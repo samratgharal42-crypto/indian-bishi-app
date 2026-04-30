@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Indian Bishi | Premium</title>
+    <title>Indian Bishi | Secure Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --bg: #0f172a; }
+        :root { --primary: #6366f1; --secondary: #a855f7; --bg: #0f172a; --card: rgba(255, 255, 255, 0.05); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
@@ -14,57 +14,82 @@
             background: #000; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
         }
 
-        /* Mobile Wrapper - हा बॉक्स डिझाईनला हलण्यापासून वाचवेल */
-        .mobile-screen {
-            width: 100%; max-width: 420px; height: 95vh;
-            background: var(--bg); border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 40px; position: relative; overflow-y: auto; overflow-x: hidden;
-            display: flex; flex-direction: column; padding: 30px 20px; box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+        /* Fixed Mobile Container - Professional Look */
+        .mobile-container {
+            width: 100%; max-width: 410px; height: 92vh;
+            background: var(--bg); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 35px; position: relative; overflow-y: auto; overflow-x: hidden;
+            display: flex; flex-direction: column; padding: 40px 25px; box-shadow: 0 40px 100px rgba(0,0,0,0.6);
         }
 
-        .auth-content { text-align: center; margin-top: 20px; }
-        .logo-box { width: 80px; height: 80px; background: white; margin: 0 auto 20px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+        /* Glassmorphism Logo Box */
+        .logo-area { text-align: center; margin-bottom: 30px; }
+        .logo-img { width: 85px; height: 85px; border-radius: 22px; background: white; padding: 5px; object-fit: contain; box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
         
-        h1 { font-size: 28px; font-weight: 800; color: white; margin: 0; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h1 { font-size: 26px; font-weight: 800; color: white; margin: 10px 0 5px; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sub-text { color: #94a3b8; font-size: 13px; margin-bottom: 30px; }
+
+        /* Stable Tabs */
+        .auth-tabs { display: flex; background: rgba(0,0,0,0.3); border-radius: 16px; margin-bottom: 30px; padding: 5px; }
+        .tab-btn { flex: 1; padding: 12px; border-radius: 12px; color: #94a3b8; font-weight: 700; font-size: 14px; cursor: pointer; text-align: center; border: none; background: none; }
+        .tab-active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
+
+        /* Form Styling */
+        .input-wrapper { margin-bottom: 20px; text-align: left; }
+        .input-label { display: block; font-size: 11px; font-weight: 800; color: #6366f1; margin-bottom: 8px; margin-left: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .custom-input { width: 100%; padding: 16px; background: rgba(255,255,255,0.03); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; font-size: 15px; }
+        .custom-input:focus { border-color: var(--primary); background: rgba(255,255,255,0.07); }
+
+        .submit-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; border-radius: 18px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4); }
+        .submit-btn:active { transform: scale(0.97); }
         
-        .tabs { display: flex; background: rgba(0,0,0,0.3); border-radius: 15px; margin: 30px 0; padding: 5px; }
-        .tab { flex: 1; padding: 12px; border-radius: 12px; color: #94a3b8; font-weight: 700; font-size: 14px; cursor: pointer; text-align: center; }
-        .active-tab { background: var(--primary); color: white; }
-
-        .input-box { margin-bottom: 20px; text-align: left; }
-        label { color: #6366f1; font-size: 11px; font-weight: 800; display: block; margin-bottom: 8px; letter-spacing: 1px; }
-        input { width: 100%; padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; outline: none; font-size: 16px; }
-        input:focus { border-color: var(--primary); }
-
-        .btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; border-radius: 18px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
         .hidden { display: none; }
+        .footer-note { margin-top: auto; padding-top: 20px; font-size: 11px; color: #475569; opacity: 0.7; }
     </style>
 </head>
 <body>
 
-<div class="mobile-screen">
-    <div class="auth-content">
-        <div class="logo-box">🏛️</div>
+<div class="mobile-container">
+    <div class="logo-area">
+        <img src="logo.png" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
         <h1>Indian Bishi</h1>
-        
-        <div class="tabs">
-            <div id="tab-login" class="tab active-tab" onclick="switchAuth('login')">LOGIN</div>
-            <div id="tab-reg" class="tab" onclick="switchAuth('reg')">REGISTER</div>
-        </div>
-
-        <div id="form-login">
-            <div class="input-box"><label>MOBILE NUMBER</label><input type="tel" id="l-mobile" placeholder="Enter 10 Digits" maxlength="10"></div>
-            <div class="input-box"><label>PASSWORD</label><input type="password" id="l-pass" placeholder="••••••••"></div>
-            <button class="btn" onclick="handleAuth('login')">LOGIN NOW</button>
-        </div>
-
-        <div id="form-reg" class="hidden">
-            <div class="input-box"><label>FULL NAME</label><input type="text" id="r-name" placeholder="Ritesh Gharal"></div>
-            <div class="input-box"><label>MOBILE NUMBER</label><input type="tel" id="r-mobile" placeholder="10 Digit Lock" maxlength="10"></div>
-            <div class="input-box"><label>CREATE PASSWORD</label><input type="password" id="r-pass" placeholder="Minimum 6 Digits"></div>
-            <button class="btn" onclick="handleAuth('reg')">REGISTER & CONTINUE</button>
-        </div>
+        <p class="sub-text">Premium Financial Services</p>
     </div>
+
+    <div class="auth-tabs">
+        <button id="btn-login" class="tab-btn tab-active" onclick="toggleAuth('login')">LOGIN</button>
+        <button id="btn-reg" class="tab-btn" onclick="toggleAuth('reg')">REGISTER</button>
+    </div>
+
+    <div id="section-login">
+        <div class="input-wrapper">
+            <label class="input-label">Registered Mobile</label>
+            <input type="tel" id="login-num" class="custom-input" placeholder="Enter 10 Digits" maxlength="10">
+        </div>
+        <div class="input-wrapper">
+            <label class="input-label">Password</label>
+            <input type="password" id="login-pass" class="custom-input" placeholder="••••••••">
+        </div>
+        <button class="submit-btn" onclick="processAuth('login')">ACCESS ACCOUNT</button>
+    </div>
+
+    <div id="section-reg" class="hidden">
+        <div class="input-wrapper">
+            <label class="input-label">Full Name</label>
+            <input type="text" id="reg-name" class="custom-input" placeholder="Enter Your Name">
+        </div>
+        <div class="input-wrapper">
+            <label class="input-label">Mobile Number</label>
+            <input type="tel" id="reg-num" class="custom-input" placeholder="10 Digit Number" maxlength="10">
+        </div>
+        <div class="input-wrapper">
+            <label class="input-label">Create Password</label>
+            <input type="password" id="reg-pass" class="custom-input" placeholder="At least 6 characters">
+        </div>
+        <button class="submit-btn" onclick="processAuth('reg')">CREATE & CONTINUE</button>
+    </div>
+
+    <div class="footer-note">Securely Encrypted with SSL & Firebase</div>
 </div>
 
 <script type="module">
@@ -83,34 +108,42 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    window.switchAuth = (t) => {
-        document.getElementById('form-login').classList.toggle('hidden', t==='reg');
-        document.getElementById('form-reg').classList.toggle('hidden', t==='login');
-        document.getElementById('tab-login').classList.toggle('active-tab', t==='login');
-        document.getElementById('tab-reg').classList.toggle('active-tab', t==='reg');
+    window.toggleAuth = (mode) => {
+        const isLogin = mode === 'login';
+        document.getElementById('section-login').classList.toggle('hidden', !isLogin);
+        document.getElementById('section-reg').classList.toggle('hidden', isLogin);
+        document.getElementById('btn-login').classList.toggle('tab-active', isLogin);
+        document.getElementById('btn-reg').classList.toggle('tab-active', !isLogin);
     }
 
-    window.handleAuth = async (type) => {
+    window.processAuth = async (type) => {
         if(type === 'reg') {
-            const name = document.getElementById('r-name').value;
-            const mobile = document.getElementById('r-mobile').value;
-            const pass = document.getElementById('r-pass').value;
-            if(mobile.length !== 10 || !name) return alert("Fill all details!");
+            const name = document.getElementById('reg-name').value;
+            const mobile = document.getElementById('reg-num').value;
+            const pass = document.getElementById('reg-pass').value;
+            
+            if(!name || mobile.length !== 10 || pass.length < 6) {
+                alert("Valid details required (Name, 10-digit number, 6+ char password)");
+                return;
+            }
 
-            const check = await get(child(ref(db), `users/${mobile}`));
-            if(check.exists()) return alert("Already Registered!");
+            const checkRef = await get(child(ref(db), `users/${mobile}`));
+            if(checkRef.exists()) return alert("Mobile already registered. Please login.");
 
-            await set(ref(db, 'users/' + mobile), { name, mobile, pass, kyc: "No", bank: "No" });
-            localStorage.setItem('user', mobile);
-            window.location.href = "user-kyc.html"; // थेट KYC पेजवर रिडायरेक्ट
+            await set(ref(db, 'users/' + mobile), { name, mobile, pass, kyc: "Pending", balance: 0 });
+            localStorage.setItem('activeUser', mobile);
+            window.location.href = "user-bank.html";
         } else {
-            const mobile = document.getElementById('l-mobile').value;
-            const pass = document.getElementById('l-pass').value;
-            const snap = await get(child(ref(db), `users/${mobile}`));
-            if(snap.exists() && snap.val().pass === pass) {
-                localStorage.setItem('user', mobile);
+            const mobile = document.getElementById('login-num').value;
+            const pass = document.getElementById('login-pass').value;
+            
+            const snapshot = await get(child(ref(db), `users/${mobile}`));
+            if (snapshot.exists() && snapshot.val().pass === pass) {
+                localStorage.setItem('activeUser', mobile);
                 window.location.href = "dashboard.html";
-            } else { alert("Invalid Credentials!"); }
+            } else {
+                alert("Incorrect details. Check number and password.");
+            }
         }
     }
 </script>
