@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pool Details | Indian Bishi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 90px; }
+
+        /* Header */
+        .header-bar { display: flex; align-items: center; padding: 20px; background: white; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .back-btn { text-decoration: none; color: var(--text); font-size: 24px; font-weight: 800; margin-right: 15px; }
+        .header-bar h2 { margin: 0; font-size: 18px; font-weight: 800; }
+
+        .content { padding: 20px; }
+
+        /* Info Card */
+        .info-card { background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 24px; padding: 25px; color: white; text-align: center; box-shadow: 0 15px 30px rgba(99, 102, 241, 0.2); margin-bottom: 25px; }
+        .pool-icon { font-size: 40px; margin-bottom: 10px; }
+        .pool-title { font-size: 22px; font-weight: 800; margin-bottom: 5px; }
+        .installment { font-size: 28px; font-weight: 800; margin: 15px 0 5px; }
+        .installment span { font-size: 14px; font-weight: 600; opacity: 0.8; }
+
+        /* Rules Section */
+        .rules-box { background: white; padding: 20px; border-radius: 20px; border: 1px solid #f1f5f9; box-shadow: 0 5px 15px rgba(0,0,0,0.02); margin-bottom: 20px; }
+        .rules-box h3 { margin: 0 0 15px; font-size: 16px; font-weight: 800; color: var(--primary); }
+        .rule-point { display: flex; align-items: flex-start; margin-bottom: 12px; font-size: 13px; color: #475569; line-height: 1.5; font-weight: 600; }
+        .rule-point span { margin-right: 10px; color: var(--primary); font-weight: 800; }
+
+        /* Fixed Bottom Payment Button */
+        .bottom-action { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px 20px; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 1000; border-top: 1px solid #f1f5f9; }
+        .pay-btn { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 16px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+        .pay-btn:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+    <div class="header-bar">
+        <a href="/indian-bishi-app/dashboard.html" class="back-btn">←</a>
+        <h2>Pool Details</h2>
+    </div>
+
+    <div class="content">
+        <div class="info-card">
+            <div class="pool-icon">💰</div>
+            <div class="pool-title">Starter Weekly Pool</div>
+            <p style="margin:0; font-size:12px; opacity:0.8;">10 Members • 10 Weeks</p>
+            <div class="installment">₹500 <span>/ week</span></div>
+            <p style="margin:5px 0 0; font-size:12px; opacity:0.9;">Total Payout: ₹5,000</p>
+        </div>
+
+        <div class="rules-box">
+            <h3>नियम आणि अटी (Rules) 📜</h3>
+            <div class="rule-point"><span>✓</span> हप्ता दर आठवड्याला वेळेवर भरणे अनिवार्य आहे.</div>
+            <div class="rule-point"><span>✓</span> बीशीची रक्कम तुमच्या व्हेरिफाईड बँक खात्यातच जमा होईल.</div>
+            <div class="rule-point"><span>✓</span> उशीरा हप्ता भरल्यास पेनल्टी (Fine) लागू होऊ शकते.</div>
+            <div class="rule-point"><span>✓</span> Indian Bishi तुमचा पैसा १००% सुरक्षित ठेवण्याची हमी देते.</div>
+        </div>
+    </div>
+
+    <div class="bottom-action">
+        <button class="pay-btn" onclick="initiatePayment()">PROCEED TO PAY ₹500</button>
+    </div>
+
+    <script>
+        function initiatePayment() {
+            // Payment Gateway Logic will go here later
+            alert("Redirecting to Payment Gateway (UPI/Card)...");
+            // window.location.href = "/indian-bishi-app/payment.html";
+        }
+    </script>
+</body>
+</html>
