@@ -7,51 +7,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background: var(--bg); 
-            margin: 0; 
             color: var(--text); 
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            padding-bottom: 100px; /* Space for Bottom Nav */
         }
 
-        /* HEADER AREA */
+        /* HEADER SECTION */
         .header { 
             background: linear-gradient(135deg, #6366f1, #a855f7); 
-            padding: 30px 20px 80px; 
+            padding: 40px 20px 80px; 
             border-radius: 0 0 40px 40px; 
             color: white; 
             position: relative; 
         }
         .user-greet { font-size: 13px; opacity: 0.9; }
-        .user-name { font-size: 24px; font-weight: 800; margin-top: 5px; }
+        .user-name { font-size: 26px; font-weight: 800; margin-top: 5px; }
+        
         .trust-badge { 
-            position: absolute; top: 25px; right: 20px; 
+            position: absolute; top: 35px; right: 20px; 
             background: rgba(255,255,255,0.2); padding: 8px 15px; 
             border-radius: 14px; font-size: 11px; font-weight: 800; 
             backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); 
         }
 
-        /* STATS CARDS */
+        /* STATS BOXES */
         .stats-container { 
             display: flex; gap: 15px; margin: -45px 20px 30px; 
             position: relative; z-index: 10; 
         }
         .stat-box { 
-            flex: 1; background: white; padding: 22px; 
-            border-radius: 24px; box-shadow: 0 12px 30px rgba(0,0,0,0.06); 
+            flex: 1; background: white; padding: 25px 15px; 
+            border-radius: 24px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); 
             text-align: center; border: 1px solid #f1f5f9; 
         }
-        .stat-val { display: block; font-size: 24px; font-weight: 800; color: var(--primary); }
+        .stat-val { display: block; font-size: 22px; font-weight: 800; color: var(--primary); }
         .stat-lbl { font-size: 10px; color: #94a3b8; font-weight: 800; text-transform: uppercase; margin-top: 6px; letter-spacing: 0.5px; }
 
         /* LOBBY AREA */
-        .lobby-content { padding: 0 20px 100px; flex-grow: 1; }
-        .section-title { font-weight: 800; font-size: 18px; margin-bottom: 20px; color: #1e293b; }
+        .lobby-content { padding: 0 20px; }
+        .section-title { font-weight: 800; font-size: 19px; margin-bottom: 20px; color: #1e293b; }
         
         .pool-card { 
             background: white; border-radius: 24px; padding: 20px; 
@@ -62,33 +61,35 @@
         .pool-info { flex: 1; }
         .pool-name { font-weight: 800; font-size: 16px; color: #1e293b; margin-bottom: 4px; }
         .pool-meta { font-size: 12px; color: #64748b; font-weight: 600; }
+        
         .join-btn { 
-            padding: 12px 24px; background: #6366f1; color: white; 
+            padding: 12px 26px; background: #6366f1; color: white; 
             border-radius: 14px; font-weight: 800; font-size: 13px; 
             border: none; cursor: pointer; box-shadow: 0 8px 15px rgba(99, 102, 241, 0.2);
         }
 
-        /* BOTTOM NAV - FIXED RECOVERY */
+        /* BOTTOM NAVIGATION - FULLY FIXED */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; right: 0; 
-            background: white; height: 80px; display: flex; 
+            background: white; height: 85px; display: flex; 
             justify-content: space-around; align-items: center; 
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.05); 
-            border-top: 1px solid #f1f5f9; z-index: 1000; 
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.08); 
+            border-top: 1px solid #f1f5f9; z-index: 9999; 
+            padding-bottom: 10px;
         }
         .nav-item { 
             display: flex; flex-direction: column; align-items: center; 
             gap: 6px; text-decoration: none; color: #94a3b8; 
-            font-size: 10px; font-weight: 800; 
+            font-size: 10px; font-weight: 800; flex: 1;
         }
         .nav-item.active { color: var(--primary); }
         .nav-icon { font-size: 24px; }
 
-        /* POPUP UI */
+        /* POPUP SYSTEM */
         .popup-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
-            display: none; align-items: center; justify-content: center; z-index: 9999; padding: 20px;
+            display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px;
         }
         .popup-content {
             background: white; width: 100%; max-width: 350px; padding: 35px 25px;
@@ -144,9 +145,15 @@
     </div>
 
     <nav class="bottom-nav">
-        <a href="dashboard.html" class="nav-item active"><span class="nav-icon">🏠</span><span>HOME</span></a>
-        <a href="bishi/all-pools.html" class="nav-item"><span class="nav-icon">🎯</span><span>MY BISHI</span></a>
-        <a href="user/profile.html" class="nav-item"><span class="nav-icon">👤</span><span>ACCOUNT</span></a>
+        <a href="dashboard.html" class="nav-item active">
+            <span class="nav-icon">🏠</span><span>HOME</span>
+        </a>
+        <a href="bishi/all-pools.html" class="nav-item">
+            <span class="nav-icon">🎯</span><span>MY BISHI</span>
+        </a>
+        <a href="user/profile.html" class="nav-item">
+            <span class="nav-icon">👤</span><span>ACCOUNT</span>
+        </a>
     </nav>
 
     <script type="module">
@@ -163,6 +170,7 @@
                 if(snap.exists()){
                     const data = snap.val();
                     document.getElementById('user-display').innerText = data.name;
+                    // SHOW RUPEE BALANCE
                     document.getElementById('bal-display').innerText = "₹" + (data.balance || 0).toFixed(2);
                     if(data.cibil) {
                         document.getElementById('cibil-display').innerText = data.cibil;
