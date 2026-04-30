@@ -82,16 +82,13 @@
 
     <nav class="bottom-nav">
         <a href="/indian-bishi-app/dashboard.html" class="nav-item active">
-            <span class="nav-icon">🏠</span>
-            <span>HOME</span>
+            <span class="nav-icon">🏠</span><span>HOME</span>
         </a>
         <a href="/indian-bishi-app/bishi/all-pools.html" class="nav-item">
-            <span class="nav-icon">🎯</span>
-            <span>MY BISHI</span>
+            <span class="nav-icon">🎯</span><span>MY BISHI</span>
         </a>
         <a href="/indian-bishi-app/user/profile.html" class="nav-item">
-            <span class="nav-icon">👤</span>
-            <span>ACCOUNT</span>
+            <span class="nav-icon">👤</span><span>ACCOUNT</span>
         </a>
     </nav>
 
@@ -106,26 +103,22 @@
             storageBucket: "indianbishi-pro.firebasestorage.app",
             messagingSenderId: "274772179441",
             appId: "1:274772179441:web:a0fac89f47c6bae6e52c50",
-            databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" // फायनल डेटाबेस लिंक
+            databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Fetch User Data from Firebase
         const userMobile = localStorage.getItem('activeUser');
         if(!userMobile) {
-            window.location.href = "/indian-bishi-app/index.html"; // युजर लॉगिन नसेल तर बाहेर काढा
+            window.location.href = "/indian-bishi-app/index.html";
         } else {
             get(child(ref(db), `users/${userMobile}`)).then((snapshot) => {
                 if (snapshot.exists()) {
-                    // नाव आणि बॅलन्स अपडेट करणे
                     document.getElementById('display-name').innerText = snapshot.val().name;
                     document.getElementById('display-balance').innerText = "₹" + (snapshot.val().balance || 0).toFixed(2);
                 }
-            }).catch((error) => {
-                console.error("Error fetching user data:", error);
-            });
+            }).catch((error) => { console.error(error); });
         }
     </script>
 </body>
