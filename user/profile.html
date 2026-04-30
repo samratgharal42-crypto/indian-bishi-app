@@ -3,58 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Account Settings | Indian Bishi</title>
+    <title>My Profile | Indian Bishi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding: 20px; padding-bottom: 100px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 100px; }
 
-        h2 { font-weight: 800; font-size: 22px; margin-bottom: 25px; margin-top: 10px; }
+        /* PROFILE HEADER (RESTORED) */
+        .profile-header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 40px 20px 70px; border-radius: 0 0 40px 40px; color: white; text-align: center; }
+        .avatar { width: 80px; height: 80px; background: white; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); color: var(--primary); }
+        .user-name { font-size: 24px; font-weight: 800; margin-bottom: 5px; }
+        .user-phone { font-size: 13px; font-weight: 600; opacity: 0.9; letter-spacing: 0.5px; }
 
-        .menu-list { display: flex; flex-direction: column; gap: 15px; }
-        
-        .menu-item { background: white; padding: 20px; border-radius: 18px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 15px; text-decoration: none; color: var(--text); box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; cursor: pointer; }
+        /* WALLET CARD (RESTORED) */
+        .wallet-card { background: white; margin: -40px 20px 25px; padding: 25px; border-radius: 24px; text-align: center; box-shadow: 0 12px 30px rgba(0,0,0,0.06); border: 1px solid #f1f5f9; position: relative; z-index: 10; }
+        .wallet-label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+        .wallet-amount { font-size: 32px; font-weight: 800; color: var(--primary); }
+
+        /* MENU LIST */
+        .menu-list { padding: 0 20px; display: flex; flex-direction: column; gap: 12px; }
+        .menu-item { background: white; padding: 20px; border-radius: 18px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 14px; text-decoration: none; color: var(--text); box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; }
         .arrow { color: #cbd5e1; font-weight: 800; }
-        
-        .logout-btn { color: #ef4444; margin-top: 10px; font-weight: 800;}
+        .logout-btn { color: #ef4444; cursor: pointer; }
 
-        /* PROFESSIONAL LOGOUT POPUP */
+        /* LOGOUT POPUP */
         .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
         .popup-content { background: white; width: 100%; max-width: 320px; padding: 35px 25px; border-radius: 32px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.2); animation: pop 0.3s ease-out; }
         @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        
         .popup-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 800; font-size: 15px; cursor: pointer; margin-top: 10px; }
-        .confirm-btn { background: #ef4444; color: white; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2); }
+        .confirm-btn { background: #ef4444; color: white; }
         .cancel-btn { background: #f1f5f9; color: #64748b; }
 
-        /* Bottom Navigation */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 80px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 40px rgba(0,0,0,0.05); z-index: 999; border-top: 1px solid #f1f5f9; }
-        .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        /* BOTTOM NAV */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 85px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 40px rgba(0,0,0,0.05); z-index: 9999; border-top: 1px solid #f1f5f9; padding-bottom: 10px; }
+        .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
         .nav-item.active { color: var(--primary); }
+        .nav-icon { font-size: 24px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-    <h2>Account Settings ⚙️</h2>
+    <div class="profile-header">
+        <div class="avatar">👤</div>
+        <div class="user-name" id="p-name">Loading...</div>
+        <div class="user-phone" id="p-mobile">+91 ----------</div>
+    </div>
+
+    <div class="wallet-card">
+        <div class="wallet-label">TOTAL WALLET BALANCE</div>
+        <div class="wallet-amount" id="p-bal">₹0.00</div>
+    </div>
 
     <div class="menu-list">
         <a href="/indian-bishi-app/kyc.html" class="menu-item">
             <span>🛡️ Identity Verification (KYC)</span>
             <span class="arrow">></span>
         </a>
-
         <a href="/indian-bishi-app/user/user-bank.html" class="menu-item">
             <span>🏦 Bank & UPI Details</span>
             <span class="arrow">></span>
         </a>
-
         <a href="/indian-bishi-app/support.html" class="menu-item">
-            <span>🎧 Help & Live Support</span>
+            <span>🎧 Help & Support</span>
             <span class="arrow">></span>
         </a>
-
-        <div onclick="showLogoutPopup()" class="menu-item logout-btn">
+        <div onclick="document.getElementById('logout-popup').style.display='flex'" class="menu-item logout-btn">
             <span>🚪 Secure Logout</span>
             <span class="arrow">></span>
         </div>
@@ -64,37 +78,42 @@
         <div class="popup-content">
             <div style="font-size: 50px; margin-bottom: 10px;">🚪</div>
             <h3 style="margin:0 0 10px; font-size:20px; color: #1e293b;">Confirm Logout</h3>
-            <p style="font-size:14px; color:#64748b; line-height:1.5; margin:0;">Are you sure you want to securely logout from Indian Bishi?</p>
+            <p style="font-size:14px; color:#64748b; line-height:1.5; margin:0;">Are you sure you want to securely logout?</p>
             <button class="popup-btn confirm-btn" onclick="logoutUser()">Yes, Logout</button>
-            <button class="popup-btn cancel-btn" onclick="closePopup()">Cancel</button>
+            <button class="popup-btn cancel-btn" onclick="document.getElementById('logout-popup').style.display='none'">Cancel</button>
         </div>
     </div>
 
     <nav class="bottom-nav">
-        <a href="/indian-bishi-app/dashboard.html" class="nav-item">🏠<span>HOME</span></a>
-        <a href="/indian-bishi-app/bishi/all-pools.html" class="nav-item">🎯<span>MY BISHI</span></a>
-        <a href="/indian-bishi-app/user/profile.html" class="nav-item active">👤<span>ACCOUNT</span></a>
+        <a href="/indian-bishi-app/dashboard.html" class="nav-item"><span class="nav-icon">🏠</span><span>HOME</span></a>
+        <a href="/indian-bishi-app/bishi/all-pools.html" class="nav-item"><span class="nav-icon">🎯</span><span>MY BISHI</span></a>
+        <a href="/indian-bishi-app/user/profile.html" class="nav-item active"><span class="nav-icon">👤</span><span>ACCOUNT</span></a>
     </nav>
 
-    <script>
-        // Check if user is logged in
-        if(!localStorage.getItem('activeUser')) {
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
+        const db = getDatabase(app);
+        const mobile = localStorage.getItem('activeUser');
+
+        if(!mobile) {
             window.location.href = "/indian-bishi-app/index.html";
+        } else {
+            get(child(ref(db), `users/${mobile}`)).then((snap) => {
+                if(snap.exists()){
+                    const data = snap.val();
+                    document.getElementById('p-name').innerText = data.name;
+                    document.getElementById('p-mobile').innerText = "+91 " + data.mobile;
+                    document.getElementById('p-bal').innerText = "₹" + (data.balance || 0).toFixed(2);
+                }
+            });
         }
 
-        // Logout Popup Functions
-        function showLogoutPopup() {
-            document.getElementById('logout-popup').style.display = 'flex';
-        }
-        function closePopup() {
-            document.getElementById('logout-popup').style.display = 'none';
-        }
-
-        // Actual Logout Function
-        function logoutUser() {
-            localStorage.removeItem('activeUser'); // Remove session
-            // Path standardized properly
-            window.location.href = "/indian-bishi-app/index.html"; // Redirect to login
+        window.logoutUser = () => {
+            localStorage.removeItem('activeUser');
+            window.location.href = "/indian-bishi-app/index.html";
         }
     </script>
 </body>
