@@ -1,94 +1,118 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Indian Bishi | Auth</title>
+    <title>Indian Bishi | Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --bg: #0f172a; --card: rgba(255, 255, 255, 0.08); }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .auth-card { background: var(--card); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); padding: 35px 25px; border-radius: 30px; width: 100%; max-width: 400px; text-align: center; }
-        .logo-img { width: 70px; height: 70px; margin-bottom: 15px; border-radius: 15px; }
-        .tabs { display: flex; background: rgba(0,0,0,0.3); border-radius: 12px; margin-bottom: 25px; padding: 4px; }
-        .tab { flex: 1; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 700; }
-        .active { background: var(--primary); }
-        .input-group { text-align: left; margin-bottom: 15px; }
-        input { width: 100%; padding: 15px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; outline: none; }
-        .btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        :root { --primary: #6366f1; --bg: #0f172a; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #000; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+
+        /* Mobile Wrapper - हा बॉक्स डिझाईनला हलण्यापासून वाचवेल */
+        .mobile-screen {
+            width: 100%; max-width: 420px; height: 95vh;
+            background: var(--bg); border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 40px; position: relative; overflow-y: auto; overflow-x: hidden;
+            display: flex; flex-direction: column; padding: 30px 20px; box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+        }
+
+        .auth-content { text-align: center; margin-top: 20px; }
+        .logo-box { width: 80px; height: 80px; background: white; margin: 0 auto 20px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+        
+        h1 { font-size: 28px; font-weight: 800; color: white; margin: 0; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .tabs { display: flex; background: rgba(0,0,0,0.3); border-radius: 15px; margin: 30px 0; padding: 5px; }
+        .tab { flex: 1; padding: 12px; border-radius: 12px; color: #94a3b8; font-weight: 700; font-size: 14px; cursor: pointer; text-align: center; }
+        .active-tab { background: var(--primary); color: white; }
+
+        .input-box { margin-bottom: 20px; text-align: left; }
+        label { color: #6366f1; font-size: 11px; font-weight: 800; display: block; margin-bottom: 8px; letter-spacing: 1px; }
+        input { width: 100%; padding: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; outline: none; font-size: 16px; }
+        input:focus { border-color: var(--primary); }
+
+        .btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; border-radius: 18px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
         .hidden { display: none; }
     </style>
 </head>
 <body>
-    <div class="auth-card">
-        <img src="logo.png" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+
+<div class="mobile-screen">
+    <div class="auth-content">
+        <div class="logo-box">🏛️</div>
+        <h1>Indian Bishi</h1>
+        
         <div class="tabs">
-            <div id="t-login" class="tab active" onclick="switchTab('login')">LOGIN</div>
-            <div id="t-reg" class="tab" onclick="switchTab('reg')">REGISTER</div>
+            <div id="tab-login" class="tab active-tab" onclick="switchAuth('login')">LOGIN</div>
+            <div id="tab-reg" class="tab" onclick="switchAuth('reg')">REGISTER</div>
         </div>
 
-        <div id="f-login">
-            <div class="input-group"><input type="tel" id="l-num" placeholder="Mobile Number" maxlength="10"></div>
-            <div class="input-group"><input type="password" id="l-pass" placeholder="Password"></div>
-            <button class="btn" onclick="auth('login')">LOGIN</button>
+        <div id="form-login">
+            <div class="input-box"><label>MOBILE NUMBER</label><input type="tel" id="l-mobile" placeholder="Enter 10 Digits" maxlength="10"></div>
+            <div class="input-box"><label>PASSWORD</label><input type="password" id="l-pass" placeholder="••••••••"></div>
+            <button class="btn" onclick="handleAuth('login')">LOGIN NOW</button>
         </div>
 
-        <div id="f-reg" class="hidden">
-            <div class="input-group"><input type="text" id="r-name" placeholder="Full Name"></div>
-            <div class="input-group"><input type="tel" id="r-num" placeholder="Mobile Number" maxlength="10"></div>
-            <div class="input-group"><input type="password" id="r-pass" placeholder="Create Password"></div>
-            <button class="btn" onclick="auth('reg')">CREATE ACCOUNT</button>
+        <div id="form-reg" class="hidden">
+            <div class="input-box"><label>FULL NAME</label><input type="text" id="r-name" placeholder="Ritesh Gharal"></div>
+            <div class="input-box"><label>MOBILE NUMBER</label><input type="tel" id="r-mobile" placeholder="10 Digit Lock" maxlength="10"></div>
+            <div class="input-box"><label>CREATE PASSWORD</label><input type="password" id="r-pass" placeholder="Minimum 6 Digits"></div>
+            <button class="btn" onclick="handleAuth('reg')">REGISTER & CONTINUE</button>
         </div>
     </div>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBjKtNm0nLIXeKG7YRBrsIQah9G1mL-UQM",
-            authDomain: "indianbishi-pro.firebaseapp.com",
-            projectId: "indianbishi-pro",
-            storageBucket: "indianbishi-pro.firebasestorage.app",
-            messagingSenderId: "274772179441",
-            appId: "1:274772179441:web:a0fac89f47c6bae6e52c50"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBjKtNm0nLIXeKG7YRBrsIQah9G1mL-UQM",
+        authDomain: "indianbishi-pro.firebaseapp.com",
+        projectId: "indianbishi-pro",
+        storageBucket: "indianbishi-pro.firebasestorage.app",
+        messagingSenderId: "274772179441",
+        appId: "1:274772179441:web:a0fac89f47c6bae6e52c50"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-        window.switchTab = (t) => {
-            document.getElementById('f-login').classList.toggle('hidden', t === 'reg');
-            document.getElementById('f-reg').classList.toggle('hidden', t === 'login');
-            document.getElementById('t-login').classList.toggle('active', t === 'login');
-            document.getElementById('t-reg').classList.toggle('active', t === 'reg');
-        }
+    window.switchAuth = (t) => {
+        document.getElementById('form-login').classList.toggle('hidden', t==='reg');
+        document.getElementById('form-reg').classList.toggle('hidden', t==='login');
+        document.getElementById('tab-login').classList.toggle('active-tab', t==='login');
+        document.getElementById('tab-reg').classList.toggle('active-tab', t==='reg');
+    }
 
-        window.auth = async (type) => {
-            if(type === 'reg') {
-                const name = document.getElementById('r-name').value;
-                const num = document.getElementById('r-num').value;
-                const pass = document.getElementById('r-pass').value;
-                if(num.length !== 10) return alert("Enter 10 digit number");
+    window.handleAuth = async (type) => {
+        if(type === 'reg') {
+            const name = document.getElementById('r-name').value;
+            const mobile = document.getElementById('r-mobile').value;
+            const pass = document.getElementById('r-pass').value;
+            if(mobile.length !== 10 || !name) return alert("Fill all details!");
 
-                const check = await get(child(ref(db), `users/${num}`));
-                if(check.exists()) return alert("Already Registered! Please Login.");
+            const check = await get(child(ref(db), `users/${mobile}`));
+            if(check.exists()) return alert("Already Registered!");
 
-                await set(ref(db, 'users/' + num), { name, num, pass, kyc: "No", balance: 0 });
-                localStorage.setItem('userNum', num);
+            await set(ref(db, 'users/' + mobile), { name, mobile, pass, kyc: "No", bank: "No" });
+            localStorage.setItem('user', mobile);
+            window.location.href = "user-kyc.html"; // थेट KYC पेजवर रिडायरेक्ट
+        } else {
+            const mobile = document.getElementById('l-mobile').value;
+            const pass = document.getElementById('l-pass').value;
+            const snap = await get(child(ref(db), `users/${mobile}`));
+            if(snap.exists() && snap.val().pass === pass) {
+                localStorage.setItem('user', mobile);
                 window.location.href = "dashboard.html";
-            } else {
-                const num = document.getElementById('l-num').value;
-                const pass = document.getElementById('l-pass').value;
-                const snap = await get(child(ref(db), `users/${num}`));
-                if(snap.exists() && snap.val().pass === pass) {
-                    localStorage.setItem('userNum', num);
-                    window.location.href = "dashboard.html";
-                } else {
-                    alert("Wrong Number or Password!");
-                }
-            }
+            } else { alert("Invalid Credentials!"); }
         }
-    </script>
+    }
+</script>
 </body>
 </html>
