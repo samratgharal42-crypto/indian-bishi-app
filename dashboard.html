@@ -158,3 +158,52 @@
     </script>
 </body>
 </html>
+        const pools = [
+            { name: "Micro Daily Pool", amt: 50, limit: 600, duration: "60 Days" },
+            { name: "Starter Weekly", amt: 500, limit: 600, duration: "10 Weeks" },
+            { name: "Silver Pool", amt: 2000, limit: 700, duration: "20 Weeks" },
+            { name: "Gold Premium", amt: 5000, limit: 700, duration: "12 Months" }
+        ];
+
+        if(!mobile) {
+            window.location.href = "index.html";
+        } else {
+            get(child(ref(db), `users/${mobile}`)).then((snap) => {
+                if(snap.exists()){
+                    const user = snap.val();
+                    document.getElementById('user-display').innerText = user.name;
+                    document.getElementById('bal-display').innerText = "₹" + (user.balance || 0).toFixed(2);
+                    
+                    const cibil = user.cibil || 0;
+                    document.getElementById('cibil-display').innerText = cibil || "Pending";
+
+                    const list = document.getElementById('pool-list');
+                    list.innerHTML = ""; 
+
+                    if(cibil < 600) {
+                        list.innerHTML = `
+                            <div style="background: white; padding: 20px; border-radius: 18px; text-align: center; border: 1px solid #f1f5f9;">
+                                <div style="font-size:30px; margin-bottom:10px;">🔒</div>
+                                <b>Pools Locked</b><br>
+                                <span style="font-size:12px; color:#64748b;">Verify your identity to unlock pools.</span><br><br>
+                                <button class="join-btn" onclick="document.getElementById('kyc-popup').style.display='flex'">Verify KYC</button>
+                            </div>`;
+                    } else {
+                        pools.forEach(p => {
+                            if(cibil >= p.limit) {
+                                if(cibil < 700 && p.amt > 500) return; 
+                                
+                                list.innerHTML += `
+                                    <div class="pool-card">
+                                        <div><b>${p.name}</b><br><small style="color:#64748b; font-weight:600;">₹${p.amt} • ${p.duration}</small></div>
+                                        <button class="join-btn" onclick="location.href='bishi/pool-info.html'">JOIN</button>
+                                    </div>`;
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
