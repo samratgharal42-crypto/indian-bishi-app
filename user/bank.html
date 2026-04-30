@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bank Details | Indian Bishi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        body { background: #0f172a; color: white; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { width: 100%; max-width: 400px; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .input-box { text-align: left; margin-bottom: 15px; }
+        label { display: block; font-size: 11px; color: #6366f1; font-weight: 800; margin-bottom: 5px; }
+        input { width: 100%; padding: 15px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; outline: none; }
+        .btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Bank Details 🏦</h2>
+        <p style="color:#94a3b8; font-size: 13px;">अपनी बीशी की राशि प्राप्त करने के लिए बैंक जोड़ें।</p>
+        
+        <div class="input-box"><label>ACCOUNT HOLDER NAME</label><input type="text" placeholder="As per Bank account"></div>
+        <div class="input-box"><label>ACCOUNT NUMBER</label><input type="password" placeholder="Enter Account Number"></div>
+        <div class="input-box"><label>IFSC CODE</label><input type="text" placeholder="SBIN000XXXX"></div>
+        <div class="input-box"><label>UPI ID (Google Pay/PhonePe)</label><input type="text" placeholder="example@apl"></div>
+
+        <button class="btn" onclick="alert('Details Saved!'); location.href='dashboard.html'">SAVE & FINISH</button>
+    </div>
+</body>
+</html>
