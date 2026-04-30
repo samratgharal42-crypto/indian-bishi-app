@@ -6,45 +6,21 @@
     <title>Indian Bishi | Secure Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --secondary: #a855f7; --bg: #0f172a; --card: rgba(255, 255, 255, 0.05); }
+        :root { --primary: #6366f1; --bg: #0f172a; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: #000; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
-        }
-
-        /* Fixed Mobile Container - Professional Look */
-        .mobile-container {
-            width: 100%; max-width: 410px; height: 92vh;
-            background: var(--bg); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 35px; position: relative; overflow-y: auto; overflow-x: hidden;
-            display: flex; flex-direction: column; padding: 40px 25px; box-shadow: 0 40px 100px rgba(0,0,0,0.6);
-        }
-
-        /* Glassmorphism Logo Box */
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #000; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .mobile-container { width: 100%; max-width: 410px; height: 92vh; background: var(--bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 35px; position: relative; overflow-y: auto; display: flex; flex-direction: column; padding: 40px 25px; box-shadow: 0 40px 100px rgba(0,0,0,0.6); }
         .logo-area { text-align: center; margin-bottom: 30px; }
-        .logo-img { width: 85px; height: 85px; border-radius: 22px; background: white; padding: 5px; object-fit: contain; box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
-        
+        .logo-img { width: 85px; height: 85px; border-radius: 22px; background: white; padding: 5px; object-fit: contain; }
         h1 { font-size: 26px; font-weight: 800; color: white; margin: 10px 0 5px; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .sub-text { color: #94a3b8; font-size: 13px; margin-bottom: 30px; }
-
-        /* Stable Tabs */
         .auth-tabs { display: flex; background: rgba(0,0,0,0.3); border-radius: 16px; margin-bottom: 30px; padding: 5px; }
         .tab-btn { flex: 1; padding: 12px; border-radius: 12px; color: #94a3b8; font-weight: 700; font-size: 14px; cursor: pointer; text-align: center; border: none; background: none; }
-        .tab-active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
-
-        /* Form Styling */
+        .tab-active { background: var(--primary); color: white; }
         .input-wrapper { margin-bottom: 20px; text-align: left; }
-        .input-label { display: block; font-size: 11px; font-weight: 800; color: #6366f1; margin-bottom: 8px; margin-left: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-label { display: block; font-size: 11px; font-weight: 800; color: #6366f1; margin-bottom: 8px; text-transform: uppercase; }
         .custom-input { width: 100%; padding: 16px; background: rgba(255,255,255,0.03); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; font-size: 15px; }
-        .custom-input:focus { border-color: var(--primary); background: rgba(255,255,255,0.07); }
-
-        .submit-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; border-radius: 18px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4); }
-        .submit-btn:active { transform: scale(0.97); }
-        
+        .submit-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; border-radius: 18px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 10px; }
         .hidden { display: none; }
-        .footer-note { margin-top: auto; padding-top: 20px; font-size: 11px; color: #475569; opacity: 0.7; }
     </style>
 </head>
 <body>
@@ -53,7 +29,7 @@
     <div class="logo-area">
         <img src="logo.png" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
         <h1>Indian Bishi</h1>
-        <p class="sub-text">Premium Financial Services</p>
+        <p style="color:#94a3b8; font-size:12px;">Premium Financial Services</p>
     </div>
 
     <div class="auth-tabs">
@@ -62,34 +38,17 @@
     </div>
 
     <div id="section-login">
-        <div class="input-wrapper">
-            <label class="input-label">Registered Mobile</label>
-            <input type="tel" id="login-num" class="custom-input" placeholder="Enter 10 Digits" maxlength="10">
-        </div>
-        <div class="input-wrapper">
-            <label class="input-label">Password</label>
-            <input type="password" id="login-pass" class="custom-input" placeholder="••••••••">
-        </div>
+        <div class="input-wrapper"><label class="input-label">Registered Mobile</label><input type="tel" id="login-num" class="custom-input" placeholder="10 Digits" maxlength="10"></div>
+        <div class="input-wrapper"><label class="input-label">Password</label><input type="password" id="login-pass" class="custom-input" placeholder="••••••••"></div>
         <button class="submit-btn" onclick="processAuth('login')">ACCESS ACCOUNT</button>
     </div>
 
     <div id="section-reg" class="hidden">
-        <div class="input-wrapper">
-            <label class="input-label">Full Name</label>
-            <input type="text" id="reg-name" class="custom-input" placeholder="Enter Your Name">
-        </div>
-        <div class="input-wrapper">
-            <label class="input-label">Mobile Number</label>
-            <input type="tel" id="reg-num" class="custom-input" placeholder="10 Digit Number" maxlength="10">
-        </div>
-        <div class="input-wrapper">
-            <label class="input-label">Create Password</label>
-            <input type="password" id="reg-pass" class="custom-input" placeholder="At least 6 characters">
-        </div>
+        <div class="input-wrapper"><label class="input-label">Full Name</label><input type="text" id="reg-name" class="custom-input" placeholder="Enter Your Name"></div>
+        <div class="input-wrapper"><label class="input-label">Mobile Number</label><input type="tel" id="reg-num" class="custom-input" placeholder="10 Digits" maxlength="10"></div>
+        <div class="input-wrapper"><label class="input-label">Create Password</label><input type="password" id="reg-pass" class="custom-input" placeholder="Min. 6 characters"></div>
         <button class="submit-btn" onclick="processAuth('reg')">CREATE & CONTINUE</button>
     </div>
-
-    <div class="footer-note">Securely Encrypted with SSL & Firebase</div>
 </div>
 
 <script type="module">
@@ -117,33 +76,43 @@
     }
 
     window.processAuth = async (type) => {
-        if(type === 'reg') {
-            const name = document.getElementById('reg-name').value;
-            const mobile = document.getElementById('reg-num').value;
-            const pass = document.getElementById('reg-pass').value;
-            
-            if(!name || mobile.length !== 10 || pass.length < 6) {
-                alert("Valid details required (Name, 10-digit number, 6+ char password)");
-                return;
-            }
+        try {
+            if(type === 'reg') {
+                const name = document.getElementById('reg-name').value;
+                const mobile = document.getElementById('reg-num').value;
+                const pass = document.getElementById('reg-pass').value;
+                
+                if(!name || mobile.length !== 10 || pass.length < 6) {
+                    alert("Please fill all details correctly!");
+                    return;
+                }
 
-            const checkRef = await get(child(ref(db), `users/${mobile}`));
-            if(checkRef.exists()) return alert("Mobile already registered. Please login.");
+                const checkRef = await get(child(ref(db), `users/${mobile}`));
+                if(checkRef.exists()) {
+                    alert("This number is already registered!");
+                    return;
+                }
 
-            await set(ref(db, 'users/' + mobile), { name, mobile, pass, kyc: "Pending", balance: 0 });
-            localStorage.setItem('activeUser', mobile);
-            window.location.href = "user-bank.html";
-        } else {
-            const mobile = document.getElementById('login-num').value;
-            const pass = document.getElementById('login-pass').value;
-            
-            const snapshot = await get(child(ref(db), `users/${mobile}`));
-            if (snapshot.exists() && snapshot.val().pass === pass) {
+                await set(ref(db, 'users/' + mobile), { name, mobile, pass, kyc: "Pending", balance: 0 });
                 localStorage.setItem('activeUser', mobile);
-                window.location.href = "dashboard.html";
+                
+                // IMPORTANT: Path correction for your folder structure
+                window.location.href = "user/bank.html"; 
             } else {
-                alert("Incorrect details. Check number and password.");
+                const mobile = document.getElementById('login-num').value;
+                const pass = document.getElementById('login-pass').value;
+                
+                const snapshot = await get(child(ref(db), `users/${mobile}`));
+                if (snapshot.exists() && snapshot.val().pass === pass) {
+                    localStorage.setItem('activeUser', mobile);
+                    window.location.href = "dashboard.html";
+                } else {
+                    alert("Invalid number or password!");
+                }
             }
+        } catch (error) {
+            console.error(error);
+            alert("Database Error: " + error.message);
         }
     }
 </script>
