@@ -10,56 +10,62 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 100px; overflow-x: hidden; }
 
-        /* Header Style */
         .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 40px 20px 60px; border-radius: 0 0 40px 40px; color: white; position: relative; }
         .user-greet { font-size: 13px; opacity: 0.9; }
         .user-name { font-size: 26px; font-weight: 800; margin-top: 5px; }
         .trust-badge { position: absolute; top: 35px; right: 20px; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 14px; font-size: 11px; font-weight: 800; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
 
-        /* SLIDING BANNER SECTION */
-        .banner-slider { margin: -30px 20px 25px; overflow: hidden; border-radius: 24px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); background: white; height: 140px; position: relative; z-index: 10; }
-        .slides { display: flex; width: 300%; height: 100%; animation: slide 10s infinite; }
-        .slide { width: 33.33%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; text-align: center; padding: 20px; font-size: 14px; }
+        /* WALLET CARDS */
+        .stats-container { display: flex; gap: 15px; margin: -30px 20px 25px; position: relative; z-index: 10; }
+        .stat-box { flex: 1; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; border: 1px solid #f1f5f9; }
+        .stat-val { display: block; font-size: 22px; font-weight: 800; color: var(--primary); }
+        .stat-lbl { font-size: 10px; color: #94a3b8; font-weight: 800; text-transform: uppercase; margin-top: 5px; }
+
+        /* SLIDING BANNER */
+        .banner-slider { margin: 0 20px 25px; overflow: hidden; border-radius: 24px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); background: white; height: 130px; position: relative; }
+        .slides { display: flex; width: 300%; height: 100%; animation: slide 12s infinite; }
+        .slide { width: 33.33%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; text-align: center; padding: 20px; font-size: 15px; line-height: 1.4; }
         .s1 { background: linear-gradient(45deg, #ff9a9e, #fad0c4); }
         .s2 { background: linear-gradient(45deg, #a1c4fd, #c2e9fb); }
         .s3 { background: linear-gradient(45deg, #84fab0, #8fd3f4); }
-        @keyframes slide { 0% { margin-left: 0; } 33% { margin-left: -100%; } 66% { margin-left: -200%; } 100% { margin-left: 0; } }
+        @keyframes slide { 0%, 25% { margin-left: 0; } 33%, 58% { margin-left: -100%; } 66%, 91% { margin-left: -200%; } 100% { margin-left: 0; } }
 
-        /* Available Bishi Pools */
+        /* POOLS SECTION */
         .lobby-content { padding: 0 20px; }
         .section-title { font-weight: 800; font-size: 19px; margin-bottom: 15px; }
-        .pool-card { background: white; border-radius: 24px; padding: 20px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #f1f5f9; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-        .join-btn { padding: 12px 24px; background: var(--primary); color: white; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 8px 15px rgba(99, 102, 241, 0.2); }
+        .pool-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #f1f5f9; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .join-btn { padding: 12px 24px; background: var(--primary); color: white; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; }
 
         /* KYC POPUP */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
-        .popup { background: white; width: 100%; max-width: 350px; padding: 30px; border-radius: 32px; text-align: center; }
+        .popup { background: white; width: 100%; max-width: 320px; padding: 30px; border-radius: 32px; text-align: center; }
         .p-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 800; margin-bottom: 10px; cursor: pointer; }
         .btn-main { background: var(--primary); color: white; }
 
-        /* BOTTOM NAVIGATION - FIXED ICONS */
+        /* BOTTOM NAV - ICONS FIXED */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 85px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 40px rgba(0,0,0,0.08); z-index: 9999; border-top: 1px solid #f1f5f9; padding-bottom: 10px; }
         .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
         .nav-item.active { color: var(--primary); }
-        
-        /* ICON FIX */
-        .nav-icon { 
-            font-size: 24px; 
-            width: 30px; 
-            height: 30px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin-bottom: 2px; 
-        }
+        .nav-icon { font-size: 24px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="trust-badge">🛡️ CIBIL: <span id="cibil-display">--</span></div>
+        <div class="trust-badge">🛡️ Score: <span id="cibil-display">Pending</span></div>
         <div class="user-greet">Welcome back,</div>
         <div class="user-name" id="user-display">Loading...</div>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-box">
+            <span class="stat-val" id="bal-display">₹0.00</span>
+            <span class="stat-lbl">Wallet</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-val">0</span>
+            <span class="stat-lbl">My Pools</span>
+        </div>
     </div>
 
     <div class="banner-slider">
@@ -88,15 +94,9 @@
     </div>
 
     <nav class="bottom-nav">
-        <a href="dashboard.html" class="nav-item active">
-            <span class="nav-icon">🏠</span><span>HOME</span>
-        </a>
-        <a href="bishi/all-pools.html" class="nav-item">
-            <span class="nav-icon">🎯</span><span>MY BISHI</span>
-        </a>
-        <a href="user/profile.html" class="nav-item">
-            <span class="nav-icon">👤</span><span>ACCOUNT</span>
-        </a>
+        <a href="dashboard.html" class="nav-item active"><span class="nav-icon">🏠</span><span>HOME</span></a>
+        <a href="bishi/all-pools.html" class="nav-item"><span class="nav-icon">🎯</span><span>MY BISHI</span></a>
+        <a href="user/profile.html" class="nav-item"><span class="nav-icon">👤</span><span>ACCOUNT</span></a>
     </nav>
 
     <script type="module">
@@ -121,6 +121,8 @@
                 if(snap.exists()){
                     const user = snap.val();
                     document.getElementById('user-display').innerText = user.name;
+                    document.getElementById('bal-display').innerText = "₹" + (user.balance || 0).toFixed(2);
+                    
                     const cibil = user.cibil || 0;
                     document.getElementById('cibil-display').innerText = cibil || "Pending";
 
@@ -138,6 +140,7 @@
                     } else {
                         pools.forEach(p => {
                             if(cibil >= p.limit) {
+                                // Logic: CIBIL 807 will bypass this return and show ALL pools
                                 if(cibil < 700 && p.amt > 500) return; 
                                 
                                 list.innerHTML += `
