@@ -96,8 +96,8 @@
                 await set(ref(db, 'users/' + mobile), { name, mobile, pass, kyc: "Pending", balance: 0 });
                 localStorage.setItem('activeUser', mobile);
                 
-                // IMPORTANT: Path correction for your folder structure
-                window.location.href = "user/bank.html"; 
+                // FIXED PATH: user folder ke andar user-bank.html
+                window.location.href = "user/user-bank.html"; 
             } else {
                 const mobile = document.getElementById('login-num').value;
                 const pass = document.getElementById('login-pass').value;
