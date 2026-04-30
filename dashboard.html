@@ -8,31 +8,31 @@
     <style>
         :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 80px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 90px; }
 
         /* Banner Style */
-        .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 30px 20px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; color: white; }
+        .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 30px 20px 45px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; color: white; }
         .user-greet { font-size: 14px; opacity: 0.9; }
-        .user-name { font-size: 22px; font-weight: 800; margin-top: 5px; }
+        .user-name { font-size: 24px; font-weight: 800; margin-top: 5px; }
 
-        .stats-container { display: flex; gap: 15px; margin: -25px 20px 20px; }
-        .stat-box { flex: 1; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
-        .stat-val { display: block; font-size: 18px; font-weight: 800; color: var(--primary); }
-        .stat-label { font-size: 11px; color: #94a3b8; font-weight: 600; text-transform: uppercase; margin-top: 5px; }
+        .stats-container { display: flex; gap: 15px; margin: -25px 20px 25px; }
+        .stat-box { flex: 1; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; border: 1px solid #f1f5f9; }
+        .stat-val { display: block; font-size: 20px; font-weight: 800; color: var(--primary); }
+        .stat-label { font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-top: 5px; }
 
         /* Bishi Pools */
-        .section-title { padding: 0 20px; font-weight: 800; font-size: 18px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .section-title { padding: 0 20px; font-weight: 800; font-size: 18px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; color: var(--text); }
         .pool-list { padding: 0 20px; }
-        .pool-card { background: white; border-radius: 24px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; }
+        .pool-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; }
         .pool-icon { width: 55px; height: 55px; background: #eef2ff; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
         .pool-info { flex: 1; }
-        .pool-name { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
-        .pool-meta { font-size: 12px; color: #64748b; }
-        .view-btn { padding: 10px 18px; background: #f1f5f9; border-radius: 12px; color: var(--primary); font-weight: 700; font-size: 12px; text-decoration: none; }
+        .pool-name { font-weight: 800; font-size: 15px; margin-bottom: 4px; color: #1e293b; }
+        .pool-meta { font-size: 12px; color: #64748b; font-weight: 600; }
+        .view-btn { padding: 10px 18px; background: #f8fafc; border-radius: 12px; color: var(--primary); font-weight: 800; font-size: 12px; text-decoration: none; border: 1px solid #e2e8f0; }
 
         /* Bottom Navigation */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 75px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); border-top: 1px solid #f1f5f9; padding: 0 10px; z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 700; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 75px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); border-top: 1px solid #f1f5f9; z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; }
         .nav-item.active { color: var(--primary); }
         .nav-icon { font-size: 22px; }
     </style>
@@ -46,7 +46,7 @@
 
     <div class="stats-container">
         <div class="stat-box">
-            <span class="stat-val">₹0.00</span>
+            <span class="stat-val" id="display-balance">₹0.00</span>
             <span class="stat-label">Earnings</span>
         </div>
         <div class="stat-box">
@@ -57,7 +57,7 @@
 
     <div class="section-title">
         Available Bishi 🏛️
-        <small style="color: var(--primary); font-size: 12px;">See All</small>
+        <small style="color: var(--primary); font-size: 12px; font-weight: 800;">See All</small>
     </div>
 
     <div class="pool-list">
@@ -67,7 +67,7 @@
                 <div class="pool-name">Starter Weekly Pool</div>
                 <div class="pool-meta">Installment: ₹500/week</div>
             </div>
-            <a href="bishi-info.html" class="view-btn">VIEW</a>
+            <a href="/indian-bishi-app/bishi/pool-info.html" class="view-btn">VIEW</a>
         </div>
 
         <div class="pool-card">
@@ -76,20 +76,20 @@
                 <div class="pool-name">Premium Monthly Pool</div>
                 <div class="pool-meta">Installment: ₹5000/month</div>
             </div>
-            <a href="bishi-info.html" class="view-btn">VIEW</a>
+            <a href="/indian-bishi-app/bishi/pool-info.html" class="view-btn">VIEW</a>
         </div>
     </div>
 
     <nav class="bottom-nav">
-        <a href="dashboard.html" class="nav-item active">
+        <a href="/indian-bishi-app/dashboard.html" class="nav-item active">
             <span class="nav-icon">🏠</span>
             <span>HOME</span>
         </a>
-        <a href="bishi/all-pools.html" class="nav-item">
+        <a href="/indian-bishi-app/bishi/all-pools.html" class="nav-item">
             <span class="nav-icon">🎯</span>
             <span>MY BISHI</span>
         </a>
-        <a href="user/profile.html" class="nav-item">
+        <a href="/indian-bishi-app/user/profile.html" class="nav-item">
             <span class="nav-icon">👤</span>
             <span>ACCOUNT</span>
         </a>
@@ -105,7 +105,8 @@
             projectId: "indianbishi-pro",
             storageBucket: "indianbishi-pro.firebasestorage.app",
             messagingSenderId: "274772179441",
-            appId: "1:274772179441:web:a0fac89f47c6bae6e52c50"
+            appId: "1:274772179441:web:a0fac89f47c6bae6e52c50",
+            databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" // फायनल डेटाबेस लिंक
         };
 
         const app = initializeApp(firebaseConfig);
@@ -114,12 +115,16 @@
         // Fetch User Data from Firebase
         const userMobile = localStorage.getItem('activeUser');
         if(!userMobile) {
-            window.location.href = "index.html";
+            window.location.href = "/indian-bishi-app/index.html"; // युजर लॉगिन नसेल तर बाहेर काढा
         } else {
             get(child(ref(db), `users/${userMobile}`)).then((snapshot) => {
                 if (snapshot.exists()) {
+                    // नाव आणि बॅलन्स अपडेट करणे
                     document.getElementById('display-name').innerText = snapshot.val().name;
+                    document.getElementById('display-balance').innerText = "₹" + (snapshot.val().balance || 0).toFixed(2);
                 }
+            }).catch((error) => {
+                console.error("Error fetching user data:", error);
             });
         }
     </script>
