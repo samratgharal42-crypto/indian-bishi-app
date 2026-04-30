@@ -6,7 +6,7 @@
     <title>Identity Verification | Indian Bishi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
+        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; --success: #10b981; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--text); }
         
@@ -14,7 +14,9 @@
         .back-btn { text-decoration: none; color: var(--text); font-size: 24px; font-weight: 800; margin-right: 15px; }
         h2 { font-size: 20px; margin: 0; font-weight: 800; }
 
-        .card { background: white; padding: 25px; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; }
+        .card { background: white; padding: 25px; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; position: relative; overflow: hidden; }
+        
+        /* FORM STATE */
         .input-group { margin-bottom: 20px; }
         label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         input { width: 100%; padding: 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; font-size: 15px; font-weight: 600; outline: none; }
@@ -22,6 +24,18 @@
 
         .verify-btn { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); transition: 0.3s; margin-top: 10px; }
         .verify-btn:disabled { background: #94a3b8; box-shadow: none; }
+
+        /* VERIFIED STATE (LOCKED) */
+        #verified-state { display: none; text-align: center; padding: 20px 0; }
+        .verified-icon { font-size: 60px; color: var(--success); margin-bottom: 15px; }
+        .score-display { font-size: 40px; font-weight: 800; color: var(--primary); margin: 10px 0; }
+        .refresh-notice { background: #f1f5f9; padding: 12px; border-radius: 12px; font-size: 12px; color: #64748b; font-weight: 600; margin-top: 20px; }
+
+        /* PROFESSIONAL SUCCESS POPUP */
+        .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
+        .popup-content { background: white; width: 100%; max-width: 320px; padding: 35px 25px; border-radius: 32px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.2); animation: pop 0.3s ease-out; }
+        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .p-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 800; font-size: 15px; cursor: pointer; background: var(--primary); color: white; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -32,49 +46,113 @@
     </div>
 
     <div class="card">
-        <h3 style="margin:0 0 10px; font-size:18px;">Fetch Trust Score</h3>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 25px; line-height: 1.5;">
-            Enter your official details to fetch your CIBIL score and unlock investment pools.
-        </p>
-        
-        <div class="input-group">
-            <label>Aadhaar Number</label>
-            <input type="number" id="aadhar-num" placeholder="1267 XXXX XXXX" maxlength="12">
-        </div>
-        
-        <div class="input-group">
-            <label>PAN Card Number</label>
-            <input type="text" id="pan-num" placeholder="ABCDE1234F" style="text-transform: uppercase;" maxlength="10">
+        <div id="form-state">
+            <h3 style="margin:0 0 10px; font-size:18px;">Fetch Trust Score</h3>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 25px; line-height: 1.5;">
+                Enter your official details. Score can be refreshed once every 30 days.
+            </p>
+            
+            <div class="input-group">
+                <label>Aadhaar Number</label>
+                <input type="number" id="aadhar-num" placeholder="1267 XXXX XXXX" maxlength="12">
+            </div>
+            
+            <div class="input-group">
+                <label>PAN Card Number</label>
+                <input type="text" id="pan-num" placeholder="ABCDE1234F" style="text-transform: uppercase;" maxlength="10">
+            </div>
+
+            <button class="verify-btn" id="verify-btn" onclick="processKYC()">
+                <span id="btn-text">Verify & Fetch Score</span>
+            </button>
         </div>
 
-        <button class="verify-btn" id="verify-btn" onclick="processKYC()">
-            <span id="btn-text">Verify & Fetch Score</span>
-        </button>
+        <div id="verified-state">
+            <div class="verified-icon">✅</div>
+            <h3 style="margin:0; font-size:20px; color:#1e293b;">KYC Verified</h3>
+            <p style="font-size:13px; color:#64748b; margin-top:5px;">Your identity is confirmed.</p>
+            
+            <div style="margin-top: 25px;">
+                <p style="font-size:11px; font-weight:800; color:#64748b; text-transform:uppercase; margin:0;">Current Trust Score</p>
+                <div class="score-display" id="locked-score">--</div>
+            </div>
+
+            <div class="refresh-notice">
+                ⏳ Next refresh available in <span id="days-left" style="color:var(--primary); font-weight:800;">30</span> days.
+            </div>
+        </div>
+    </div>
+
+    <div id="success-popup" class="popup-overlay">
+        <div class="popup-content">
+            <div style="font-size: 50px; margin-bottom: 10px;">🎉</div>
+            <h3 style="margin:0 0 10px; font-size:22px; color: #10b981;">Success!</h3>
+            <p style="font-size:14px; color:#64748b; line-height:1.5; margin:0;">Your identity is verified. Your Trust Score is:</p>
+            <div id="popup-score" style="font-size: 35px; font-weight: 800; color: var(--primary); margin: 15px 0;">750</div>
+            <button class="p-btn" onclick="window.location.href='dashboard.html'">Go to Dashboard</button>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, get, update, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
         const db = getDatabase(app);
         const mobile = localStorage.getItem('activeUser');
 
+        // Check current status on page load
+        if(mobile) {
+            get(child(ref(db), `users/${mobile}`)).then((snap) => {
+                if(snap.exists()){
+                    const user = snap.val();
+                    if(user.kyc === "Approved" && user.cibil) {
+                        // User is already verified, lock the page
+                        document.getElementById('form-state').style.display = "none";
+                        document.getElementById('verified-state').style.display = "block";
+                        document.getElementById('locked-score').innerText = user.cibil;
+                        
+                        // Calculate days left for refresh
+                        if(user.lastChecked) {
+                            const daysPassed = Math.floor((Date.now() - user.lastChecked) / (1000 * 60 * 60 * 24));
+                            const daysLeft = Math.max(0, 30 - daysPassed);
+                            document.getElementById('days-left').innerText = daysLeft;
+                        }
+                    }
+                }
+            });
+        } else {
+            window.location.href = "index.html";
+        }
+
         window.processKYC = () => {
+            const aNum = document.getElementById('aadhar-num').value;
+            const pNum = document.getElementById('pan-num').value;
+
+            if(aNum.length !== 12 || pNum.length !== 10) {
+                alert("Please enter valid 12-digit Aadhaar and 10-character PAN.");
+                return;
+            }
+
             const btnText = document.getElementById('btn-text');
             const btn = document.getElementById('verify-btn');
             
             btn.disabled = true;
-            btnText.innerText = "Connecting to Bureau...";
+            btnText.innerText = "Authenticating with Bureau...";
 
             setTimeout(() => {
-                const fakeCibil = Math.floor(Math.random() * (850 - 680 + 1)) + 680;
+                // Simulate API Check (Random score between 600 - 850)
+                const generatedScore = Math.floor(Math.random() * (850 - 600 + 1)) + 600;
+                const currentTime = Date.now(); // Save timestamp for the 30-day lock
+
                 update(ref(db, `users/${mobile}`), {
                     kyc: "Approved",
-                    cibil: fakeCibil
+                    cibil: generatedScore,
+                    lastChecked: currentTime
                 }).then(() => {
-                    alert("Success! Your Trust Score is: " + fakeCibil);
-                    window.location.href = "dashboard.html";
+                    // Show Professional Popup instead of default alert
+                    document.getElementById('popup-score').innerText = generatedScore;
+                    document.getElementById('success-popup').style.display = 'flex';
                 });
             }, 2500);
         }
