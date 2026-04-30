@@ -44,7 +44,7 @@
     </div>
 
     <div id="section-reg" class="hidden">
-        <div class="input-wrapper"><label class="input-label">Full Name</label><input type="text" id="reg-name" class="custom-input" placeholder="Enter Your Name"></div>
+        <div class="input-wrapper"><label class="input-label">Full Name</label><input type="text" id="reg-name" class="custom-input" placeholder="Enter Full Name"></div>
         <div class="input-wrapper"><label class="input-label">Mobile Number</label><input type="tel" id="reg-num" class="custom-input" placeholder="10 Digits" maxlength="10"></div>
         <div class="input-wrapper"><label class="input-label">Create Password</label><input type="password" id="reg-pass" class="custom-input" placeholder="Min. 6 characters"></div>
         <button class="submit-btn" onclick="processAuth('reg')">CREATE & CONTINUE</button>
@@ -61,7 +61,8 @@
         projectId: "indianbishi-pro",
         storageBucket: "indianbishi-pro.firebasestorage.app",
         messagingSenderId: "274772179441",
-        appId: "1:274772179441:web:a0fac89f47c6bae6e52c50"
+        appId: "1:274772179441:web:a0fac89f47c6bae6e52c50",
+        databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -96,8 +97,8 @@
                 await set(ref(db, 'users/' + mobile), { name, mobile, pass, kyc: "Pending", balance: 0 });
                 localStorage.setItem('activeUser', mobile);
                 
-                // FIXED PATH: user folder ke andar user-bank.html
-                window.location.href = "user/user-bank.html"; 
+                // GitHub Pages Path Fix
+                window.location.href = "/indian-bishi-app/user/user-bank.html"; 
             } else {
                 const mobile = document.getElementById('login-num').value;
                 const pass = document.getElementById('login-pass').value;
@@ -105,7 +106,7 @@
                 const snapshot = await get(child(ref(db), `users/${mobile}`));
                 if (snapshot.exists() && snapshot.val().pass === pass) {
                     localStorage.setItem('activeUser', mobile);
-                    window.location.href = "dashboard.html";
+                    window.location.href = "/indian-bishi-app/dashboard.html";
                 } else {
                     alert("Invalid number or password!");
                 }
@@ -118,3 +119,4 @@
 </script>
 </body>
 </html>
+
