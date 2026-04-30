@@ -8,31 +8,33 @@
     <style>
         :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 100px; overflow-x: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 90px; overflow-x: hidden; }
 
-        .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 40px 20px 60px; border-radius: 0 0 40px 40px; color: white; position: relative; }
-        .trust-badge { position: absolute; top: 35px; right: 20px; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 14px; font-size: 11px; font-weight: 800; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
+        /* Header Style */
+        .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 30px 20px 60px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; position: relative; }
+        .user-greet { font-size: 13px; opacity: 0.9; }
+        .user-name { font-size: 24px; font-weight: 800; margin-top: 5px; }
+        .trust-badge { position: absolute; top: 35px; right: 20px; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 14px; font-size: 11px; font-weight: 800; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; gap: 5px;}
 
-        /* SLIDING BANNER */
-        .banner-slider { margin: -30px 20px 25px; overflow: hidden; border-radius: 24px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); background: white; height: 140px; position: relative; z-index: 10; }
-        .slides { display: flex; width: 300%; height: 100%; animation: slide 10s infinite; }
-        .slide { width: 33.33%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; text-align: center; padding: 20px; font-size: 14px; }
+        /* SLIDING BANNER SECTION */
+        .banner-slider { margin: -30px 20px 25px; overflow: hidden; border-radius: 24px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); background: white; height: 160px; position: relative; z-index: 10; }
+        .slides { display: flex; width: 300%; height: 100%; animation: slide 15s infinite; }
+        
+        /* BANNER TEXT HERE: s1, s2, s3 classes madhe badal kara */
+        .slide { width: 33.33%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; text-align: center; padding: 20px; font-size: 16px; }
         .s1 { background: linear-gradient(45deg, #ff9a9e, #fad0c4); }
         .s2 { background: linear-gradient(45deg, #a1c4fd, #c2e9fb); }
         .s3 { background: linear-gradient(45deg, #84fab0, #8fd3f4); }
         @keyframes slide { 0% { margin-left: 0; } 33% { margin-left: -100%; } 66% { margin-left: -200%; } 100% { margin-left: 0; } }
 
+        /* Available Bishi */
         .lobby-content { padding: 0 20px; }
-        .section-title { font-weight: 800; font-size: 19px; margin-bottom: 15px; }
-        .pool-card { background: white; border-radius: 24px; padding: 20px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #f1f5f9; }
-        .join-btn { padding: 12px 24px; background: var(--primary); color: white; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; }
+        .section-title { padding: 0; font-weight: 800; font-size: 19px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; color: var(--text); }
+        .pool-card { background: white; border-radius: 24px; padding: 20px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; }
+        .pool-name { font-weight: 800; font-size: 15px; color: #1e293b; margin-bottom: 4px;}
+        .view-btn { padding: 12px 24px; background: #6366f1; color: white; border-radius: 14px; font-weight: 800; font-size: 13px; text-decoration: none; border: none; cursor: pointer; box-shadow: 0 8px 15px rgba(99, 102, 241, 0.2); }
 
-        /* POPUP */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
-        .popup { background: white; width: 100%; max-width: 350px; padding: 30px; border-radius: 32px; text-align: center; }
-        .p-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 800; margin-bottom: 10px; cursor: pointer; }
-        .btn-main { background: var(--primary); color: white; }
-
+        /* Bottom Navigation */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 80px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 40px rgba(0,0,0,0.05); z-index: 999; border-top: 1px solid #f1f5f9; }
         .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 5px; }
         .nav-item.active { color: var(--primary); }
@@ -41,8 +43,8 @@
 <body>
 
     <div class="header">
-        <div class="trust-badge">🛡️ CIBIL: <span id="cibil-display">--</span></div>
-        <div class="user-greet">Namaste,</div>
+        <div class="trust-badge">🛡️ Score: <span id="cibil-display">Pending</span></div>
+        <div class="user-greet">Namaste, Welcome Back!</div>
         <div class="user-name" id="user-display">Loading...</div>
     </div>
 
@@ -55,76 +57,42 @@
     </div>
 
     <div class="lobby-content">
-        <div class="section-title">Investment Pools 🏛️</div>
-        <div id="pool-list">
-            <p style='text-align:center; color:#64748b; margin-top:20px;'>Loading pools...</p>
-        </div>
-    </div>
+        <div class="section-title">Available Bishi 🏛️</div>
 
-    <div id="kyc-popup" class="overlay">
-        <div class="popup">
-            <div style="font-size:50px;">🛡️</div>
-            <h3 style="margin:15px 0 10px;">Verification Needed</h3>
-            <p style="color:#64748b; font-size:14px; margin-bottom:20px;">Complete your KYC to unlock investment pools.</p>
-            <button class="p-btn btn-main" onclick="location.href='kyc.html'">Verify Now</button>
-            <button class="p-btn" style="background:#f1f5f9; color: #64748b;" onclick="document.getElementById('kyc-popup').style.display='none'">Maybe Later</button>
+        <div class="pool-card">
+            <div>
+                <div class="pool-name">Starter Weekly</div>
+                <small style="color: #64748b; font-weight: 600;">Entry: ₹500/week</small>
+            </div>
+            <a href="/indian-bishi-app/bishi/pool-info.html" class="view-btn">JOIN</a>
         </div>
     </div>
 
     <nav class="bottom-nav">
-        <a href="dashboard.html" class="nav-item active"><span style="font-size: 24px;">🏠</span><span>HOME</span></a>
-        <a href="bishi/all-pools.html" class="nav-item"><span style="font-size: 24px;">🎯</span><span>MY BISHI</span></a>
-        <a href="user/profile.html" class="nav-item"><span style="font-size: 24px;">👤</span><span>ACCOUNT</span></a>
+        <a href="/indian-bishi-app/dashboard.html" class="nav-item active">🏠<span>HOME</span></a>
+        <a href="/indian-bishi-app/bishi/all-pools.html" class="nav-item">🎯<span>MY BISHI</span></a>
+        <a href="/indian-bishi-app/user/profile.html" class="nav-item">👤<span>ACCOUNT</span></a>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+        // IMPORTANT: databaseURL update kara
         const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
         const db = getDatabase(app);
-        const mobile = localStorage.getItem('activeUser');
 
-        const pools = [
-            { name: "Micro Daily Pool", amt: 50, limit: 600, duration: "60 Days" },
-            { name: "Starter Weekly", amt: 500, limit: 600, duration: "10 Weeks" },
-            { name: "Silver Pool", amt: 2000, limit: 700, duration: "20 Weeks" },
-            { name: "Gold Premium", amt: 5000, limit: 700, duration: "12 Months" }
-        ];
-
-        if(!mobile) {
-            window.location.href = "index.html";
+        // Fetch User Data
+        const userMobile = localStorage.getItem('activeUser');
+        if(!userMobile) {
+            window.location.href = "/indian-bishi-app/index.html"; 
         } else {
-            get(child(ref(db), `users/${mobile}`)).then((snap) => {
-                if(snap.exists()){
-                    const user = snap.val();
-                    document.getElementById('user-display').innerText = user.name;
-                    const cibil = user.cibil || 0;
-                    document.getElementById('cibil-display').innerText = cibil || "Pending";
-
-                    const list = document.getElementById('pool-list');
-                    list.innerHTML = ""; // clear loading text
-
-                    if(cibil < 600) {
-                        list.innerHTML = `
-                            <div style="background: white; padding: 20px; border-radius: 20px; text-align: center; border: 1px solid #f1f5f9;">
-                                🔒<br><br><b>Pools Locked</b><br>
-                                <span style="font-size:12px; color:#64748b;">Verify your identity to see available pools.</span><br><br>
-                                <button class="join-btn" onclick="document.getElementById('kyc-popup').style.display='flex'">Verify KYC</button>
-                            </div>`;
-                    } else {
-                        pools.forEach(p => {
-                            if(cibil >= p.limit) {
-                                // Logic: if CIBIL < 700, they only see pools up to 500 Rs.
-                                if(cibil < 700 && p.amt > 500) return; 
-                                
-                                list.innerHTML += `
-                                    <div class="pool-card">
-                                        <div><b>${p.name}</b><br><small style="color:#64748b;">₹${p.amt} • ${p.duration}</small></div>
-                                        <button class="join-btn" onclick="location.href='bishi/pool-info.html'">JOIN</button>
-                                    </div>`;
-                            }
-                        });
+            get(child(ref(db), `users/${userMobile}`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    document.getElementById('user-display').innerText = snapshot.val().name;
+                    // CIBIL Score display, initially "Pending" unless set in Firebase
+                    if(snapshot.val().cibil) {
+                        document.getElementById('cibil-display').innerText = snapshot.val().cibil;
                     }
                 }
             });
