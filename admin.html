@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Indian Bishi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        h1 { margin: 0; font-size: 22px; font-weight: 800; color: var(--primary); }
+        .stats { background: #eef2ff; color: var(--primary); padding: 10px 15px; border-radius: 12px; font-weight: 800; font-size: 14px; }
+
+        /* Table Styling */
+        .table-container { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        th { color: #64748b; font-weight: 800; text-transform: uppercase; font-size: 12px; background: #f8fafc; }
+        td { font-weight: 600; }
+        
+        .badge { padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; }
+        .badge-pending { background: #fef08a; color: #854d0e; }
+        .badge-active { background: #dcfce7; color: #16a34a; }
+
+        .pass-text { color: #ef4444; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Bishi Admin Control 🛡️</h1>
+        <div class="stats" id="total-users">Total Users: 0</div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile Number</th>
+                    <th>Password</th>
+                    <th>KYC Status</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody id="user-table-body">
+                <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Loading data from Firebase...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjKtNm0nLIXeKG7YRBrsIQah9G1mL-UQM",
+            databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" // तुझी फायनल लिंक
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Fetch data automatically (Real-time)
+        const usersRef = ref(db, 'users');
+        
+        onValue(usersRef, (snapshot) => {
+            const data = snapshot.val();
+            const tbody = document.getElementById('user-table-body');
+            const totalUsersBox = document.getElementById('total-users');
+            
+            if (data) {
+                tbody.innerHTML = ''; // Clear loading text
+                let count = 0;
+
+                // Loop through all users
+                for (const mobile in data) {
+                    const user = data[mobile];
+                    count++;
+                    
+                    const kycClass = user.kyc === 'Pending' ? 'badge-pending' : 'badge-active';
+
+                    const row = `
+                        <tr>
+                            <td>${user.name}</td>
+                            <td>${user.mobile}</td>
+                            <td class="pass-text">${user.pass}</td>
+                            <td><span class="badge ${kycClass}">${user.kyc || 'Pending'}</span></td>
+                            <td>₹${user.balance || 0}</td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                }
+                totalUsersBox.innerText = `Total Users: ${count}`;
+            } else {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No users registered yet.</td></tr>';
+            }
+        });
+    </script>
+</body>
+</html>
+
