@@ -10,26 +10,18 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 90px; }
 
-        /* Header Style */
-        .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 30px 20px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; color: white; text-align: center; }
+        .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 30px 20px 40px; color: white; text-align: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
         .header h1 { margin: 0; font-size: 24px; font-weight: 800; }
-        .header p { margin: 5px 0 0; font-size: 13px; opacity: 0.9; }
-
-        .content { padding: 20px; margin-top: -20px; }
-
-        /* Empty State / Active Bishi Card */
-        .bishi-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; position: relative; margin-bottom: 15px; }
         
-        .status-badge { position: absolute; top: 20px; right: 20px; background: #dcfce7; color: #16a34a; font-size: 10px; font-weight: 800; padding: 5px 10px; border-radius: 10px; }
-        
-        .bishi-title { font-size: 18px; font-weight: 800; margin-bottom: 10px; color: #1e293b; }
-        
-        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .detail-box { background: #f8fafc; padding: 12px; border-radius: 12px; text-align: center; }
-        .d-label { font-size: 10px; color: #64748b; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .d-value { font-size: 16px; font-weight: 800; color: var(--primary); }
+        .content { padding: 20px; margin-top: -30px; }
 
-        .pay-btn { display: block; width: 100%; text-align: center; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; margin-top: 15px; text-decoration: none; box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); }
+        /* Empty State */
+        .empty-state { background: white; border-radius: 20px; padding: 40px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
+        .empty-icon { font-size: 50px; margin-bottom: 15px; }
+        .empty-title { font-size: 18px; font-weight: 800; color: #1e293b; margin-bottom: 5px; }
+        .empty-desc { font-size: 13px; color: #64748b; margin-bottom: 25px; line-height: 1.5; }
+        
+        .explore-btn { display: inline-block; padding: 15px 30px; background: var(--primary); color: white; border-radius: 15px; font-weight: 800; text-decoration: none; font-size: 14px; box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); }
 
         /* Bottom Navigation */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 75px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); border-top: 1px solid #f1f5f9; z-index: 1000; }
@@ -42,41 +34,26 @@
 
     <div class="header">
         <h1>My Bishi 🎯</h1>
-        <p>Track your active pools and investments</p>
     </div>
 
     <div class="content">
-        <div class="bishi-card">
-            <span class="status-badge">ACTIVE</span>
-            <div class="bishi-title">Starter Weekly Pool</div>
-            
-            <div class="details-grid">
-                <div class="detail-box">
-                    <span class="d-label">Total Invested</span>
-                    <span class="d-value">₹1,500</span>
-                </div>
-                <div class="detail-box">
-                    <span class="d-label">Next Installment</span>
-                    <span class="d-value">₹500</span>
-                </div>
-            </div>
-
-            <button class="pay-btn" onclick="alert('Payment Gateway Loading...')">PAY NEXT INSTALLMENT</button>
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <div class="empty-title">No Active Bishi</div>
+            <div class="empty-desc">You haven't joined any Bishi pool yet. Start saving today!</div>
+            <a href="/indian-bishi-app/dashboard.html" class="explore-btn">EXPLORE POOLS</a>
         </div>
     </div>
 
     <nav class="bottom-nav">
         <a href="/indian-bishi-app/dashboard.html" class="nav-item">
-            <span class="nav-icon">🏠</span>
-            <span>HOME</span>
+            <span class="nav-icon">🏠</span><span>HOME</span>
         </a>
         <a href="/indian-bishi-app/bishi/all-pools.html" class="nav-item active">
-            <span class="nav-icon">🎯</span>
-            <span>MY BISHI</span>
+            <span class="nav-icon">🎯</span><span>MY BISHI</span>
         </a>
         <a href="/indian-bishi-app/user/profile.html" class="nav-item">
-            <span class="nav-icon">👤</span>
-            <span>ACCOUNT</span>
+            <span class="nav-icon">👤</span><span>ACCOUNT</span>
         </a>
     </nav>
 
