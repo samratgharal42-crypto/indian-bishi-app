@@ -62,7 +62,6 @@
         storageBucket: "indianbishi-pro.firebasestorage.app",
         messagingSenderId: "274772179441",
         appId: "1:274772179441:web:a0fac89f47c6bae6e52c50",
-        // ही तुझी फायनल Database URL आहे
         databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com"
     };
 
@@ -98,8 +97,8 @@
                 await set(ref(db, 'users/' + mobile), { name, mobile, pass, kyc: "Pending", balance: 0 });
                 localStorage.setItem('activeUser', mobile);
                 
-                // GitHub Pages Path Fix
-                window.location.href = "/indian-bishi-app/user/user-bank.html"; 
+                // Fixed: Redirecting directly to Dashboard to avoid 404
+                window.location.href = "/indian-bishi-app/dashboard.html"; 
             } else {
                 const mobile = document.getElementById('login-num').value;
                 const pass = document.getElementById('login-pass').value;
