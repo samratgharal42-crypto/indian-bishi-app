@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KYC Verification | Indian Bishi</title>
+    <title>KYC & CIBIL Check | Indian Bishi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -11,48 +11,84 @@
         
         .header-bar { display: flex; align-items: center; margin-bottom: 20px; }
         .back-btn { text-decoration: none; color: #1e293b; font-size: 24px; font-weight: 800; margin-right: 15px; }
-        h2 { font-size: 22px; margin: 0; font-weight: 800; }
+        h2 { font-size: 20px; margin: 0; font-weight: 800; }
 
         .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
         
-        .upload-box { border: 2px dashed #cbd5e1; padding: 20px; text-align: center; border-radius: 15px; margin-bottom: 20px; background: #f8fafc; position: relative; }
-        .upload-box h4 { margin: 0 0 10px; color: #475569; font-size: 14px; }
-        input[type="file"] { width: 100%; font-size: 12px; color: #64748b; }
-        
-        .btn { width: 100%; padding: 18px; background: #6366f1; color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 15px; cursor: pointer; margin-top: 10px; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2); }
-        .btn:active { transform: scale(0.98); }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
+        input { width: 100%; padding: 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 15px; font-weight: 600; outline: none; }
+        input:focus { border-color: #6366f1; }
+
+        .btn { width: 100%; padding: 18px; background: #6366f1; color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2); transition: 0.3s; }
+        .btn:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; }
     </style>
 </head>
 <body>
 
     <div class="header-bar">
-        <a href="/indian-bishi-app/user/profile.html" class="back-btn">←</a>
-        <h2>Identity (KYC) 🛡️</h2>
+        <a href="dashboard.html" class="back-btn">←</a>
+        <h2>Identity & CIBIL Check 🛡️</h2>
     </div>
 
     <div class="card">
         <p style="font-size: 13px; color: #64748b; margin-top: 0; margin-bottom: 20px;">
-            Securely verify your identity to activate your Bishi withdrawals.
+            Bishi join karnyasaathi KYC aani CIBIL Score anivarya ahe. Details taka aani verify kara.
         </p>
         
-        <div class="upload-box">
-            <h4>Aadhar Card (Front)</h4>
-            <input type="file" accept="image/*">
+        <div class="input-group">
+            <label>Aadhaar Number</label>
+            <input type="number" id="aadhar-num" placeholder="12 Digit Number" maxlength="12">
         </div>
         
-        <div class="upload-box">
-            <h4>PAN Card</h4>
-            <input type="file" accept="image/*">
+        <div class="input-group">
+            <label>PAN Card Number</label>
+            <input type="text" id="pan-num" placeholder="ABCDE1234F" style="text-transform: uppercase;" maxlength="10">
         </div>
 
-        <button class="btn" onclick="submitKYC()">SUBMIT DOCUMENTS</button>
+        <button class="btn" id="verify-btn" onclick="fetchCIBIL()">
+            <span id="btn-text">VERIFY & FETCH CIBIL</span>
+        </button>
     </div>
 
-    <script>
-        function submitKYC() {
-            // Here we will later add Firebase Storage logic
-            alert('KYC Documents Submitted Successfully! Pending Approval.');
-            window.location.href = "/indian-bishi-app/user/profile.html";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
+        const db = getDatabase(app);
+        const mobile = localStorage.getItem('activeUser');
+
+        window.fetchCIBIL = () => {
+            const aNum = document.getElementById('aadhar-num').value;
+            const pNum = document.getElementById('pan-num').value;
+
+            if(aNum.length !== 12 || pNum.length !== 10) {
+                alert("Krupaya valid Aadhaar aani PAN details taka.");
+                return;
+            }
+
+            const btn = document.getElementById('verify-btn');
+            const btnText = document.getElementById('btn-text');
+            
+            btn.disabled = true;
+            btnText.innerText = "Fetching CIBIL Score ⏳...";
+
+            // Simulate API processing delay (3 seconds)
+            setTimeout(() => {
+                // Generate a random CIBIL score between 650 to 850
+                const fakeCibil = Math.floor(Math.random() * (850 - 650 + 1)) + 650;
+
+                // Update Firebase
+                update(ref(db, `users/${mobile}`), {
+                    kyc: "Approved",
+                    cibil: fakeCibil
+                }).then(() => {
+                    alert(`Verification Successful! Tumcha CIBIL Score ahe: ${fakeCibil}`);
+                    window.location.href = "dashboard.html"; // Go back to dashboard
+                });
+
+            }, 3000);
         }
     </script>
 
