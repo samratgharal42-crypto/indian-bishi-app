@@ -16,30 +16,27 @@
 
         .card { background: white; padding: 25px; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; position: relative; overflow: hidden; }
         
-        /* FORM STATE (Visible by default) */
+        /* LOADER STATE */
+        #loading-state { text-align: center; padding: 40px 0; color: #64748b; font-weight: 600; font-size: 14px; }
+
+        /* FORM STATE (Hidden initially) */
+        #form-state { display: none; }
         .input-group { margin-bottom: 20px; }
         label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         input { width: 100%; padding: 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; font-size: 15px; font-weight: 600; outline: none; }
         input:focus { border-color: var(--primary); background: white; }
-
         .verify-btn { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); transition: 0.3s; margin-top: 10px; }
-        .verify-btn:disabled { background: #94a3b8; box-shadow: none; }
 
-        /* VERIFIED STATE (Hidden by default) */
+        /* VERIFIED STATE (Hidden initially) */
         #verified-state { display: none; text-align: center; padding: 20px 0; }
         .blue-tick-img { width: 60px; height: 60px; margin-bottom: 15px; }
         .refresh-notice { background: #f1f5f9; padding: 12px; border-radius: 12px; font-size: 12px; color: #64748b; font-weight: 600; margin-top: 20px; }
 
-        /* PROFESSIONAL SUCCESS POPUP */
+        /* POPUP */
         .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
         .popup-content { background: white; width: 100%; max-width: 320px; padding: 35px 25px; border-radius: 32px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.2); animation: pop 0.3s ease-out; }
         @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .p-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 800; font-size: 15px; cursor: pointer; background: var(--primary); color: white; margin-top: 20px; }
-
-        /* Bottom Navigation */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 80px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 40px rgba(0,0,0,0.05); z-index: 999; border-top: 1px solid #f1f5f9; }
-        .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 5px; }
-        .nav-item.active { color: var(--primary); }
     </style>
 </head>
 <body>
@@ -50,52 +47,34 @@
     </div>
 
     <div class="card">
+        <div id="loading-state">
+            ⏳ Checking secure data...
+        </div>
+
         <div id="form-state">
             <h3 style="margin:0 0 10px; font-size:18px;">Fetch Trust Score</h3>
-            <p style="font-size: 13px; color: #64748b; margin-bottom: 25px; line-height: 1.5;">
-                Enter your official details securely. Score can be refreshed once every 30 days.
-            </p>
-            
-            <div class="input-group">
-                <label>Aadhaar Number</label>
-                <input type="number" id="aadhar-num" placeholder="1267 XXXX XXXX" maxlength="12">
-            </div>
-            
-            <div class="input-group">
-                <label>PAN Card Number</label>
-                <input type="text" id="pan-num" placeholder="ABCDE1234F" style="text-transform: uppercase;" maxlength="10">
-            </div>
-
-            <button class="verify-btn" id="verify-btn" onclick="processKYC()">
-                <span id="btn-text">Verify & Fetch Score</span>
-            </button>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 25px; line-height: 1.5;">Enter your official details securely. Score can be refreshed once every 30 days.</p>
+            <div class="input-group"><label>Aadhaar Number</label><input type="number" id="aadhar-num" placeholder="1267 XXXX XXXX" maxlength="12"></div>
+            <div class="input-group"><label>PAN Card Number</label><input type="text" id="pan-num" placeholder="ABCDE1234F" style="text-transform: uppercase;" maxlength="10"></div>
+            <button class="verify-btn" id="verify-btn" onclick="processKYC()"><span id="btn-text">Verify & Fetch Score</span></button>
         </div>
 
         <div id="verified-state">
             <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" class="blue-tick-img" alt="Verified">
             <h3 style="margin:0; font-size:20px; color:#1e293b;">Identity Verified</h3>
             <p style="font-size:13px; color:#64748b; margin-top:5px;">Your documents have been processed securely.</p>
-            
-            <div class="refresh-notice">
-                ⏳ Score is up-to-date.<br>Next refresh available in <span style="color:var(--primary); font-weight:800;">30</span> days.
-            </div>
+            <div class="refresh-notice">⏳ Score is up-to-date.<br>Next refresh available in <span style="color:var(--primary); font-weight:800;">30</span> days.</div>
         </div>
     </div>
 
     <div id="success-popup" class="popup-overlay">
         <div class="popup-content">
-            <div style="font-size: 50px; margin-bottom: 10px;">🎉</div>
-            <h3 style="margin:0 0 10px; font-size:22px; color: #10b981;">KYC Success!</h3>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" width="70" style="margin-bottom: 15px;">
+            <h3 style="margin:0 0 10px; font-size:22px; color: #1e293b;">KYC Success!</h3>
             <p style="font-size:14px; color:#64748b; line-height:1.5; margin:0;">Your Trust Score has been fetched and updated on your dashboard.</p>
             <button class="p-btn" onclick="window.location.href='/indian-bishi-app/dashboard.html'">Go to Dashboard</button>
         </div>
     </div>
-
-    <nav class="bottom-nav">
-        <a href="/indian-bishi-app/dashboard.html" class="nav-item">🏠<span>HOME</span></a>
-        <a href="/indian-bishi-app/bishi/all-pools.html" class="nav-item">🎯<span>MY BISHI</span></a>
-        <a href="/indian-bishi-app/user/profile.html" class="nav-item">👤<span>ACCOUNT</span></a>
-    </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -105,16 +84,13 @@
         const db = getDatabase(app);
         const mobile = localStorage.getItem('activeUser');
 
-        // Check if user is verified on load
         if(mobile) {
             get(child(ref(db), `users/${mobile}`)).then((snap) => {
-                if(snap.exists()){
-                    const user = snap.val();
-                    if(user.kyc === "Approved" && user.cibil) {
-                        // Lock the page if already verified
-                        document.getElementById('form-state').style.display = "none";
-                        document.getElementById('verified-state').style.display = "block";
-                    }
+                document.getElementById('loading-state').style.display = "none";
+                if(snap.exists() && snap.val().kyc === "Approved" && snap.val().cibil) {
+                    document.getElementById('verified-state').style.display = "block";
+                } else {
+                    document.getElementById('form-state').style.display = "block";
                 }
             });
         }
@@ -122,35 +98,19 @@
         window.processKYC = () => {
             const aNum = document.getElementById('aadhar-num').value;
             const pNum = document.getElementById('pan-num').value;
-
-            if(aNum.length !== 12 || pNum.length !== 10) {
-                alert("Please enter valid 12-digit Aadhaar and 10-character PAN.");
-                return;
-            }
+            if(aNum.length !== 12 || pNum.length !== 10) { alert("Please enter valid details."); return; }
 
             const btnText = document.getElementById('btn-text');
             const btn = document.getElementById('verify-btn');
-            
-            btn.disabled = true;
-            btnText.innerText = "Connecting Bureau...";
+            btn.disabled = true; btnText.innerText = "Connecting Bureau...";
 
             setTimeout(() => {
-                // Faking a score based on last character of PAN for simulation
                 const lastChar = pNum.charAt(9);
-                let generatedScore = 650;
-                if(isNaN(lastChar)) generatedScore = 720;
-                else generatedScore = parseInt(lastChar) > 5 ? 780 : 610;
-
-                // Update Firebase and SAVE TIMESTAMP for 30 days logic
-                update(ref(db, `users/${mobile}`), {
-                    kyc: "Approved",
-                    cibil: generatedScore,
-                    lastChecked: Date.now() 
-                }).then(() => {
-                    // Show Professional Success Popup instead of alert
+                let generatedScore = isNaN(lastChar) ? 720 : (parseInt(lastChar) > 5 ? 780 : 610);
+                update(ref(db, `users/${mobile}`), { kyc: "Approved", cibil: generatedScore, lastChecked: Date.now() }).then(() => {
                     document.getElementById('success-popup').style.display = 'flex';
                 });
-            }, 2500);
+            }, 2000);
         }
     </script>
 </body>
