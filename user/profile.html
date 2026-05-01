@@ -8,7 +8,7 @@
     <style>
         :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 100px; overflow-x: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 120px; overflow-x: hidden; }
 
         /* PROFILE HEADER */
         .profile-header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 40px 20px 70px; border-radius: 0 0 40px 40px; color: white; text-align: center; }
@@ -27,7 +27,7 @@
         .arrow { color: #cbd5e1; font-weight: 800; }
         .logout-btn { color: #ef4444; cursor: pointer; }
 
-        /* LOGOUT POPUP */
+        /* POPUP STYLES */
         .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
         .popup-content { background: white; width: 100%; max-width: 320px; padding: 35px 25px; border-radius: 32px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.2); animation: pop 0.3s ease-out; }
         @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -35,7 +35,7 @@
         .confirm-btn { background: #ef4444; color: white; }
         .cancel-btn { background: #f1f5f9; color: #64748b; }
 
-        /* ULTIMATE BOTTOM NAV FIX (100% LOCKED, NO JUMPING) */
+        /* ULTIMATE BOTTOM NAV FIX (100% LOCKED) */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 80px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 9999; border-top: 1px solid #f1f5f9; }
         .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 33.33%; height: 100%; gap: 5px; }
         .nav-item.active { color: var(--primary); }
@@ -66,6 +66,10 @@
         </a>
         <a href="/indian-bishi-app/support.html" class="menu-item">
             <span>🎧 Help & Live Support</span>
+            <span class="arrow">></span>
+        </a>
+        <a href="/indian-bishi-app/policies.html" class="menu-item">
+            <span>📜 Legal Policies (T&C, Refund)</span>
             <span class="arrow">></span>
         </a>
         <div onclick="document.getElementById('logout-popup').style.display='flex'" class="menu-item logout-btn">
