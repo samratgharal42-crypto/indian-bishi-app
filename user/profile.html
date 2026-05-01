@@ -8,15 +8,15 @@
     <style>
         :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 100px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 100px; overflow-x: hidden; }
 
-        /* PROFILE HEADER (RESTORED) */
+        /* PROFILE HEADER */
         .profile-header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 40px 20px 70px; border-radius: 0 0 40px 40px; color: white; text-align: center; }
         .avatar { width: 80px; height: 80px; background: white; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); color: var(--primary); }
         .user-name { font-size: 24px; font-weight: 800; margin-bottom: 5px; }
         .user-phone { font-size: 13px; font-weight: 600; opacity: 0.9; letter-spacing: 0.5px; }
 
-        /* WALLET CARD (RESTORED) */
+        /* WALLET CARD */
         .wallet-card { background: white; margin: -40px 20px 25px; padding: 25px; border-radius: 24px; text-align: center; box-shadow: 0 12px 30px rgba(0,0,0,0.06); border: 1px solid #f1f5f9; position: relative; z-index: 10; }
         .wallet-label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
         .wallet-amount { font-size: 32px; font-weight: 800; color: var(--primary); }
@@ -35,11 +35,11 @@
         .confirm-btn { background: #ef4444; color: white; }
         .cancel-btn { background: #f1f5f9; color: #64748b; }
 
-        /* BOTTOM NAV */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 85px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 40px rgba(0,0,0,0.05); z-index: 9999; border-top: 1px solid #f1f5f9; padding-bottom: 10px; }
-        .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
+        /* UNIVERSAL BOTTOM NAV (EXACT SAME AS DASHBOARD) */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 80px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 9999; border-top: 1px solid #f1f5f9; }
+        .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; flex: 1; gap: 4px; }
         .nav-item.active { color: var(--primary); }
-        .nav-icon { font-size: 24px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; }
+        .nav-icon { font-size: 24px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; line-height: 1; }
     </style>
 </head>
 <body>
@@ -65,7 +65,7 @@
             <span class="arrow">></span>
         </a>
         <a href="/indian-bishi-app/support.html" class="menu-item">
-            <span>🎧 Help & Support</span>
+            <span>🎧 Help & Live Support</span>
             <span class="arrow">></span>
         </a>
         <div onclick="document.getElementById('logout-popup').style.display='flex'" class="menu-item logout-btn">
