@@ -7,27 +7,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 90px; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; color: var(--text); padding-bottom: 100px; overflow-x: hidden; }
 
-        .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 30px 20px 40px; color: white; text-align: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
-        .header h1 { margin: 0; font-size: 24px; font-weight: 800; }
-        
-        .content { padding: 20px; margin-top: -30px; }
+        /* HEADER */
+        .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 40px 20px 80px; border-radius: 0 0 35px 35px; color: white; text-align: center; position: relative; }
+        .header h1 { font-size: 24px; font-weight: 800; margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        /* Empty State */
-        .empty-state { background: white; border-radius: 20px; padding: 40px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
+        /* EMPTY STATE CARD */
+        .empty-card { background: white; margin: -40px 20px 20px; padding: 40px 25px; border-radius: 24px; text-align: center; box-shadow: 0 12px 30px rgba(0,0,0,0.06); border: 1px solid #f1f5f9; position: relative; z-index: 10; }
         .empty-icon { font-size: 50px; margin-bottom: 15px; }
-        .empty-title { font-size: 18px; font-weight: 800; color: #1e293b; margin-bottom: 5px; }
-        .empty-desc { font-size: 13px; color: #64748b; margin-bottom: 25px; line-height: 1.5; }
-        
-        .explore-btn { display: inline-block; padding: 15px 30px; background: var(--primary); color: white; border-radius: 15px; font-weight: 800; text-decoration: none; font-size: 14px; box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); }
+        .empty-title { font-size: 20px; font-weight: 800; margin-bottom: 10px; color: #1e293b; }
+        .empty-desc { font-size: 14px; color: #64748b; line-height: 1.5; margin-bottom: 25px; }
+        .explore-btn { display: inline-block; padding: 16px 30px; background: var(--primary); color: white; text-decoration: none; border-radius: 16px; font-weight: 800; font-size: 14px; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25); transition: 0.3s; }
+        .explore-btn:active { transform: scale(0.98); }
 
-        /* Bottom Navigation */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 75px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); border-top: 1px solid #f1f5f9; z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 700; }
+        /* ULTIMATE BOTTOM NAV FIX (100% LOCKED) - EXACTLY AS DASHBOARD */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 80px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 9999; border-top: 1px solid #f1f5f9; }
+        .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 33.33%; height: 100%; }
         .nav-item.active { color: var(--primary); }
-        .nav-icon { font-size: 22px; }
+        .nav-icon { font-size: 24px !important; line-height: 24px !important; height: 24px !important; width: 24px !important; display: block; text-align: center; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -36,26 +35,24 @@
         <h1>My Bishi 🎯</h1>
     </div>
 
-    <div class="content">
-        <div class="empty-state">
-            <div class="empty-icon">📭</div>
-            <div class="empty-title">No Active Bishi</div>
-            <div class="empty-desc">You haven't joined any Bishi pool yet. Start saving today!</div>
-            <a href="/indian-bishi-app/dashboard.html" class="explore-btn">EXPLORE POOLS</a>
-        </div>
+    <div class="empty-card">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">No Active Bishi</div>
+        <div class="empty-desc">You haven't joined any Bishi pool yet. Start saving today!</div>
+        <a href="/indian-bishi-app/dashboard.html" class="explore-btn">EXPLORE POOLS</a>
     </div>
 
     <nav class="bottom-nav">
-        <a href="/indian-bishi-app/dashboard.html" class="nav-item">
-            <span class="nav-icon">🏠</span><span>HOME</span>
-        </a>
-        <a href="/indian-bishi-app/bishi/all-pools.html" class="nav-item active">
-            <span class="nav-icon">🎯</span><span>MY BISHI</span>
-        </a>
-        <a href="/indian-bishi-app/user/profile.html" class="nav-item">
-            <span class="nav-icon">👤</span><span>ACCOUNT</span>
-        </a>
+        <a href="/indian-bishi-app/dashboard.html" class="nav-item"><span class="nav-icon">🏠</span><span>HOME</span></a>
+        <a href="/indian-bishi-app/bishi/all-pools.html" class="nav-item active"><span class="nav-icon">🎯</span><span>MY BISHI</span></a>
+        <a href="/indian-bishi-app/user/profile.html" class="nav-item"><span class="nav-icon">👤</span><span>ACCOUNT</span></a>
     </nav>
 
+    <script>
+        // Check if user is logged in
+        if(!localStorage.getItem('activeUser')) {
+            window.location.href = "/indian-bishi-app/index.html";
+        }
+    </script>
 </body>
 </html>
