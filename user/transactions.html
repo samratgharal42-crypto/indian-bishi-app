@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Transactions | Indian Bishi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; --success: #10b981; --danger: #ef4444; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 100px; }
+
+        .header { background: white; padding: 20px; display: flex; align-items: center; border-bottom: 1px solid #f1f5f9; position: sticky; top: 0; z-index: 100; }
+        .back-btn { text-decoration: none; font-size: 24px; color: var(--text); margin-right: 15px; font-weight: 800; }
+        .header h2 { font-size: 18px; font-weight: 800; }
+
+        .txn-container { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        
+        .txn-card { background: white; padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #f1f5f9; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .txn-info h4 { font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 4px; }
+        .txn-info p { font-size: 11px; color: #64748b; font-weight: 600; }
+        
+        .txn-amount { font-size: 16px; font-weight: 800; }
+        .amt-credit { color: var(--success); }
+        .amt-debit { color: var(--danger); }
+
+        .empty-state { text-align: center; margin-top: 100px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="javascript:history.back()" class="back-btn">←</a>
+        <h2>Transaction History</h2>
+    </div>
+
+    <div class="txn-container" id="txn-list">
+        <div class="empty-state">Fetching your transactions...</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
+        const db = getDatabase(app);
+        const mobile = localStorage.getItem('activeUser');
+
+        if(!mobile) { window.location.href = "/indian-bishi-app/index.html"; }
+
+        // Fetch transactions for this specific user
+        const txnRef = ref(db, 'transactions');
+        onValue(txnRef, (snapshot) => {
+            const container = document.getElementById('txn-list');
+            container.innerHTML = "";
+            let hasData = false;
+
+            snapshot.forEach((child) => {
+                const data = child.val();
+                if(data.userMobile === mobile) {
+                    hasData = true;
+                    const isCredit = data.type === 'Credit';
+                    const html = `
+                        <div class="txn-card">
+                            <div class="txn-info">
+                                <h4>${data.title}</h4>
+                                <p>${data.date} • ${data.id}</p>
+                            </div>
+                            <div class="txn-amount ${isCredit ? 'amt-credit' : 'amt-debit'}">
+                                ${isCredit ? '+' : '-'} ₹${data.amount.toFixed(2)}
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('afterbegin', html);
+                }
+            });
+
+            if(!hasData) {
+                container.innerHTML = '<div class="empty-state">No transactions yet!</div>';
+            }
+        });
+    </script>
+</body>
+</html>
