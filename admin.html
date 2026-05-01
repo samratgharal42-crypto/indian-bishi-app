@@ -3,105 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin Control Panel | Indian Bishi</title>
+    <title>Master Admin | Indian Bishi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #0f172a; --accent: #6366f1; --bg: #f1f5f9; --text: #1e293b; --danger: #ef4444; --success: #10b981; }
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); margin: 0; color: var(--text); padding: 0; }
 
-        /* ADMIN LOGIN SCREEN */
-        #login-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: white; z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
-        .login-box { background: white; padding: 30px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; border: 1px solid #e2e8f0; }
-        .login-box h2 { color: var(--primary); margin-bottom: 20px; }
-        .login-box input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 18px; text-align: center; margin-bottom: 15px; font-weight: 800; letter-spacing: 5px; outline: none; }
+        /* LOGIN SCREEN */
+        #login-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: var(--primary); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; color: white; }
+        .login-box { background: white; padding: 30px; border-radius: 24px; text-align: center; width: 100%; max-width: 350px; color: var(--text); }
+        .login-box input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 20px; text-align: center; margin-bottom: 15px; font-weight: 800; letter-spacing: 5px; outline: none; }
         .login-box button { width: 100%; background: var(--accent); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; }
 
         /* DASHBOARD */
         #admin-dashboard { display: none; padding-bottom: 50px; }
         .header { background: var(--primary); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { margin: 0; font-size: 20px; font-weight: 800; }
-        
-        .tabs { display: flex; background: white; border-bottom: 1px solid #e2e8f0; }
-        .tab { flex: 1; padding: 15px; text-align: center; font-weight: 800; color: #64748b; cursor: pointer; font-size: 14px; }
+        .tabs { display: flex; background: white; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; }
+        .tab { flex: 1; padding: 15px; text-align: center; font-weight: 800; color: #64748b; cursor: pointer; font-size: 14px; border-bottom: 3px solid transparent; }
         .tab.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
 
         .container { padding: 20px; }
-        
-        /* FORM STYLES */
         .card { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); margin-bottom: 20px; border: 1px solid #e2e8f0; }
         .card h3 { margin-top: 0; color: var(--primary); font-size: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+        
         .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 12px; font-weight: 800; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
+        .input-group label { display: block; font-size: 12px; font-weight: 800; color: #64748b; margin-bottom: 5px; }
         .input-group input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 14px; font-weight: 600; outline: none; }
         .btn-create { width: 100%; background: var(--success); color: white; padding: 15px; border: none; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; }
 
-        /* POOL LIST */
-        .pool-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .pool-info h4 { margin: 0 0 5px 0; font-size: 15px; color: var(--primary); }
-        .pool-info p { margin: 0; font-size: 12px; color: #64748b; font-weight: 600; }
-        .btn-delete { background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer; }
-
+        /* LIST ITEMS */
+        .list-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .item-title { font-weight: 800; font-size: 15px; color: var(--primary); }
+        .item-sub { font-size: 12px; color: #64748b; font-weight: 600; margin: 2px 0; }
+        .badge { background: #e0e7ff; color: var(--accent); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; }
+        
+        .btn-row { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-small { flex: 1; padding: 8px; border-radius: 8px; border: none; font-weight: 800; font-size: 12px; cursor: pointer; color: white; }
+        .bg-danger { background: var(--danger); }
+        .bg-success { background: var(--success); }
+        .bg-primary { background: var(--accent); }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
+        <h1 style="margin: 0 0 5px;">Indian Bishi</h1>
+        <p style="margin: 0 0 30px; font-size: 14px; opacity: 0.8;">Advanced Admin Control</p>
         <div class="login-box">
-            <h2>🛡️ Admin Login</h2>
-            <p style="font-size: 12px; color: #64748b; margin-top:-10px;">Enter Secret PIN to access Control Panel</p>
+            <h2>Enter Secret PIN</h2>
             <input type="password" id="admin-pin" placeholder="••••" maxlength="4">
-            <button onclick="checkPin()">Access Dashboard</button>
+            <button onclick="checkPin()">Unlock System 🔓</button>
         </div>
     </div>
 
     <div id="admin-dashboard">
         <div class="header">
-            <h1>⚙️ Admin Panel</h1>
-            <div style="font-size: 12px; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 8px;">Indian Bishi</div>
+            <h1 style="margin:0; font-size: 18px;">⚙️ Master Admin</h1>
+            <div onclick="location.reload()" style="font-size: 12px; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 8px; cursor: pointer;">Logout</div>
         </div>
 
         <div class="tabs">
-            <div class="tab active" onclick="switchTab('pools')">🎲 Manage Pools</div>
-            <div class="tab" onclick="switchTab('users')">👥 Users & KYC</div>
+            <div class="tab active" onclick="switchTab('pools')">🎯 Manage Pools</div>
+            <div class="tab" onclick="switchTab('users')">👥 Users & Wallet</div>
         </div>
 
         <div class="container">
             <div id="tab-pools">
                 <div class="card">
-                    <h3>➕ Create New Bishi Pool</h3>
+                    <h3>➕ Create New Pool</h3>
                     <div class="input-group">
-                        <label>Pool Name (e.g. Gold Pool)</label>
-                        <input type="text" id="pool-name" placeholder="Enter Pool Name">
+                        <label>Pool Name</label>
+                        <input type="text" id="p-name" placeholder="e.g. Gold Pool 50K">
                     </div>
-                    <div class="input-group">
-                        <label>Total Pool Amount (₹)</label>
-                        <input type="number" id="pool-amount" placeholder="e.g. 50000">
+                    <div style="display: flex; gap: 10px;">
+                        <div class="input-group" style="flex: 1;">
+                            <label>Total Amount (₹)</label>
+                            <input type="number" id="p-amount" placeholder="50000">
+                        </div>
+                        <div class="input-group" style="flex: 1;">
+                            <label>Monthly EMI (₹)</label>
+                            <input type="number" id="p-emi" placeholder="5000">
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label>Monthly Contribution (₹)</label>
-                        <input type="number" id="pool-emi" placeholder="e.g. 5000">
+                    <div style="display: flex; gap: 10px;">
+                        <div class="input-group" style="flex: 1;">
+                            <label>Total Months</label>
+                            <input type="number" id="p-months" placeholder="10">
+                        </div>
+                        <div class="input-group" style="flex: 1;">
+                            <label>Max Members</label>
+                            <input type="number" id="p-max" placeholder="10">
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label>Total Months</label>
-                        <input type="number" id="pool-months" placeholder="e.g. 10">
-                    </div>
-                    <button class="btn-create" onclick="createNewPool()">Create Pool 🚀</button>
+                    <button class="btn-create" onclick="createPool()">Publish Pool 🚀</button>
                 </div>
 
                 <div class="card">
-                    <h3>🗑️ Active Pools (Delete)</h3>
-                    <div id="pools-list">
-                        <p style="text-align: center; color: #94a3b8; font-size: 13px;">Loading pools...</p>
-                    </div>
+                    <h3>🗑️ Live Pools (Delete)</h3>
+                    <div id="admin-pools-list"><p style="font-size:12px; color:#64748b;">Loading...</p></div>
                 </div>
             </div>
 
             <div id="tab-users" style="display: none;">
-                <div class="card" style="text-align: center; padding: 40px 20px;">
-                    <h1 style="font-size: 40px; margin: 0;">🚧</h1>
-                    <h3>Users & KYC Section</h3>
-                    <p style="font-size: 13px; color: #64748b;">This section will be activated in the next step. You will be able to approve KYCs and add money to user wallets from here.</p>
+                <div class="card">
+                    <h3>👥 Registered Users</h3>
+                    <div id="admin-users-list"><p style="font-size:12px; color:#64748b;">Loading users...</p></div>
                 </div>
             </div>
         </div>
@@ -109,107 +117,117 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Firebase Configuration
         const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
         const db = getDatabase(app);
 
-        // Simple Admin PIN Check
+        // LOGIN
         window.checkPin = () => {
-            const pin = document.getElementById('admin-pin').value;
-            // The Secret PIN is 1234
-            if(pin === "1234") {
+            if(document.getElementById('admin-pin').value === "1234") {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('admin-dashboard').style.display = 'block';
-                loadPools(); // Load pools from database
-            } else {
-                alert("❌ Incorrect PIN! Unauthorized Access.");
-            }
+                loadPools();
+                loadUsers();
+            } else { alert("❌ Wrong PIN!"); }
         };
 
-        // Switch Tabs (UI)
-        window.switchTab = (tabName) => {
+        // TABS
+        window.switchTab = (tab) => {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
-            
-            if(tabName === 'pools') {
-                document.getElementById('tab-pools').style.display = 'block';
-                document.getElementById('tab-users').style.display = 'none';
-            } else {
-                document.getElementById('tab-pools').style.display = 'none';
-                document.getElementById('tab-users').style.display = 'block';
-            }
+            document.getElementById('tab-pools').style.display = tab === 'pools' ? 'block' : 'none';
+            document.getElementById('tab-users').style.display = tab === 'users' ? 'block' : 'none';
         };
 
-        // CREATE NEW POOL IN FIREBASE
-        window.createNewPool = () => {
-            const name = document.getElementById('pool-name').value;
-            const amount = document.getElementById('pool-amount').value;
-            const emi = document.getElementById('pool-emi').value;
-            const months = document.getElementById('pool-months').value;
+        // CREATE POOL
+        window.createPool = () => {
+            const name = document.getElementById('p-name').value;
+            const amt = document.getElementById('p-amount').value;
+            const emi = document.getElementById('p-emi').value;
+            const months = document.getElementById('p-months').value;
+            const max = document.getElementById('p-max').value;
 
-            if(!name || !amount || !emi || !months) {
-                alert("⚠️ Please fill all details!");
-                return;
-            }
+            if(!name || !amt || !emi || !months || !max) { alert("⚠️ Fill all fields!"); return; }
 
-            const newPoolRef = push(ref(db, 'pools'));
-            set(newPoolRef, {
-                poolName: name,
-                totalAmount: parseInt(amount),
-                monthlyEmi: parseInt(emi),
-                totalMonths: parseInt(months),
-                status: "Open"
+            push(ref(db, 'pools'), {
+                name: name, amount: parseInt(amt), emi: parseInt(emi), 
+                months: parseInt(months), maxMembers: parseInt(max), joined: 0, status: "Open"
             }).then(() => {
-                alert("✅ New Bishi Pool Created Successfully!");
-                document.getElementById('pool-name').value = '';
-                document.getElementById('pool-amount').value = '';
-                document.getElementById('pool-emi').value = '';
-                document.getElementById('pool-months').value = '';
-            }).catch((error) => {
-                alert("Error creating pool: " + error);
+                alert("✅ Pool Created! It is now live on User App.");
+                document.querySelectorAll('input').forEach(i => i.value = '');
             });
         };
 
-        // LOAD POOLS FROM FIREBASE
+        // LOAD POOLS
         const loadPools = () => {
-            const poolsRef = ref(db, 'pools');
-            onValue(poolsRef, (snapshot) => {
-                const listDiv = document.getElementById('pools-list');
-                listDiv.innerHTML = ""; // Clear old data
-
-                if(!snapshot.exists()){
-                    listDiv.innerHTML = '<p style="text-align: center; color: #94a3b8; font-size: 13px;">No active pools found.</p>';
-                    return;
-                }
-
-                snapshot.forEach((childSnapshot) => {
-                    const poolKey = childSnapshot.key;
-                    const data = childSnapshot.val();
-
-                    const poolHtml = `
-                        <div class="pool-item">
-                            <div class="pool-info">
-                                <h4>${data.poolName}</h4>
-                                <p>₹${data.totalAmount} Pool • ₹${data.monthlyEmi}/mo</p>
+            onValue(ref(db, 'pools'), (snap) => {
+                const list = document.getElementById('admin-pools-list');
+                list.innerHTML = "";
+                if(!snap.exists()) { list.innerHTML = "<p>No pools active.</p>"; return; }
+                
+                snap.forEach(child => {
+                    const data = child.val();
+                    list.innerHTML += `
+                        <div class="list-item">
+                            <div class="item-header">
+                                <span class="item-title">${data.name}</span>
+                                <span class="badge">₹${data.amount}</span>
                             </div>
-                            <button class="btn-delete" onclick="deletePool('${poolKey}')">Delete</button>
+                            <p class="item-sub">EMI: ₹${data.emi} | Months: ${data.months} | Joined: ${data.joined}/${data.maxMembers}</p>
+                            <button class="btn-small bg-danger" style="margin-top:5px; width:100%" onclick="deletePool('${child.key}')">Delete Pool</button>
                         </div>
                     `;
-                    listDiv.innerHTML += poolHtml;
                 });
             });
         };
 
-        // DELETE POOL FROM FIREBASE
-        window.deletePool = (poolId) => {
-            const confirmDelete = confirm("⚠️ Are you sure you want to delete this pool?");
-            if(confirmDelete) {
-                remove(ref(db, 'pools/' + poolId)).then(() => {
-                    // Alert will show, and onValue will automatically refresh the list
+        window.deletePool = (id) => { if(confirm("Delete this pool?")) remove(ref(db, 'pools/' + id)); };
+
+        // LOAD USERS & WALLET CONTROLS
+        const loadUsers = () => {
+            onValue(ref(db, 'users'), (snap) => {
+                const list = document.getElementById('admin-users-list');
+                list.innerHTML = "";
+                if(!snap.exists()) { list.innerHTML = "<p>No users found.</p>"; return; }
+
+                snap.forEach(child => {
+                    const mobile = child.key;
+                    const data = child.val();
+                    const bal = data.balance || 0;
+                    
+                    list.innerHTML += `
+                        <div class="list-item">
+                            <div class="item-header">
+                                <span class="item-title">👤 ${data.name}</span>
+                                <span class="badge" style="background:#10b981; color:white;">₹${bal.toFixed(2)}</span>
+                            </div>
+                            <p class="item-sub">📱 +91 ${mobile}</p>
+                            <div class="btn-row">
+                                <button class="btn-small bg-primary" onclick="addMoney('${mobile}', ${bal})">💳 Add Money</button>
+                                <button class="btn-small bg-danger" onclick="deductMoney('${mobile}', ${bal})">🔽 Deduct</button>
+                            </div>
+                        </div>
+                    `;
                 });
+            });
+        };
+
+        // ADD/DEDUCT MONEY LOGIC
+        window.addMoney = (mobile, currentBal) => {
+            let amount = prompt("Enter amount to ADD to " + mobile + "'s wallet:");
+            if(amount && !isNaN(amount) && amount > 0) {
+                let newBal = currentBal + parseFloat(amount);
+                update(ref(db, 'users/' + mobile), { balance: newBal }).then(() => alert("✅ Money Added!"));
             }
+        };
+
+        window.deductMoney = (mobile, currentBal) => {
+            let amount = prompt("Enter amount to DEDUCT from " + mobile + "'s wallet:");
+            if(amount && !isNaN(amount) && amount > 0 && amount <= currentBal) {
+                let newBal = currentBal - parseFloat(amount);
+                update(ref(db, 'users/' + mobile), { balance: newBal }).then(() => alert("✅ Money Deducted!"));
+            } else if (amount > currentBal) { alert("⚠️ Insufficient balance to deduct!"); }
         };
 
     </script>
