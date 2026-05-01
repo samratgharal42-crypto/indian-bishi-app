@@ -2,26 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Add Money | Indian Bishi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment | Indian Bishi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); padding: 20px; }
-        .card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
-        input { width: 100%; padding: 20px; border-radius: 16px; border: 2px solid #e2e8f0; font-size: 32px; font-weight: 800; text-align: center; margin: 20px 0; color: var(--primary); outline: none; }
-        .pay-btn { width: 100%; background: #673ab7; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; }
-        .phonepe-logo { height: 20px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .pay-card { background: white; width: 90%; max-width: 400px; padding: 30px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.05); text-align: center; }
+        .logo { width: 60px; margin-bottom: 20px; }
+        .amt-input { font-size: 40px; font-weight: 800; border: none; outline: none; text-align: center; width: 100%; color: #6366f1; margin: 20px 0; }
+        .pay-btn { background: #673ab7; color: white; border: none; width: 100%; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        #loader { display: none; margin-top: 20px; color: #64748b; font-size: 14px; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2 style="font-size: 18px;">Add Money to Wallet</h2>
-        <p style="font-size: 12px; color: #64748b; margin-top: 5px;">Enter amount to deposit via PhonePe</p>
-        <input type="number" id="amt" placeholder="₹0">
-        <button class="pay-btn" onclick="alert('PhonePe Integration is coming soon!')">
-            Proceed to Pay <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.png" class="phonepe-logo">
+
+    <div class="pay-card" id="card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.png" class="logo">
+        <div style="font-size:14px; color:#64748b">Enter Amount to Deposit</div>
+        <input type="number" class="amt-input" id="amount" placeholder="₹0" autofocus>
+        
+        <button class="pay-btn" onclick="processPayment()">
+            Pay Securely via PhonePe
         </button>
+
+        <div id="loader">🚀 Redirecting to Secure Gateway...</div>
     </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
+        const db = getDatabase(app);
+        const mobile = localStorage.getItem('activeUser');
+
+        window.processPayment = () => {
+            const amt = document.getElementById('amount').value;
+            if(!amt || amt < 1) return alert("Enter valid amount!");
+
+            document.getElementById('loader').style.display = 'block';
+            
+            // ॲडमिन पॅनेलला रिक्वेस्ट पाठवणे
+            push(ref(db, 'pay_requests'), {
+                userMobile: mobile,
+                amount: parseFloat(amt),
+                timestamp: Date.now(),
+                status: "Pending"
+            }).then(() => {
+                setTimeout(() => {
+                    alert("✅ Payment Request Sent! Once verified, money will be added to your wallet.");
+                    window.location.href = "/indian-bishi-app/dashboard.html";
+                }, 2000);
+            });
+        };
+    </script>
 </body>
 </html>
