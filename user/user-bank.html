@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bank Details | Indian Bishi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; --success: #10b981; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--text); padding-bottom: 50px; }
+        
+        .header-bar { display: flex; align-items: center; margin-bottom: 25px; }
+        .back-btn { text-decoration: none; color: var(--text); font-size: 24px; font-weight: 800; margin-right: 15px; }
+        h2 { font-size: 20px; margin: 0; font-weight: 800; }
+
+        .card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; margin-bottom: 20px; }
+        h3 { font-size: 16px; margin: 0 0 15px; display: flex; align-items: center; gap: 8px; }
+        
+        .input-group { margin-bottom: 18px; }
+        label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        input { width: 100%; padding: 15px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 15px; font-weight: 600; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--primary); background: white; }
+
+        .save-btn { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25); transition: 0.3s; margin-top: 10px; }
+        .save-btn:active { transform: scale(0.98); }
+
+        /* SUCCESS POPUP */
+        .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
+        .popup-content { background: white; width: 100%; max-width: 320px; padding: 35px 25px; border-radius: 28px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.2); animation: pop 0.3s ease-out; }
+        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .p-btn { width: 100%; padding: 16px; border-radius: 14px; border: none; font-weight: 800; font-size: 15px; cursor: pointer; background: var(--primary); color: white; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="header-bar">
+        <a href="profile.html" class="back-btn">←</a>
+        <h2>Bank & UPI Details</h2>
+    </div>
+
+    <div class="card">
+        <h3>🏦 Bank Account</h3>
+        <p style="font-size: 12px; color: #64748b; margin-top:-10px; margin-bottom:20px;">Payouts will be sent to this verified account.</p>
+        
+        <div class="input-group">
+            <label>Account Holder Name</label>
+            <input type="text" id="acc-name" placeholder="As per bank passbook">
+        </div>
+        <div class="input-group">
+            <label>Account Number</label>
+            <input type="number" id="acc-num" placeholder="Enter Account Number">
+        </div>
+        <div class="input-group">
+            <label>IFSC Code</label>
+            <input type="text" id="ifsc-code" placeholder="e.g. SBIN0001234" style="text-transform: uppercase;" maxlength="11">
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📱 UPI ID (Optional)</h3>
+        <div class="input-group" style="margin-bottom: 0;">
+            <label>For Quick Transfers</label>
+            <input type="text" id="upi-id" placeholder="yourname@bank">
+        </div>
+    </div>
+
+    <button class="save-btn" id="save-btn" onclick="saveBankDetails()">SAVE DETAILS</button>
+
+    <div id="success-popup" class="popup-overlay">
+        <div class="popup-content">
+            <div style="font-size: 50px; margin-bottom: 10px;">✅</div>
+            <h3 style="margin:0 0 10px; font-size:22px; color: #10b981;">Saved Successfully!</h3>
+            <p style="font-size:14px; color:#64748b; line-height:1.5; margin:0;">Your bank and UPI details have been securely updated.</p>
+            <button class="p-btn" onclick="window.location.href='profile.html'">Back to Profile</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, update, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
+        const db = getDatabase(app);
+        const mobile = localStorage.getItem('activeUser');
+
+        if(!mobile) window.location.href = "../index.html";
+
+        // Fetch existing details on page load
+        get(child(ref(db), `users/${mobile}/bankDetails`)).then((snap) => {
+            if(snap.exists()){
+                const data = snap.val();
+                document.getElementById('acc-name').value = data.accName || "";
+                document.getElementById('acc-num').value = data.accNum || "";
+                document.getElementById('ifsc-code').value = data.ifsc || "";
+                document.getElementById('upi-id').value = data.upi || "";
+            }
+        });
+
+        window.saveBankDetails = () => {
+            const accName = document.getElementById('acc-name').value;
+            const accNum = document.getElementById('acc-num').value;
+            const ifsc = document.getElementById('ifsc-code').value;
+            const upi = document.getElementById('upi-id').value;
+
+            if(!accName || !accNum || !ifsc) {
+                alert("Please fill all mandatory bank details.");
+                return;
+            }
+
+            const btn = document.getElementById('save-btn');
+            btn.innerText = "SAVING...";
+            btn.disabled = true;
+
+            // Save to Firebase under the user's node
+            update(ref(db, `users/${mobile}/bankDetails`), {
+                accName: accName,
+                accNum: accNum,
+                ifsc: ifsc,
+                upi: upi,
+                updatedAt: Date.now()
+            }).then(() => {
+                document.getElementById('success-popup').style.display = 'flex';
+                btn.innerText = "SAVE DETAILS";
+                btn.disabled = false;
+            }).catch((error) => {
+                alert("Error saving details. Please try again.");
+                btn.innerText = "SAVE DETAILS";
+                btn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
