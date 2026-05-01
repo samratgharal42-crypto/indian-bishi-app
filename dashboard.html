@@ -16,7 +16,7 @@
         .user-name { font-size: 24px; font-weight: 800; }
         .trust-badge { position: absolute; top: 35px; right: 20px; background: rgba(255,255,255,0.2); padding: 8px 14px; border-radius: 12px; font-size: 11px; font-weight: 800; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
 
-        /* IMAGE BANNER SLIDER */
+        /* SLIDING BANNER */
         .banner-slider { margin: -40px 20px 20px; overflow: hidden; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); background: white; height: 100px; position: relative; z-index: 10; }
         .slides { display: flex; width: 300%; height: 100%; animation: slide 12s infinite; }
         .slide { width: 33.333%; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
@@ -34,11 +34,11 @@
         .p-btn { width: 100%; padding: 15px; border-radius: 14px; border: none; font-weight: 800; font-size: 14px; margin-bottom: 10px; cursor: pointer; }
         .btn-main { background: var(--primary); color: white; }
 
-        /* UNIVERSAL BOTTOM NAV (STRICTLY LOCKED ICONS) */
+        /* ULTIMATE BOTTOM NAV FIX (100% LOCKED) */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 80px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 9999; border-top: 1px solid #f1f5f9; }
-        .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; flex: 1; gap: 4px; }
+        .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 33.33%; height: 100%; }
         .nav-item.active { color: var(--primary); }
-        .nav-icon { font-size: 24px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; line-height: 1; }
+        .nav-icon { font-size: 24px !important; line-height: 24px !important; height: 24px !important; width: 24px !important; display: block; text-align: center; margin-bottom: 5px; }
     </style>
 </head>
 <body>
