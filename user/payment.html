@@ -8,49 +8,67 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .pay-card { background: white; width: 90%; max-width: 400px; padding: 30px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.05); text-align: center; }
-        .logo { width: 60px; margin-bottom: 20px; }
-        .amt-input { font-size: 40px; font-weight: 800; border: none; outline: none; text-align: center; width: 100%; color: #6366f1; margin: 20px 0; }
-        .pay-btn { background: #673ab7; color: white; border: none; width: 100%; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        #loader { display: none; margin-top: 20px; color: #64748b; font-size: 14px; }
+        .logo { width: 120px; margin-bottom: 20px; }
+        .pay-reason { font-size: 14px; color: #64748b; font-weight: 800; margin-bottom: 10px; }
+        .amt-input { font-size: 40px; font-weight: 800; border: none; outline: none; text-align: center; width: 100%; color: #6366f1; margin: 10px 0 30px; background: transparent; }
+        .pay-btn { background: #673ab7; color: white; border: none; width: 100%; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 16px; cursor: pointer; }
+        #loader { display: none; margin-top: 20px; color: #10b981; font-size: 14px; font-weight: 800; }
     </style>
 </head>
 <body>
 
-    <div class="pay-card" id="card">
+    <div class="pay-card">
         <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.png" class="logo">
-        <div style="font-size:14px; color:#64748b">Enter Amount to Deposit</div>
+        <div class="pay-reason" id="pay-reason">Enter Amount to Deposit</div>
         <input type="number" class="amt-input" id="amount" placeholder="₹0" autofocus>
         
-        <button class="pay-btn" onclick="processPayment()">
-            Pay Securely via PhonePe
-        </button>
+        <button class="pay-btn" id="pay-btn" onclick="processPayment()">Proceed to Pay</button>
 
-        <div id="loader">🚀 Redirecting to Secure Gateway...</div>
+        <div id="loader">Processing Payment... Please wait ⏳</div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
         const db = getDatabase(app);
         const mobile = localStorage.getItem('activeUser');
 
+        // Check URL parameters for Pool ID and Amount
+        const urlParams = new URLSearchParams(window.location.search);
+        const poolId = urlParams.get('poolId');
+        const emiAmount = urlParams.get('amount');
+        const poolName = urlParams.get('name');
+
+        if(emiAmount) {
+            document.getElementById('amount').value = emiAmount;
+            document.getElementById('amount').readOnly = true; // Lock the amount
+            document.getElementById('pay-reason').innerText = `Joining: ${poolName} (First EMI)`;
+        }
+
         window.processPayment = () => {
             const amt = document.getElementById('amount').value;
             if(!amt || amt < 1) return alert("Enter valid amount!");
 
+            document.getElementById('pay-btn').style.display = 'none';
             document.getElementById('loader').style.display = 'block';
             
-            // ॲडमिन पॅनेलला रिक्वेस्ट पाठवणे
+            // 1. Send Request to Admin
             push(ref(db, 'pay_requests'), {
                 userMobile: mobile,
                 amount: parseFloat(amt),
-                timestamp: Date.now(),
-                status: "Pending"
+                poolId: poolId || "Wallet Deposit",
+                status: "Pending",
+                timestamp: Date.now()
             }).then(() => {
+                // 2. If it's a Pool Join, save to User's profile
+                if(poolId) {
+                    update(ref(db, `users/${mobile}/joined_pools`), { [poolId]: true });
+                }
+                
                 setTimeout(() => {
-                    alert("✅ Payment Request Sent! Once verified, money will be added to your wallet.");
+                    alert("✅ Payment Request Sent! Pool has been added to 'My Bishi'.");
                     window.location.href = "/indian-bishi-app/dashboard.html";
                 }, 2000);
             });
