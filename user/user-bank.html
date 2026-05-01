@@ -17,6 +17,7 @@
         .card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; margin-bottom: 20px; }
         h3 { font-size: 16px; margin: 0 0 15px; display: flex; align-items: center; gap: 8px; }
         
+        /* FORM STATE */
         .input-group { margin-bottom: 18px; }
         label { display: block; font-size: 11px; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         input { width: 100%; padding: 15px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 15px; font-weight: 600; outline: none; transition: 0.2s; }
@@ -24,6 +25,14 @@
 
         .save-btn { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25); transition: 0.3s; margin-top: 10px; }
         .save-btn:active { transform: scale(0.98); }
+
+        /* LOCKED STATE (Document Style) */
+        #locked-section { display: none; }
+        .locked-doc { background: #f8fafc; padding: 20px; border-radius: 16px; border: 1.5px dashed #cbd5e1; text-align: left; margin-top: 20px; }
+        .doc-row { margin-bottom: 15px; }
+        .doc-row:last-child { margin-bottom: 0; }
+        .doc-label { font-size: 10px; color: #64748b; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; }
+        .doc-val { font-size: 16px; color: #1e293b; font-weight: 800; }
 
         /* SUCCESS POPUP */
         .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
@@ -39,40 +48,71 @@
         <h2>Bank & UPI Details</h2>
     </div>
 
-    <div class="card">
-        <h3>🏦 Bank Account</h3>
-        <p style="font-size: 12px; color: #64748b; margin-top:-10px; margin-bottom:20px;">Payouts will be sent to this verified account.</p>
+    <div id="form-section">
+        <div class="card">
+            <h3>🏦 Bank Account</h3>
+            <p style="font-size: 12px; color: #64748b; margin-top:-10px; margin-bottom:20px;">Payouts will be sent to this verified account.</p>
+            
+            <div class="input-group">
+                <label>Account Holder Name</label>
+                <input type="text" id="acc-name" placeholder="As per bank passbook">
+            </div>
+            <div class="input-group">
+                <label>Account Number</label>
+                <input type="number" id="acc-num" placeholder="Enter Account Number">
+            </div>
+            <div class="input-group">
+                <label>IFSC Code</label>
+                <input type="text" id="ifsc-code" placeholder="e.g. SBIN0001234" style="text-transform: uppercase;" maxlength="11">
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>📱 UPI ID (Optional)</h3>
+            <div class="input-group" style="margin-bottom: 0;">
+                <label>For Quick Transfers</label>
+                <input type="text" id="upi-id" placeholder="yourname@bank">
+            </div>
+        </div>
+
+        <button class="save-btn" id="save-btn" onclick="saveBankDetails()">SAVE & LOCK DETAILS</button>
+    </div>
+
+    <div id="locked-section">
+        <div class="card" style="text-align: center;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" width="60" style="margin-bottom: 15px;">
+            <h3 style="justify-content: center; color: var(--primary); font-size: 20px; margin-bottom: 5px;">Details Locked</h3>
+            <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0;">Your payout details are securely verified and stored. They cannot be changed.</p>
+            
+            <div class="locked-doc">
+                <div class="doc-row">
+                    <div class="doc-label">Account Holder</div>
+                    <div class="doc-val" id="lbl-name">--</div>
+                </div>
+                <div class="doc-row">
+                    <div class="doc-label">Account Number</div>
+                    <div class="doc-val" id="lbl-num">--</div>
+                </div>
+                <div class="doc-row">
+                    <div class="doc-label">IFSC Code</div>
+                    <div class="doc-val" id="lbl-ifsc">--</div>
+                </div>
+                <div class="doc-row" style="border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 5px;">
+                    <div class="doc-label">UPI ID</div>
+                    <div class="doc-val" id="lbl-upi" style="color: var(--primary);">--</div>
+                </div>
+            </div>
+        </div>
         
-        <div class="input-group">
-            <label>Account Holder Name</label>
-            <input type="text" id="acc-name" placeholder="As per bank passbook">
-        </div>
-        <div class="input-group">
-            <label>Account Number</label>
-            <input type="number" id="acc-num" placeholder="Enter Account Number">
-        </div>
-        <div class="input-group">
-            <label>IFSC Code</label>
-            <input type="text" id="ifsc-code" placeholder="e.g. SBIN0001234" style="text-transform: uppercase;" maxlength="11">
-        </div>
+        <p style="text-align: center; font-size: 12px; color: #94a3b8; margin-top: 20px;">Contact support to request changes.</p>
     </div>
-
-    <div class="card">
-        <h3>📱 UPI ID (Optional)</h3>
-        <div class="input-group" style="margin-bottom: 0;">
-            <label>For Quick Transfers</label>
-            <input type="text" id="upi-id" placeholder="yourname@bank">
-        </div>
-    </div>
-
-    <button class="save-btn" id="save-btn" onclick="saveBankDetails()">SAVE DETAILS</button>
 
     <div id="success-popup" class="popup-overlay">
         <div class="popup-content">
-            <div style="font-size: 50px; margin-bottom: 10px;">✅</div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" width="70" style="margin-bottom: 15px;">
             <h3 style="margin:0 0 10px; font-size:22px; color: #10b981;">Saved Successfully!</h3>
-            <p style="font-size:14px; color:#64748b; line-height:1.5; margin:0;">Your bank and UPI details have been securely updated.</p>
-            <button class="p-btn" onclick="window.location.href='profile.html'">Back to Profile</button>
+            <p style="font-size:14px; color:#64748b; line-height:1.5; margin:0;">Your bank and UPI details have been securely locked.</p>
+            <button class="p-btn" onclick="window.location.reload()">View Document</button>
         </div>
     </div>
 
@@ -86,14 +126,25 @@
 
         if(!mobile) window.location.href = "../index.html";
 
-        // Fetch existing details on page load
+        // Check if data exists and lock the page
         get(child(ref(db), `users/${mobile}/bankDetails`)).then((snap) => {
             if(snap.exists()){
                 const data = snap.val();
-                document.getElementById('acc-name').value = data.accName || "";
-                document.getElementById('acc-num').value = data.accNum || "";
-                document.getElementById('ifsc-code').value = data.ifsc || "";
-                document.getElementById('upi-id').value = data.upi || "";
+                
+                // Switch to locked view
+                document.getElementById('form-section').style.display = 'none';
+                document.getElementById('locked-section').style.display = 'block';
+
+                // Display masked/secure data
+                document.getElementById('lbl-name').innerText = data.accName;
+                
+                // Mask account number for professional look (e.g., •••• •••• 1234)
+                const accNum = data.accNum;
+                const maskedNum = "•••• •••• " + accNum.slice(-4);
+                document.getElementById('lbl-num').innerText = maskedNum;
+                
+                document.getElementById('lbl-ifsc').innerText = data.ifsc;
+                document.getElementById('lbl-upi').innerText = data.upi || "Not Provided";
             }
         });
 
@@ -109,10 +160,9 @@
             }
 
             const btn = document.getElementById('save-btn');
-            btn.innerText = "SAVING...";
+            btn.innerText = "SECURING DATA...";
             btn.disabled = true;
 
-            // Save to Firebase under the user's node
             update(ref(db, `users/${mobile}/bankDetails`), {
                 accName: accName,
                 accNum: accNum,
@@ -121,11 +171,9 @@
                 updatedAt: Date.now()
             }).then(() => {
                 document.getElementById('success-popup').style.display = 'flex';
-                btn.innerText = "SAVE DETAILS";
-                btn.disabled = false;
             }).catch((error) => {
                 alert("Error saving details. Please try again.");
-                btn.innerText = "SAVE DETAILS";
+                btn.innerText = "SAVE & LOCK DETAILS";
                 btn.disabled = false;
             });
         }
