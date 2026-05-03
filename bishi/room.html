@@ -24,6 +24,7 @@
 <body>
 
     <div class="header">
+        <a href="all-pools.html" style="color:white; float:left; text-decoration:none; font-size:20px;">⬅</a>
         <h2 style="margin:0; font-size:14px; text-transform:uppercase; letter-spacing:1px;">Live Bidding Room 🔴</h2>
         <div class="win-amt">Current Lowest:<br>₹<span id="current-lowest">---</span></div>
         <div style="font-size:12px; color:#cbd5e1;">Bidding closes at 12:00 AM Midnight</div>
@@ -55,6 +56,16 @@
         let poolWinAmount = 0;
         const mySecretId = "Member-" + mobile.slice(-4); 
 
+        // 🚨 CHECK IF USER ALREADY WON THIS BISHI 🚨
+        get(child(ref(db), `pools/${poolId}/past_winners/${mobile}`)).then(snap => {
+            if(snap.exists()) {
+                document.getElementById('action-area').innerHTML = `
+                    <div style='background:#fef2f2; color:#ef4444; padding:15px; border-radius:12px; text-align:center; font-weight:800; border:1px solid #fecaca;'>
+                        🏆 You have already won this Bishi!<br><span style='font-size:11px; color:#b91c1c; font-weight:600;'>You cannot bid again until the new cycle starts.</span>
+                    </div>`;
+            }
+        });
+
         get(child(ref(db), `pools/${poolId}`)).then(snap => {
             if(snap.exists()) {
                 poolWinAmount = parseInt(snap.val().winAmount);
@@ -63,7 +74,6 @@
             }
         });
 
-        // LIVE CALCULATION FIX (parseInt used)
         onValue(ref(db, `bids/${poolId}`), snap => {
             const chat = document.getElementById('chat-history');
             if(snap.exists()) {
@@ -72,8 +82,7 @@
                 
                 snap.forEach(c => {
                     const d = c.val();
-                    const bidAmt = parseInt(d.amount); // STRING TO INT FIX
-                    
+                    const bidAmt = parseInt(d.amount);
                     if(bidAmt < lowest) { lowest = bidAmt; }
                     
                     const isMe = d.user === mobile;
@@ -84,11 +93,10 @@
                         <div class="${cssClass}">
                             ${nameToShow} asked for <b>₹${bidAmt}</b>
                             <span class="time">${d.time}</span>
-                        </div>
-                    `;
+                        </div>`;
                 });
                 
-                currentLowest = lowest; // UPDATE GLOBAL LOWEST
+                currentLowest = lowest; 
                 document.getElementById('current-lowest').innerText = currentLowest;
                 chat.scrollTop = chat.scrollHeight; 
             }
