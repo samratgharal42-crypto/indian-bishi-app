@@ -6,23 +6,27 @@
     <title>Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; padding: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .card { background: white; padding: 25px 10px; border-radius: 16px; text-align: center; text-decoration: none; color: #1e293b; font-weight: 800; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .card:hover { border-color: #6366f1; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; padding: 20px; margin: 0; }
+        .header { background: #0f172a; color: white; padding: 25px; border-radius: 16px; margin-bottom: 20px; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { background: white; padding: 20px 10px; border-radius: 16px; text-align: center; text-decoration: none; color: #1e293b; font-weight: 800; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+        .icon { font-size: 28px; }
+        .card:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
-    <div style="background:#0f172a; color:white; padding:30px; border-radius:20px; text-align:center;">
-        <h1 style="margin:0;">⚙️ Indian Bishi Admin</h1>
+    <div class="header">
+        <h2 style="margin:0;">⚙️ Admin Panel</h2>
+        <p style="font-size:12px; color:#cbd5e1; margin-top:5px;">Master Control</p>
     </div>
 
     <div class="grid">
-        <a href="pools.html" class="card">📈 Live Pools</a>
-        <a href="deposits.html" class="card">📥 UTR Deposits</a>
-        <a href="withdrawals.html" class="card">🏆 Payouts</a>
-        <a href="support.html" class="card">🎧 Support</a>
-        <a href="users.html" class="card">👥 All Users</a>
+        <a href="pools.html" class="card"><span class="icon">➕</span> Manage Pools</a>
+        <a href="deposits.html" class="card"><span class="icon">📥</span> UTR Deposits</a>
+        <a href="bids.html" class="card"><span class="icon">👁️</span> Live Bids & Winners</a>
+        <a href="withdrawals.html" class="card"><span class="icon">🏆</span> Withdrawals</a>
+        <a href="users.html" class="card"><span class="icon">👥</span> All Users Info</a>
+        <a href="support.html" class="card"><span class="icon">🎧</span> Support Chat</a>
     </div>
 </body>
 </html>
