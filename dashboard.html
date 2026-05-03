@@ -10,20 +10,26 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 25px 20px 40px; color: white; border-radius: 0 0 30px 30px; }
+        /* Premium Header */
+        .header { background: linear-gradient(135deg, #7c3aed, #4f46e5); padding: 25px 20px 60px; color: white; border-radius: 0 0 30px 30px; position: relative; }
         .welcome-text { font-size: 13px; opacity: 0.9; }
-        .user-name { font-size: 24px; font-weight: 800; }
-        .cibil-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; float: right; margin-top: -35px; }
+        .user-name { font-size: 26px; font-weight: 800; margin-top: 2px; }
+        .cibil-badge { position: absolute; right: 20px; top: 30px; background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(4px); }
 
-        .banner { margin: -20px 20px 20px; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.1); background: #1e293b; color: #fbbf24; text-align: center; padding: 20px; }
+        /* Premium Banner Mimic */
+        .banner { margin: -30px 20px 25px; background: #111827; border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15); position: relative; z-index: 10; border: 1px solid #374151; }
+        .banner h3 { color: #fbbf24; font-size: 14px; margin: 0 0 5px; letter-spacing: 1px; }
+        .banner h2 { color: #f59e0b; font-size: 26px; font-weight: 900; margin: 0 0 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .banner p { color: #d1d5db; font-size: 11px; margin: 0; font-weight: 600; }
+
+        .section-title { padding: 0 20px; font-size: 18px; font-weight: 800; margin-bottom: 15px; color: #1e293b; display: flex; align-items: center; gap: 8px; }
         
-        .section-title { padding: 0 20px; font-size: 18px; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        
+        /* New Pool Card Design */
         .pools-container { padding: 0 20px; display: flex; flex-direction: column; gap: 15px; }
-        .pool-card { background: white; padding: 18px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; }
-        .pool-info h4 { margin: 0 0 5px; font-size: 16px; color: var(--primary); }
-        .pool-info p { margin: 0; font-size: 12px; color: #64748b; font-weight: 600; }
-        .join-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 800; cursor: pointer; }
+        .pool-card { background: white; padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
+        .pool-info h4 { margin: 0 0 4px; font-size: 17px; color: #6366f1; text-transform: uppercase; font-weight: 800; }
+        .pool-info p { margin: 0; font-size: 13px; color: #64748b; font-weight: 600; }
+        .join-btn { background: #6366f1; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 10px rgba(99,102,241,0.3); }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 80px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 9999; border-top: 1px solid #f1f5f9; }
         .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 33.33%; height: 100%; gap: 5px; }
@@ -40,9 +46,9 @@
     </div>
 
     <div class="banner">
-        <h3 style="margin:0;">KEY FEATURES</h3>
-        <h2 style="margin:5px 0; font-size:26px; font-weight:900;">INDIAN BISHI</h2>
-        <p style="margin:0; font-size:12px; opacity:0.8;">Trusted Community • Transparent • Growth</p>
+        <h3>KEY FEATURES</h3>
+        <h2>INDIAN BISHI</h2>
+        <p>Trusted Community • Transparent • Growth</p>
     </div>
 
     <div class="section-title">Investment Pools 🏦</div>
@@ -52,9 +58,9 @@
     </div>
 
     <nav class="bottom-nav">
-        <a href="/indian-bishi-app/dashboard.html" class="nav-item active"><span class="nav-icon">🏠</span><span>HOME</span></a>
-        <a href="/indian-bishi-app/bishi/all-pools.html" class="nav-item"><span class="nav-icon">🎯</span><span>MY BISHI</span></a>
-        <a href="/indian-bishi-app/user/profile.html" class="nav-item"><span class="nav-icon">👤</span><span>ACCOUNT</span></a>
+        <a href="dashboard.html" class="nav-item active"><span class="nav-icon">🏠</span><span>HOME</span></a>
+        <a href="bishi/all-pools.html" class="nav-item"><span class="nav-icon">🎯</span><span>MY BISHI</span></a>
+        <a href="user/profile.html" class="nav-item"><span class="nav-icon">👤</span><span>ACCOUNT</span></a>
     </nav>
 
     <script type="module">
@@ -67,12 +73,10 @@
 
         if(!mobile) window.location.href = "index.html";
 
-        // Get User Name
         get(child(ref(db), `users/${mobile}`)).then((snap) => {
             if(snap.exists()) document.getElementById('user-name').innerText = snap.val().name;
         });
 
-        // Load All Active Pools
         onValue(ref(db, 'pools'), (snapshot) => {
             const container = document.getElementById('investment-pools');
             container.innerHTML = "";
@@ -94,9 +98,9 @@
             });
         });
 
-        // Redirect to Payment with Pool Details
+        // Fixed Path for Local and Hosted Redirects
         window.joinPool = (poolId, emiAmount, poolName) => {
-            window.location.href = `/indian-bishi-app/user/payment.html?poolId=${poolId}&amount=${emiAmount}&name=${encodeURIComponent(poolName)}`;
+            window.location.href = "user/payment.html?poolId=" + poolId + "&amount=" + emiAmount + "&name=" + encodeURIComponent(poolName);
         };
     </script>
 </body>
