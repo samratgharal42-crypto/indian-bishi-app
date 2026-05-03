@@ -10,7 +10,7 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        /* HEADER WITH PROPER SPACING */
+        /* HEADER */
         .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 30px 20px 60px; color: white; border-radius: 0 0 30px 30px; position: relative; }
         .welcome-text { font-size: 14px; opacity: 0.9; }
         .user-name { font-size: 28px; font-weight: 800; margin-top: 5px; }
@@ -18,21 +18,20 @@
 
         .main-content { padding: 0 20px; margin-top: -30px; position: relative; z-index: 10; }
 
-        /* RESTORED ORIGINAL BANNER (NO IMAGE NEEDED) */
-        .banner { background: #1e293b; border-radius: 20px; padding: 25px 20px; text-align: center; color: #fbbf24; box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-bottom: 25px; border: 1px solid #334155; }
-        .banner h3 { margin: 0; font-size: 14px; letter-spacing: 2px; color: #facc15; }
-        .banner h2 { margin: 5px 0 10px; font-size: 28px; font-weight: 900; letter-spacing: 1px; color: #fbbf24; }
-        .banner p { margin: 0; font-size: 12px; color: #cbd5e1; font-weight: 600; }
+        /* 🔥 3 BANNERS SLIDER 🔥 */
+        .banner-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; margin-bottom: 25px; padding-bottom: 10px; }
+        .banner-slider::-webkit-scrollbar { display: none; }
+        .slide { scroll-snap-align: center; flex: 0 0 100%; border-radius: 16px; object-fit: cover; height: 160px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
 
         .section-title { font-size: 18px; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; color: #1e293b; }
         
-        /* ORIGINAL POOL CARD DESIGN */
+        /* YOUR POOL CARD DESIGN */
         .pools-container { display: flex; flex-direction: column; gap: 15px; }
         .pool-card-new { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
         .p-head { display: flex; justify-content: space-between; align-items: center; }
         .p-title { font-size: 18px; font-weight: 800; color: #1e293b; text-transform: uppercase; }
         .p-badge { background: #e0e7ff; color: #6366f1; padding: 5px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; }
-        .p-amt { font-size: 32px; font-weight: 800; color: #6366f1; margin: 5px 0 15px; }
+        .p-amt { font-size: 38px; font-weight: 800; color: #6366f1; margin: 5px 0 15px; letter-spacing: -1px; }
         
         .p-stats { display: flex; justify-content: space-between; background: white; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 15px 10px; margin-bottom: 15px; }
         .stat-box { text-align: center; flex: 1; border-right: 1px dashed #cbd5e1; }
@@ -40,7 +39,7 @@
         .s-label { font-size: 10px; color: #64748b; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; }
         .s-val { font-size: 14px; font-weight: 800; color: #1e293b; }
         
-        .btn-gradient { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; display: block; text-align: center; box-shadow: 0 10px 20px rgba(99,102,241,0.2); }
+        .btn-gradient { background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; display: block; text-align: center; box-shadow: 0 10px 20px rgba(99,102,241,0.2); }
 
         /* BOTTOM NAV */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 80px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 9999; border-top: 1px solid #f1f5f9; }
@@ -58,10 +57,10 @@
     </div>
 
     <div class="main-content">
-        <div class="banner">
-            <h3>KEY FEATURES</h3>
-            <h2>INDIAN BISHI</h2>
-            <p>Trusted Community • Transparent • Growth</p>
+        <div class="banner-slider">
+            <img src="offer1.jpg" alt="Offer 1" class="slide" onerror="this.src='https://via.placeholder.com/400x150/1e293b/fbbf24?text=Indian+Bishi+Offer+1'">
+            <img src="offer2.jpg" alt="Offer 2" class="slide" onerror="this.src='https://via.placeholder.com/400x150/6366f1/ffffff?text=Special+Gold+Pool'">
+            <img src="offer3.jpg" alt="Offer 3" class="slide" onerror="this.src='https://via.placeholder.com/400x150/10b981/ffffff?text=Zero+Penalty+This+Month'">
         </div>
 
         <div class="section-title">🎯 Available Bishi Pools</div>
@@ -91,6 +90,7 @@
             if(snap.exists()) document.getElementById('user-name').innerText = snap.val().name;
         });
 
+        // ऍडमिनमधून बीशी इथे फेच करणे
         onValue(ref(db, 'pools'), (snapshot) => {
             const container = document.getElementById('investment-pools');
             container.innerHTML = "";
