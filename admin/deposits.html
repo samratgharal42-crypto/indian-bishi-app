@@ -1,95 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <title>Deposits | Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Deposits</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; margin: 0; padding: 15px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn-back { background: white; padding: 10px 15px; border-radius: 10px; text-decoration: none; color: #1e293b; font-weight: 800; border: 1px solid #e2e8f0; }
-        .card { background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 12px; font-size: 14px; }
-        .btn-row { display: flex; gap: 10px; margin-top: 15px; }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 800; color: white; cursor: pointer; }
-        .bg-green { background: #10b981; } .bg-red { background: #ef4444; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; padding: 15px; }
+        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #cbd5e1; }
+        .btn { padding: 10px; border: none; border-radius: 8px; font-weight: 800; color: white; cursor: pointer; width: 48%; }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <a href="index.html" class="btn-back">⬅ Back</a>
-        <h2 style="margin:0; font-size:18px;">📥 UTR Deposits</h2>
-    </div>
-
-    <div id="deposits-list"><p style="text-align:center; color:#64748b;">Loading pending requests...</p></div>
+    <a href="index.html" style="text-decoration:none; font-weight:800; color:#1e293b;">⬅ Back</a>
+    <h2>📥 UTR Verifications</h2>
+    <div id="list">Loading...</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, get, child, push, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
-        const db = getDatabase(app);
+        import { getDatabase, ref, onValue, update, get, child, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        const db = getDatabase(initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" }));
 
         onValue(ref(db, 'deposits'), snap => {
-            const list = document.getElementById('deposits-list');
-            list.innerHTML = "";
-            let hasReq = false;
+            const list = document.getElementById('list'); list.innerHTML = "";
+            let hasData = false;
             snap.forEach(c => {
                 const d = c.val();
                 if(d.status === "Pending") {
-                    hasReq = true;
-                    const forText = d.poolId && d.poolId !== "Wallet Deposit" ? `Joining Pool: ${d.poolName}` : `Wallet Recharge`;
+                    hasData = true;
                     list.innerHTML += `
                         <div class="card">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                                <b style="font-size:18px; color:#0f172a;">₹${d.amount}</b>
-                                <span style="color:#6366f1; font-weight:800;">+91 ${d.userMobile}</span>
-                            </div>
-                            <div style="color:#64748b; font-size:12px; margin-bottom:5px;">UTR: <b>${d.utr}</b></div>
-                            <div style="background:#e0e7ff; color:#4f46e5; padding:6px 10px; border-radius:6px; font-size:12px; font-weight:800; display:inline-block;">${forText}</div>
-                            
-                            <div class="btn-row">
-                                <button class="btn bg-green" onclick="approveDep('${c.key}', '${d.userMobile}', ${d.amount}, '${d.poolId}', '${d.poolName}')">Accept ✅</button>
-                                <button class="btn bg-red" onclick="rejectDep('${c.key}', '${d.userMobile}', ${d.amount})">Reject ❌</button>
-                            </div>
+                            <b style="font-size:18px;">₹${d.amount}</b> | +91 ${d.userMobile}<br>
+                            <span style="color:#64748b;">UTR: ${d.utr}</span><br>
+                            <span style="color:#6366f1; font-weight:800;">Reason: ${d.poolName || 'Wallet'}</span><br><br>
+                            <button class="btn" style="background:#10b981;" onclick="appr('${c.key}', '${d.userMobile}', ${d.amount}, '${d.poolId}', '${d.poolName}')">Accept ✅</button>
+                            <button class="btn" style="background:#ef4444;" onclick="rej('${c.key}')">Reject ❌</button>
                         </div>`;
                 }
             });
-            if(!hasReq) list.innerHTML = "<p style='text-align:center; color:#64748b;'>No pending deposits.</p>";
+            if(!hasData) list.innerHTML = "No pending deposits.";
         });
 
-        window.approveDep = (id, mob, amt, pId, pName) => {
-            const todayDate = new Date().toLocaleDateString('en-IN');
+        window.appr = (id, mob, amt, pId, pName) => {
+            const dateStr = new Date().toLocaleDateString('en-IN');
             
-            // 1. पैसै वॉलेटमध्ये ॲड करणे
+            // 1. Add to Wallet
             get(child(ref(db), `users/${mob}/balance`)).then(snap => {
-                let curBal = snap.exists() ? parseFloat(snap.val()) : 0;
-                update(ref(db, `users/${mob}`), { balance: curBal + parseFloat(amt) });
+                let cur = snap.exists() ? parseFloat(snap.val()) : 0;
+                update(ref(db, `users/${mob}`), { balance: cur + parseFloat(amt) });
             });
 
-            // 2. 🚨 BISHI ACTIVATION LOGIC (FIXED) 🚨
-            if(pId && pId !== "undefined" && pId !== "null" && pId !== "Wallet Deposit" && pId.length > 3) {
-                // युजरच्या 'joined_pools' मध्ये बीशीची ID 'true' म्हणून सेट करणे
-                const updates = {};
-                updates[`users/${mob}/joined_pools/${pId}`] = true;
-                update(ref(db), updates);
-
-                push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', status: 'Success', title: `Joined Pool: ${pName}`, date: todayDate });
-                alert("✅ Approved! Money added to wallet & Bishi Activated in 'My Bishi'!");
+            // 2. Add to Joined Pools (FIXED LOGIC)
+            if(pId && pId !== "undefined" && pId !== "null" && pId !== "Wallet Deposit") {
+                update(ref(db, `users/${mob}/joined_pools`), { [pId]: true });
+                push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', status: 'Success', title: `Joined Pool: ${pName}`, date: dateStr });
+                alert("✅ Wallet Updated & Bishi Activated in User's App!");
             } else {
-                push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', status: 'Success', title: `Wallet Recharge`, date: todayDate });
-                alert("✅ Approved! Money added to wallet.");
+                push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', status: 'Success', title: `Wallet Recharge`, date: dateStr });
+                alert("✅ Wallet Updated!");
             }
-
-            // 3. रिक्वेस्ट 'Approved' करणे
+            
             update(ref(db, 'deposits/' + id), { status: "Approved" });
         };
 
-        window.rejectDep = (id, mob, amt) => { 
-            push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Failed', status: 'Rejected', title: "Deposit Rejected (Check UTR)", date: new Date().toLocaleDateString('en-IN') });
-            update(ref(db, 'deposits/' + id), { status: "Rejected" }); 
-        };
+        window.rej = id => update(ref(db, 'deposits/' + id), { status: "Rejected" });
     </script>
 </body>
 </html>
