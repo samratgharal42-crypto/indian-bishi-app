@@ -10,22 +10,25 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        /* ORIGINAL HEADER */
-        .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 25px 20px 40px; color: white; border-radius: 0 0 30px 30px; }
-        .welcome-text { font-size: 13px; opacity: 0.9; }
-        .user-name { font-size: 24px; font-weight: 800; }
-        .cibil-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; float: right; margin-top: -35px; border: 1px solid rgba(255,255,255,0.4); }
+        /* HEADER WITH PROPER SPACING */
+        .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 30px 20px 60px; color: white; border-radius: 0 0 30px 30px; position: relative; }
+        .welcome-text { font-size: 14px; opacity: 0.9; }
+        .user-name { font-size: 28px; font-weight: 800; margin-top: 5px; }
+        .cibil-badge { background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; position: absolute; right: 20px; top: 35px; border: 1px solid rgba(255,255,255,0.3); }
 
-        .container { padding: 0 20px; margin-top: -20px; }
+        .main-content { padding: 0 20px; margin-top: -30px; position: relative; z-index: 10; }
 
-        /* ORIGINAL BANNER IMAGE */
-        .banner-img { width: 100%; border-radius: 16px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 25px; display: block; }
-        
+        /* RESTORED ORIGINAL BANNER (NO IMAGE NEEDED) */
+        .banner { background: #1e293b; border-radius: 20px; padding: 25px 20px; text-align: center; color: #fbbf24; box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-bottom: 25px; border: 1px solid #334155; }
+        .banner h3 { margin: 0; font-size: 14px; letter-spacing: 2px; color: #facc15; }
+        .banner h2 { margin: 5px 0 10px; font-size: 28px; font-weight: 900; letter-spacing: 1px; color: #fbbf24; }
+        .banner p { margin: 0; font-size: 12px; color: #cbd5e1; font-weight: 600; }
+
         .section-title { font-size: 18px; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; color: #1e293b; }
         
-        /* YOUR BEAUTIFUL POOL CARD DESIGN */
+        /* ORIGINAL POOL CARD DESIGN */
         .pools-container { display: flex; flex-direction: column; gap: 15px; }
-        .pool-card-new { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+        .pool-card-new { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
         .p-head { display: flex; justify-content: space-between; align-items: center; }
         .p-title { font-size: 18px; font-weight: 800; color: #1e293b; text-transform: uppercase; }
         .p-badge { background: #e0e7ff; color: #6366f1; padding: 5px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; }
@@ -37,7 +40,7 @@
         .s-label { font-size: 10px; color: #64748b; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; }
         .s-val { font-size: 14px; font-weight: 800; color: #1e293b; }
         
-        .btn-gradient { background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; display: block; text-align: center; text-decoration: none; box-shadow: 0 10px 20px rgba(99,102,241,0.2); }
+        .btn-gradient { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; display: block; text-align: center; box-shadow: 0 10px 20px rgba(99,102,241,0.2); }
 
         /* BOTTOM NAV */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 80px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 9999; border-top: 1px solid #f1f5f9; }
@@ -54,8 +57,12 @@
         <div class="cibil-badge">🛡️ CIBIL: 807</div>
     </div>
 
-    <div class="container">
-        <img src="banner.jpg" alt="Indian Bishi Banner" class="banner-img" onerror="this.style.display='none'">
+    <div class="main-content">
+        <div class="banner">
+            <h3>KEY FEATURES</h3>
+            <h2>INDIAN BISHI</h2>
+            <p>Trusted Community • Transparent • Growth</p>
+        </div>
 
         <div class="section-title">🎯 Available Bishi Pools</div>
         
@@ -84,12 +91,11 @@
             if(snap.exists()) document.getElementById('user-name').innerText = snap.val().name;
         });
 
-        // Load Active Pools with YOUR exact design
         onValue(ref(db, 'pools'), (snapshot) => {
             const container = document.getElementById('investment-pools');
             container.innerHTML = "";
             if(!snapshot.exists()) {
-                container.innerHTML = "<p style='text-align:center'>No active pools right now.</p>"; return;
+                container.innerHTML = "<p style='text-align:center; color:#64748b;'>No active pools right now.</p>"; return;
             }
 
             snapshot.forEach((childSnapshot) => {
@@ -125,7 +131,6 @@
             });
         });
 
-        // Redirects to Payment Page
         window.joinPool = (poolId, emiAmount, poolName) => {
             window.location.href = `/indian-bishi-app/user/payment.html?poolId=${poolId}&amount=${emiAmount}&name=${encodeURIComponent(poolName)}`;
         };
