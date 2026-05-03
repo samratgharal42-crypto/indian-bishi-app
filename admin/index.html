@@ -3,30 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Master Admin | Indian Bishi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; padding: 20px; margin: 0; }
-        .header { background: #0f172a; color: white; padding: 25px; border-radius: 16px; margin-bottom: 20px; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: white; padding: 20px 10px; border-radius: 16px; text-align: center; text-decoration: none; color: #1e293b; font-weight: 800; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
-        .icon { font-size: 28px; }
-        .card:active { transform: scale(0.95); }
+        :root { --primary: #0f172a; --accent: #6366f1; --bg: #f8fafc; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #1e293b; height: 100vh; }
+        
+        /* LOGIN SCREEN UI */
+        #login-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #0f172a, #1e293b); padding: 20px; }
+        .login-card { background: white; padding: 40px 30px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); width: 100%; max-width: 350px; text-align: center; }
+        .login-card h2 { margin: 0 0 5px; color: var(--primary); font-size: 24px; }
+        .login-card p { color: #64748b; font-size: 13px; margin-bottom: 25px; font-weight: 600; }
+        .login-card input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 24px; text-align: center; font-weight: 800; letter-spacing: 10px; outline: none; margin-bottom: 20px; transition: 0.3s; box-sizing: border-box; }
+        .login-card input:focus { border-color: var(--accent); }
+        .login-card button { background: var(--accent); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(99,102,241,0.3); }
+        .login-card button:active { transform: scale(0.95); }
+
+        /* DASHBOARD UI */
+        #dashboard { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #0f172a, #334155); color: white; padding: 30px 20px; border-radius: 20px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .header h1 { margin: 0; font-size: 22px; }
+        .logout-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 12px; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+        .menu-card { background: white; padding: 25px 15px; border-radius: 16px; text-align: center; text-decoration: none; color: #1e293b; font-weight: 800; border: 1px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 10px; transition: 0.3s; }
+        .menu-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(99,102,241,0.1); }
+        .icon { font-size: 32px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h2 style="margin:0;">⚙️ Admin Panel</h2>
-        <p style="font-size:12px; color:#cbd5e1; margin-top:5px;">Master Control</p>
+
+    <div id="login-screen">
+        <div class="login-card">
+            <h2>🛡️ Admin Access</h2>
+            <p>Enter Master PIN to continue</p>
+            <input type="password" id="admin-pin" placeholder="••••" maxlength="4">
+            <button onclick="checkLogin()">Unlock Dashboard</button>
+        </div>
     </div>
 
-    <div class="grid">
-        <a href="pools.html" class="card"><span class="icon">➕</span> Manage Pools</a>
-        <a href="deposits.html" class="card"><span class="icon">📥</span> UTR Deposits</a>
-        <a href="bids.html" class="card"><span class="icon">👁️</span> Live Bids & Winners</a>
-        <a href="withdrawals.html" class="card"><span class="icon">🏆</span> Withdrawals</a>
-        <a href="users.html" class="card"><span class="icon">👥</span> All Users Info</a>
-        <a href="support.html" class="card"><span class="icon">🎧</span> Support Chat</a>
+    <div id="dashboard">
+        <div class="header">
+            <div>
+                <h1>⚙️ Master Panel</h1>
+                <p style="margin:5px 0 0; font-size:12px; color:#cbd5e1;">Indian Bishi Control Center</p>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout 🔒</button>
+        </div>
+
+        <div class="grid">
+            <a href="pools.html" class="menu-card"><span class="icon">📈</span> Manage Pools</a>
+            <a href="deposits.html" class="menu-card"><span class="icon">📥</span> UTR Deposits</a>
+            <a href="withdrawals.html" class="menu-card"><span class="icon">🏆</span> Payouts</a>
+            <a href="bids.html" class="menu-card"><span class="icon">👁️</span> Live Bids</a>
+            <a href="users.html" class="menu-card"><span class="icon">👥</span> All Users</a>
+            <a href="support.html" class="menu-card"><span class="icon">🎧</span> Support Chat</a>
+        </div>
     </div>
+
+    <script>
+        // Check if already logged in during this session
+        if(sessionStorage.getItem('adminLogged') === 'true') {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+        }
+
+        function checkLogin() {
+            const pin = document.getElementById('admin-pin').value;
+            if(pin === "9599") { // 🚨 TUZHA PASSWORD 🚨
+                sessionStorage.setItem('adminLogged', 'true');
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+            } else {
+                alert("❌ Incorrect PIN! Access Denied.");
+                document.getElementById('admin-pin').value = '';
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('adminLogged');
+            location.reload();
+        }
+    </script>
 </body>
 </html>
