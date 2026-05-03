@@ -29,13 +29,12 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
         const db = getDatabase(app);
         const mobile = localStorage.getItem('activeUser');
 
-        // Check URL parameters for Pool ID and Amount
         const urlParams = new URLSearchParams(window.location.search);
         const poolId = urlParams.get('poolId');
         const emiAmount = urlParams.get('amount');
@@ -43,8 +42,8 @@
 
         if(emiAmount) {
             document.getElementById('amount').value = emiAmount;
-            document.getElementById('amount').readOnly = true; // Lock the amount
-            document.getElementById('pay-reason').innerText = `Joining: ${poolName} (First EMI)`;
+            document.getElementById('amount').readOnly = true; 
+            document.getElementById('pay-reason').innerText = `Joining: ${poolName}`;
         }
 
         window.processPayment = () => {
@@ -54,21 +53,17 @@
             document.getElementById('pay-btn').style.display = 'none';
             document.getElementById('loader').style.display = 'block';
             
-            // 1. Send Request to Admin
+            // फक्त ॲडमिनला रिक्वेस्ट पाठवणार (ऑटोमॅटिक जॉईन होणार नाही)
             push(ref(db, 'pay_requests'), {
                 userMobile: mobile,
                 amount: parseFloat(amt),
                 poolId: poolId || "Wallet Deposit",
+                poolName: poolName || "Self Deposit",
                 status: "Pending",
                 timestamp: Date.now()
             }).then(() => {
-                // 2. If it's a Pool Join, save to User's profile
-                if(poolId) {
-                    update(ref(db, `users/${mobile}/joined_pools`), { [poolId]: true });
-                }
-                
                 setTimeout(() => {
-                    alert("✅ Payment Request Sent! Pool has been added to 'My Bishi'.");
+                    alert("✅ Payment Request Sent! Once verified, Bishi will appear in 'My Bishi'.");
                     window.location.href = "/indian-bishi-app/dashboard.html";
                 }, 2000);
             });
