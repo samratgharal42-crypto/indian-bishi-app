@@ -6,7 +6,7 @@
     <title>My Active Bishi | Indian Bishi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
+        :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; --success: #10b981; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
@@ -14,20 +14,26 @@
         
         .container { padding: 20px; }
 
-        /* PERFECT CARD DESIGN */
-        .pool-card-new { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 15px; border: 1px solid #f1f5f9; }
-        .p-head { display: flex; justify-content: space-between; align-items: center; }
-        .p-title { font-size: 18px; font-weight: 800; color: #1e293b; text-transform: uppercase; }
-        .p-badge-active { background: #d1fae5; color: #059669; padding: 5px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; }
-        .p-amt { font-size: 32px; font-weight: 800; color: #6366f1; margin: 5px 0 15px; }
+        /* ADVANCED POOL CARD */
+        .pool-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 20px; border: 1px solid #f1f5f9; position: relative; overflow: hidden; }
+        .pool-card::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--success); }
         
-        .p-stats { display: flex; justify-content: space-between; background: white; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 15px 10px; margin-bottom: 15px; }
+        .p-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .p-title { font-size: 18px; font-weight: 800; color: #1e293b; text-transform: uppercase; }
+        .p-badge-active { background: #d1fae5; color: #059669; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; }
+        
+        .p-win-amt { font-size: 32px; font-weight: 800; color: var(--primary); margin: 5px 0 15px; letter-spacing: -1px; }
+        .p-win-amt span { font-size: 13px; color: #64748b; font-weight: 600; letter-spacing: 0; }
+        
+        .p-stats { display: flex; justify-content: space-between; background: #f8fafc; border-radius: 12px; padding: 15px 10px; margin-bottom: 15px; border: 1px dashed #cbd5e1; }
         .stat-box { text-align: center; flex: 1; border-right: 1px dashed #cbd5e1; }
         .stat-box:last-child { border-right: none; }
         .s-label { font-size: 10px; color: #64748b; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; }
         .s-val { font-size: 14px; font-weight: 800; color: #1e293b; }
         
-        .btn-active-status { background: #f0fdf4; color: #059669; border: 1px solid #bbf7d0; width: 100%; padding: 15px; border-radius: 12px; font-size: 15px; font-weight: 800; display: block; text-align: center; }
+        /* ACTION BUTTONS */
+        .btn-bid { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2); margin-bottom: 10px; }
+        .btn-status { background: #f0fdf4; color: #059669; border: 1px solid #bbf7d0; width: 100%; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 800; display: block; text-align: center; }
 
         .empty-state { text-align: center; padding: 50px 20px; color: #64748b; font-weight: 600; line-height: 1.6; }
         .btn-home { display: inline-block; background: var(--primary); color: white; padding: 12px 24px; border-radius: 12px; text-decoration: none; margin-top: 15px; font-weight: 800; }
@@ -44,13 +50,13 @@
     <div class="header">🎯 My Active Bishi</div>
 
     <div class="container" id="my-pools">
-        <p style="text-align:center; color:#94a3b8; font-weight:600; margin-top: 50px;">Loading your joined pools...</p>
+        <p style="text-align:center; color:#94a3b8; font-weight:600; margin-top: 50px;">Fetching your active bishi...</p>
     </div>
 
     <nav class="bottom-nav">
-        <a href="/indian-bishi-app/dashboard.html" class="nav-item"><span class="nav-icon">🏠</span><span>HOME</span></a>
-        <a href="/indian-bishi-app/bishi/all-pools.html" class="nav-item active"><span class="nav-icon">🎯</span><span>MY BISHI</span></a>
-        <a href="/indian-bishi-app/user/profile.html" class="nav-item"><span class="nav-icon">👤</span><span>ACCOUNT</span></a>
+        <a href="../dashboard.html" class="nav-item"><span class="nav-icon">🏠</span><span>HOME</span></a>
+        <a href="all-pools.html" class="nav-item active"><span class="nav-icon">🎯</span><span>MY BISHI</span></a>
+        <a href="../user/profile.html" class="nav-item"><span class="nav-icon">👤</span><span>ACCOUNT</span></a>
     </nav>
 
     <script type="module">
@@ -63,21 +69,23 @@
 
         if(!mobile) window.location.href = "../index.html";
 
+        // 1. Fetch User's Joined Pools First
         onValue(ref(db, `users/${mobile}/joined_pools`), (joinedSnap) => {
             const container = document.getElementById('my-pools');
             
             if(!joinedSnap.exists()) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div style="font-size:40px; margin-bottom:10px;">📭</div>
-                        You haven't joined any Bishi Pools yet.<br>Go to Home page to explore and join!
-                        <br><a href="../dashboard.html" class="btn-home">Explore Pools</a>
+                        <div style="font-size:50px; margin-bottom:15px;">📭</div>
+                        You haven't joined any Bishi Pools yet.<br>Start your investment journey today!
+                        <br><a href="../dashboard.html" class="btn-home">Explore Live Pools</a>
                     </div>`;
                 return;
             }
 
-            const joinedPoolsData = joinedSnap.val(); 
+            const joinedPoolsData = joinedSnap.val(); // e.g. { "pool_id_1": true }
 
+            // 2. Fetch Actual Pool Details
             onValue(ref(db, 'pools'), (allPoolsSnap) => {
                 container.innerHTML = "";
                 let hasPools = false;
@@ -86,30 +94,35 @@
                     if(joinedPoolsData[child.key]) { 
                         hasPools = true;
                         const data = child.val();
+                        
                         container.innerHTML += `
-                            <div class="pool-card-new">
+                            <div class="pool-card">
                                 <div class="p-head">
-                                    <div class="p-title">${data.name}</div>
-                                    <div class="p-badge-active">Active</div>
+                                    <div class="p-title">${data.name || 'Bishi'}</div>
+                                    <div class="p-badge-active">🟢 Active</div>
                                 </div>
-                                <div class="p-amt">₹${data.amount.toLocaleString('en-IN')}</div>
+                                <div class="p-win-amt">₹${(data.winAmount || 0).toLocaleString('en-IN')} <span>Win Amount</span></div>
                                 
                                 <div class="p-stats">
                                     <div class="stat-box">
-                                        <div class="s-label">EMI</div>
-                                        <div class="s-val">₹${data.emi}/mo</div>
+                                        <div class="s-label">EMI (${data.emiType || 'N/A'})</div>
+                                        <div class="s-val">₹${data.emiAmount || 0}</div>
                                     </div>
                                     <div class="stat-box">
-                                        <div class="s-label">MONTHS</div>
-                                        <div class="s-val">${data.months}</div>
+                                        <div class="s-label">DURATION</div>
+                                        <div class="s-val">${data.duration || 0}</div>
                                     </div>
                                     <div class="stat-box">
-                                        <div class="s-label">PAID HAPTE</div>
-                                        <div class="s-val">1 / ${data.months}</div>
+                                        <div class="s-label">STATUS</div>
+                                        <div class="s-val" style="color:#10b981;">Up to date</div>
                                     </div>
                                 </div>
 
-                                <div class="btn-active-status">🟢 You are an active member</div>
+                                <a href="room.html?id=${child.key}" class="btn-bid">
+                                    🔴 Enter Live Bidding Room
+                                </a>
+
+                                <div class="btn-status">🛡️ AutoPay Mandate Active</div>
                             </div>
                         `;
                     }
