@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Withdrawals | Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; padding: 15px; }
+        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #cbd5e1; }
+        .btn-done { background: #10b981; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: 800; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <a href="index.html" style="text-decoration:none; font-weight:800;">⬅ Back</a>
+    <h2>🏆 Bishi Winners (Withdrawals)</h2>
+    <div id="w-list">Loading requests...</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        const db = getDatabase(initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" }));
+
+        onValue(ref(db, 'withdrawals'), snap => {
+            const list = document.getElementById('w-list');
+            list.innerHTML = "";
+            let has = false;
+            snap.forEach(c => {
+                const w = c.val();
+                if(w.status === "Pending") {
+                    has = true;
+                    list.innerHTML += `
+                        <div class="card">
+                            <b>Winner: +91 ${w.userMobile}</b><br>
+                            <span style="color:#6366f1; font-size:20px;">Amount: ₹${w.amount}</span><br>
+                            <small>Pool: ${w.poolName}</small><br><br>
+                            <button class="btn-done" onclick="markPaid('${c.key}')">Mark as Paid ✅</button>
+                        </div>`;
+                }
+            });
+            if(!has) list.innerHTML = "No pending winner payouts.";
+        });
+
+        window.markPaid = id => update(ref(db, 'withdrawals/' + id), { status: "Paid" });
+    </script>
+</body>
+</html>
