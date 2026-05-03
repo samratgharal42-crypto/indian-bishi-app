@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make Deposit | Indian Bishi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .pay-card { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
+        
+        .amt-display { font-size: 40px; font-weight: 800; color: #1e293b; margin: 10px 0; }
+        .pay-reason { font-size: 14px; color: #64748b; font-weight: 800; margin-bottom: 20px; }
+        
+        .qr-box { background: #f1f5f9; padding: 15px; border-radius: 16px; display: inline-block; margin-bottom: 20px; border: 1px dashed #cbd5e1; }
+        .qr-box img { width: 180px; height: 180px; mix-blend-mode: multiply; }
+
+        .app-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
+        .app-btn { flex: 1; padding: 12px 5px; border-radius: 12px; font-weight: 800; font-size: 13px; text-decoration: none; color: white; display: flex; justify-content: center; align-items: center; }
+        .pe { background: #5f259f; } /* PhonePe */
+        .gp { background: #1a73e8; } /* GPay */
+        .py { background: #00baf2; } /* Paytm */
+
+        .utr-box { text-align: left; margin-top: 20px; padding-top: 20px; border-top: 1px solid #f1f5f9; }
+        .utr-box label { font-size: 12px; font-weight: 800; color: #64748b; }
+        .utr-box input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 16px; font-weight: 800; margin: 8px 0 15px; outline: none; text-align: center; letter-spacing: 2px; }
+        .submit-btn { background: #10b981; color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="pay-card">
+        <div style="font-size:16px; font-weight:800; color:#0f172a">Payment Gateway</div>
+        <div class="pay-reason" id="pay-reason">Loading...</div>
+        
+        <div class="amt-display" id="display-amt">₹0</div>
+
+        <div class="qr-box">
+            <img id="qr-image" src="" alt="Scan to Pay">
+        </div>
+
+        <div style="font-size:12px; color:#64748b; margin-bottom:10px; font-weight:800;">OR PAY DIRECTLY VIA</div>
+        
+        <div class="app-buttons">
+            <a href="#" id="link-pe" class="app-btn pe">PhonePe</a>
+            <a href="#" id="link-gp" class="app-btn gp">GPay</a>
+            <a href="#" id="link-py" class="app-btn py">Paytm</a>
+        </div>
+
+        <div class="utr-box">
+            <label>After payment, enter 12-digit UTR/Ref No:</label>
+            <input type="number" id="utr-input" placeholder="e.g. 312345678901">
+            <button class="submit-btn" onclick="submitDeposit()">Verify Payment</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
+        const db = getDatabase(app);
+        const mobile = localStorage.getItem('activeUser');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const poolId = urlParams.get('poolId');
+        const amount = urlParams.get('amount') || "0";
+        const poolName = urlParams.get('name') || "Wallet Deposit";
+
+        // 🚨 TUZHA MERCHANT UPI ID 🚨
+        const upiId = "paytm.s18vfbf@pty";
+        const payeeName = "Indian Bishi";
+
+        // Setup Display
+        document.getElementById('display-amt').innerText = "₹" + amount;
+        document.getElementById('pay-reason').innerText = poolId ? `Joining: ${poolName}` : "Add to Wallet";
+
+        // Generate QR Code & UPI Links
+        const upiString = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
+        
+        document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
+        
+        document.getElementById('link-pe').href = `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
+        document.getElementById('link-gp').href = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
+        document.getElementById('link-py').href = `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
+
+        window.submitDeposit = () => {
+            const utr = document.getElementById('utr-input').value;
+            if(utr.length < 12) return alert("Please enter correct 12-digit UTR number!");
+
+            push(ref(db, 'deposits'), {
+                userMobile: mobile,
+                amount: parseFloat(amount),
+                utr: utr,
+                poolId: poolId,
+                poolName: poolName,
+                status: "Pending",
+                date: new Date().toLocaleDateString('en-IN')
+            }).then(() => {
+                alert("✅ Payment details submitted! Your request is under verification.");
+                window.location.href = "/indian-bishi-app/dashboard.html";
+            });
+        };
+    </script>
+</body>
+</html>
