@@ -21,7 +21,7 @@
         .header { background: var(--primary); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         
         .tab-bar { display: flex; background: white; border-bottom: 1px solid #e2e8f0; overflow-x: auto; position: sticky; top: 60px; z-index: 100; }
-        .tab { flex: none; padding: 15px 20px; font-weight: 800; font-size: 12px; color: #64748b; cursor: pointer; white-space: nowrap; }
+        .tab { flex: none; padding: 15px 20px; font-weight: 800; font-size: 12px; color: #64748b; cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; }
         .tab.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
 
         .container { padding: 15px; }
@@ -40,14 +40,15 @@
         .btn-red { background: var(--danger); }
         .btn-green { background: var(--success); }
 
-        input, select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 10px; font-size: 14px; }
+        input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 10px; font-size: 14px; outline: none; }
     </style>
 </head>
 <body>
 
     <div id="auth-screen">
         <div class="auth-box">
-            <h2 style="margin-bottom:20px">Admin Access</h2>
+            <h2 style="margin-bottom:5px; color:#0f172a;">Admin Access</h2>
+            <p style="font-size:12px; color:#64748b; margin-bottom:20px;">Indian Bishi Control Panel</p>
             <input type="password" id="pin" placeholder="••••" maxlength="4">
             <button onclick="login()">Login 🔓</button>
         </div>
@@ -55,8 +56,8 @@
 
     <div id="main-dashboard">
         <div class="header">
-            <h2 style="font-size:16px">Indian Bishi Admin</h2>
-            <button onclick="location.reload()" style="background:none; border:1px solid white; color:white; padding:4px 8px; border-radius:6px; font-size:10px;">Logout</button>
+            <h2 style="font-size:16px; margin:0;">⚙️ Admin Panel</h2>
+            <button onclick="location.reload()" style="background:rgba(255,255,255,0.2); border:none; color:white; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;">Logout</button>
         </div>
 
         <div class="tab-bar">
@@ -71,46 +72,62 @@
                 <div class="card">
                     <h3>➕ Create New Pool</h3>
                     <input type="text" id="p-name" placeholder="Pool Name (e.g. Silver 25K)">
-                    <input type="number" id="p-amt" placeholder="Total Amount">
-                    <input type="number" id="p-emi" placeholder="Monthly EMI">
-                    <input type="number" id="p-months" placeholder="Duration (Months)">
-                    <button class="btn btn-green" style="width:100%" onclick="createPool()">Create Pool 🚀</button>
+                    <div style="display:flex; gap:10px;">
+                        <input type="number" id="p-amt" placeholder="Total Amt (₹)">
+                        <input type="number" id="p-emi" placeholder="EMI (₹)">
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <input type="number" id="p-months" placeholder="Months">
+                        <input type="number" id="p-max" placeholder="Max Members" value="60">
+                    </div>
+                    <button class="btn btn-green" style="width:100%" onclick="createPool()">Publish Pool 🚀</button>
                 </div>
-                <div id="pools-list"></div>
+                <div class="card">
+                    <h3>🗑️ Live Pools (Delete)</h3>
+                    <div id="pools-list"><p style="font-size:12px; color:#64748b;">Loading...</p></div>
+                </div>
             </div>
 
             <div id="tab-users" class="tab-content" style="display:none">
-                <div id="users-list"></div>
+                <div class="card">
+                    <h3>👥 Registered Users</h3>
+                    <div id="users-list"><p style="font-size:12px; color:#64748b;">Loading...</p></div>
+                </div>
             </div>
 
             <div id="tab-requests" class="tab-content" style="display:none">
                 <div class="card">
-                    <h3>🔔 Pending Deposits</h3>
-                    <div id="requests-list"></div>
+                    <h3>🔔 Pending Payments</h3>
+                    <div id="requests-list"><p style="font-size:12px; color:#64748b;">Loading...</p></div>
                 </div>
             </div>
 
             <div id="tab-txns" class="tab-content" style="display:none">
-                <div id="global-txns"></div>
+                <div class="card">
+                    <h3>📝 Global Transactions</h3>
+                    <div id="global-txns"><p style="font-size:12px; color:#64748b;">Loading...</p></div>
+                </div>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, get, child, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
         const db = getDatabase(app);
 
+        // LOGIN (PIN: 1234)
         window.login = () => {
             if(document.getElementById('pin').value === "1234") {
                 document.getElementById('auth-screen').style.display = 'none';
                 document.getElementById('main-dashboard').style.display = 'block';
                 init();
-            } else { alert("Wrong PIN!"); }
+            } else { alert("❌ Wrong PIN!"); }
         };
 
+        // TAB SWITCHER
         window.showTab = (name) => {
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -125,40 +142,48 @@
             loadTxns();
         };
 
-        // --- POOLS LOGIC ---
+        // ------------------ 1. POOLS LOGIC ------------------
         window.createPool = () => {
             const name = document.getElementById('p-name').value;
             const amt = parseInt(document.getElementById('p-amt').value);
             const emi = parseInt(document.getElementById('p-emi').value);
             const months = parseInt(document.getElementById('p-months').value);
-            if(!name || !amt) return;
-            push(ref(db, 'pools'), { name, amount: amt, emi, months, joined: 0, status: "Open" });
-            alert("Pool Live!");
+            const max = parseInt(document.getElementById('p-max').value);
+
+            if(!name || !amt || !emi || !months) return alert("Fill all fields!");
+
+            push(ref(db, 'pools'), { name, amount: amt, emi, months, maxMembers: max, joined: 0, status: "Open" })
+            .then(() => {
+                alert("✅ Pool is Live on User App!");
+                document.querySelectorAll('input[type="text"], input[type="number"]').forEach(i => i.value = '');
+            });
         };
 
         const loadPools = () => {
             onValue(ref(db, 'pools'), snap => {
                 const list = document.getElementById('pools-list');
                 list.innerHTML = "";
+                if(!snap.exists()) { list.innerHTML = "<p style='font-size:12px;'>No live pools.</p>"; return; }
                 snap.forEach(c => {
                     const d = c.val();
-                    list.innerHTML += `<div class="list-item"><b>${d.name}</b> (₹${d.amount})<br><button class="btn btn-red" onclick="deletePool('${c.key}')">Delete</button></div>`;
+                    list.innerHTML += `<div class="list-item"><b>${d.name}</b> (₹${d.amount})<br><span style="font-size:11px; color:#64748b;">EMI: ₹${d.emi} | Months: ${d.months}</span><br><button class="btn btn-red" style="margin-top:5px; width:100%;" onclick="deletePool('${c.key}')">Delete Pool</button></div>`;
                 });
             });
         };
-        window.deletePool = id => remove(ref(db, 'pools/' + id));
+        window.deletePool = id => { if(confirm("Delete this pool?")) remove(ref(db, 'pools/' + id)); };
 
-        // --- USERS & WALLET ---
+        // ------------------ 2. USERS LOGIC ------------------
         const loadUsers = () => {
             onValue(ref(db, 'users'), snap => {
                 const list = document.getElementById('users-list');
                 list.innerHTML = "";
+                if(!snap.exists()) return;
                 snap.forEach(c => {
                     const d = c.val();
                     list.innerHTML += `
-                        <div class="card">
-                            <b>${d.name}</b> (+91 ${c.key})<br>
-                            <span class="badge bg-success">Balance: ₹${(d.balance || 0).toFixed(2)}</span>
+                        <div class="list-item">
+                            <b>👤 ${d.name}</b> (+91 ${c.key})<br>
+                            <span class="badge bg-success" style="margin-top:5px; display:inline-block;">Balance: ₹${(d.balance || 0).toFixed(2)}</span>
                             <div class="btn-row">
                                 <button class="btn btn-blue" onclick="adjustWallet('${c.key}', ${d.balance || 0}, 'add')">Add Money</button>
                                 <button class="btn btn-red" onclick="adjustWallet('${c.key}', ${d.balance || 0}, 'minus')">Deduct</button>
@@ -170,29 +195,34 @@
 
         window.adjustWallet = (mob, cur, type) => {
             let amt = parseFloat(prompt("Enter Amount:"));
-            if(!amt) return;
+            if(!amt || isNaN(amt) || amt <= 0) return;
             let newBal = type === 'add' ? cur + amt : cur - amt;
+            
             update(ref(db, 'users/' + mob), { balance: newBal });
             push(ref(db, 'transactions'), {
                 userMobile: mob, amount: amt, type: type === 'add' ? 'Credit' : 'Debit',
                 title: type === 'add' ? "Admin Deposit" : "Admin Deduction",
-                date: new Date().toLocaleString(), id: "AD"+Date.now()
+                date: new Date().toLocaleDateString('en-IN'), id: "AD"+Date.now()
             });
+            alert("✅ Wallet Updated!");
         };
 
-        // --- PAY REQUESTS LOGIC ---
+        // ------------------ 3. PAY REQUESTS (MAIN LOGIC) ------------------
         const loadRequests = () => {
             onValue(ref(db, 'pay_requests'), snap => {
                 const list = document.getElementById('requests-list');
-                list.innerHTML = snap.exists() ? "" : "No pending requests.";
+                list.innerHTML = snap.exists() ? "" : "<p style='font-size:12px;'>No pending requests.</p>";
                 snap.forEach(c => {
                     const d = c.val();
+                    const reason = d.poolId && d.poolId !== "Wallet Deposit" ? `Joining: ${d.poolName}` : "Wallet Deposit";
+                    
                     list.innerHTML += `
                         <div class="list-item">
-                            <b>₹${d.amount}</b> from ${d.userMobile}<br>
+                            <b style="font-size:16px; color:var(--primary);">₹${d.amount}</b> from +91 ${d.userMobile}<br>
+                            <span style="font-size:12px; color:#ef4444; font-weight:800;">Reason: ${reason}</span><br>
                             <span class="badge bg-warning">Pending Approval</span>
                             <div class="btn-row">
-                                <button class="btn btn-green" onclick="approvePay('${c.key}', '${d.userMobile}', ${d.amount})">Approve ✅</button>
+                                <button class="btn btn-green" onclick="approvePay('${c.key}', '${d.userMobile}', ${d.amount}, '${d.poolId}', '${d.poolName}')">Approve ✅</button>
                                 <button class="btn btn-red" onclick="deleteReq('${c.key}')">Reject</button>
                             </div>
                         </div>`;
@@ -200,24 +230,54 @@
             });
         };
 
-        window.approvePay = (reqId, mob, amt) => {
-            update(ref(db, `users/${mob}`), { balance: (window.userBal || 0) + amt }); // Note: Simplified bal fetch
-            push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', title: "Deposit via App", date: new Date().toLocaleString(), id: reqId });
+        window.approvePay = (reqId, mob, amt, pId, pName) => {
+            // Check if it's a Pool Join Request or Wallet Deposit
+            if(pId && pId !== "Wallet Deposit" && pId !== "undefined" && pId !== "null") {
+                // 1. ADD TO JOINED POOLS
+                update(ref(db, `users/${mob}/joined_pools`), { [pId]: true });
+                // 2. RECORD TRANSACTION
+                push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', title: `Joined Pool: ${pName || 'Bishi'}`, date: new Date().toLocaleDateString('en-IN'), id: reqId });
+                alert("✅ Payment Approved! User is now joined in the Bishi.");
+            } else {
+                // 1. ADD TO WALLET BALANCE
+                get(child(ref(db), `users/${mob}/balance`)).then(snap => {
+                    let curBal = snap.exists() ? snap.val() : 0;
+                    update(ref(db, `users/${mob}`), { balance: curBal + amt });
+                });
+                // 2. RECORD TRANSACTION
+                push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', title: "Wallet Deposit (PhonePe)", date: new Date().toLocaleDateString('en-IN'), id: reqId });
+                alert("✅ Payment Approved! Money added to User's Wallet.");
+            }
+            
+            // DELETE REQUEST AFTER APPROVAL
             remove(ref(db, 'pay_requests/' + reqId));
-            alert("Payment Approved!");
         };
-        window.deleteReq = id => remove(ref(db, 'pay_requests/' + id));
 
+        window.deleteReq = id => { if(confirm("Reject this payment?")) remove(ref(db, 'pay_requests/' + id)); };
+
+        // ------------------ 4. TRANSACTIONS ------------------
         const loadTxns = () => {
             onValue(ref(db, 'transactions'), snap => {
                 const list = document.getElementById('global-txns');
-                list.innerHTML = "<h3>Recent History</h3>";
+                list.innerHTML = "";
+                if(!snap.exists()) { list.innerHTML = "<p style='font-size:12px;'>No transactions yet.</p>"; return; }
+                
                 snap.forEach(c => {
                     const d = c.val();
-                    list.innerHTML += `<div class="list-item" style="font-size:11px">${d.date}: ${d.userMobile} - ${d.type} ₹${d.amount}</div>`;
+                    const color = d.type === 'Credit' ? '#10b981' : '#ef4444';
+                    const sign = d.type === 'Credit' ? '+' : '-';
+                    list.innerHTML = `
+                        <div class="list-item" style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <b style="font-size:12px;">+91 ${d.userMobile}</b><br>
+                                <span style="font-size:10px; color:#64748b;">${d.title} | ${d.date}</span>
+                            </div>
+                            <div style="font-weight:800; color:${color};">${sign}₹${d.amount}</div>
+                        </div>` + list.innerHTML; // Prepend to show latest first
                 });
             });
         };
     </script>
 </body>
 </html>
+
