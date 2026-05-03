@@ -130,7 +130,7 @@
 
             <div id="tab-support" class="tab-content" style="display:none">
                 <div class="card">
-                    <h3>🎧 User Queries</h3>
+                    <h3>🎧 User Queries & Chat</h3>
                     <div id="support-list"><p style="font-size:12px; color:#64748b;">Loading...</p></div>
                 </div>
             </div>
@@ -251,7 +251,7 @@
             alert("✅ Wallet Updated!");
         };
 
-        // 3. DEPOSITS LOGIC (UTR)
+        // 3. DEPOSITS LOGIC (UTR + Wallet + My Bishi Fix)
         const loadDeposits = () => {
             onValue(ref(db, 'deposits'), snap => {
                 const list = document.getElementById('deposits-list');
@@ -277,18 +277,26 @@
         };
 
         window.approveDep = (id, mob, amt, pId, pName) => {
-            if(pId && pId !== "undefined") {
+            // Step 1: ALWAYS ADD MONEY TO USER'S WALLET
+            get(child(ref(db), `users/${mob}/balance`)).then(snap => {
+                let curBal = snap.exists() ? parseFloat(snap.val()) : 0;
+                let newBal = curBal + parseFloat(amt);
+                update(ref(db, `users/${mob}`), { balance: newBal });
+            });
+
+            // Step 2: CHECK IF IT'S FOR A BISHI POOL
+            if(pId && pId !== "undefined" && pId !== "null" && pId !== "Wallet Deposit") {
+                // Yes, it is a Bishi. Start it in 'My Bishi'
                 update(ref(db, `users/${mob}/joined_pools`), { [pId]: true });
-                push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', status: 'Success', title: `Joined: ${pName}`, date: todayDate });
+                push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', status: 'Success', title: `Wallet Deposit & Joined: ${pName}`, date: todayDate });
             } else {
-                get(child(ref(db), `users/${mob}/balance`)).then(snap => {
-                    let cur = snap.exists() ? snap.val() : 0;
-                    update(ref(db, `users/${mob}`), { balance: cur + amt });
-                });
+                // No, it was just a normal wallet recharge
                 push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', status: 'Success', title: `Wallet Deposit`, date: todayDate });
             }
+
+            // Step 3: UPDATE STATUS
             update(ref(db, 'deposits/' + id), { status: "Approved" });
-            alert("✅ Deposit Approved!");
+            alert("✅ Approved! Money added to wallet & Bishi started (if applicable).");
         };
 
         window.rejectDep = (id, mob, amt) => { 
@@ -335,31 +343,41 @@
             });
         };
 
-        // 6. SUPPORT
+        // 6. SUPPORT (Fixed to show all messages and reply option)
         const loadSupport = () => {
             onValue(ref(db, 'support'), snap => {
                 const list = document.getElementById('support-list');
-                list.innerHTML = snap.exists() ? "" : "No unread messages.";
+                list.innerHTML = "";
+                if(!snap.exists()) { 
+                    list.innerHTML = "<p style='font-size:12px; color:#64748b;'>No messages yet.</p>"; 
+                    return; 
+                }
+                
                 snap.forEach(c => {
                     const d = c.val();
-                    if(d.status === "Unread") {
-                        list.innerHTML += `
-                            <div class="list-item">
-                                <b>+91 ${d.userMobile}</b><br>
-                                <p style="margin:5px 0;">${d.message}</p>
-                                <button class="btn btn-blue" onclick="replyMsg('${c.key}', '${d.userMobile}')">Reply</button>
-                            </div>`;
-                    }
+                    const statusIcon = d.status === "Answered" ? "<span style='color:green; font-size:11px;'>✅ Answered</span>" : "<span style='color:red; font-size:11px;'>🔔 New</span>";
+                    const replySection = d.status !== "Answered" ? 
+                        `<button class="btn btn-blue" style="margin-top:5px;" onclick="replyMsg('${c.key}', '${d.userMobile}')">Reply</button>` : 
+                        `<div style="font-size:11px; color:#64748b; background:#e2e8f0; padding:8px; border-radius:8px; margin-top:8px;"><b>Your Reply:</b> ${d.reply}</div>`;
+                    
+                    list.innerHTML += `
+                        <div class="list-item">
+                            <b>+91 ${d.userMobile}</b> ${statusIcon}<br>
+                            <p style="margin:5px 0; font-size:14px; font-weight:800; color:#1e293b;">${d.message}</p>
+                            ${replySection}
+                        </div>`;
                 });
             });
         };
+
         window.replyMsg = (id, mob) => {
             let rep = prompt("Reply to " + mob + ":");
             if(rep) {
                 update(ref(db, 'support/' + id), { reply: rep, status: "Answered" });
-                alert("Reply Sent!");
+                alert("✅ Reply Sent!");
             }
         };
     </script>
 </body>
 </html>
+
