@@ -17,14 +17,14 @@
 
         .main-content { padding: 0 20px; margin-top: -30px; position: relative; z-index: 10; }
 
-        /* 🔥 PROPER 1000x350 BANNERS SLIDER 🔥 */
+        /* 🔥 1000x350 BANNERS SLIDER 🔥 */
         .banner-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; margin-bottom: 25px; padding-bottom: 10px; }
         .banner-slider::-webkit-scrollbar { display: none; }
         .slide { scroll-snap-align: center; flex: 0 0 100%; border-radius: 16px; object-fit: cover; aspect-ratio: 1000 / 350; width: 100%; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
 
         .section-title { font-size: 18px; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; color: #1e293b; }
         
-        /* UPDATED POOL CARD DESIGN */
+        /* POOL CARD DESIGN */
         .pools-container { display: flex; flex-direction: column; gap: 15px; }
         .pool-card-new { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
         .p-head { display: flex; justify-content: space-between; align-items: center; }
@@ -89,7 +89,6 @@
             if(snap.exists()) document.getElementById('user-name').innerText = snap.val().name;
         });
 
-        // ऍडमिनमधून नवीन फॉरमॅट बीशी फेच करणे
         onValue(ref(db, 'pools'), (snapshot) => {
             const container = document.getElementById('investment-pools');
             container.innerHTML = "";
@@ -107,7 +106,7 @@
                             <div class="p-title">${data.name}</div>
                             <div class="p-badge">Open</div>
                         </div>
-                        <div class="p-win-amt">₹${data.winAmount.toLocaleString('en-IN')} <span>Win Amount</span></div>
+                        <div class="p-win-amt">₹${(data.winAmount || 0).toLocaleString('en-IN')} <span>Win Amount</span></div>
                         
                         <div class="p-stats">
                             <div class="stat-box">
@@ -124,15 +123,11 @@
                             </div>
                         </div>
 
-                        <button class="btn-gradient" onclick="joinPool('${childSnapshot.key}', ${data.emiAmount}, '${data.name}')">Pay First Installment 🚀</button>
+                        <button class="btn-gradient" onclick="window.location.href='pool-details.html?id=${childSnapshot.key}'">View Details & Join 🚀</button>
                     </div>
                 `;
             });
         });
-
-        window.joinPool = (poolId, emiAmount, poolName) => {
-            window.location.href = `/indian-bishi-app/user/deposit.html?poolId=${poolId}&amount=${emiAmount}&name=${encodeURIComponent(poolName)}`;
-        };
     </script>
 </body>
 </html>
