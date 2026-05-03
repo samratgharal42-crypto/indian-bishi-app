@@ -6,54 +6,60 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; padding: 15px; margin: 0; }
-        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #cbd5e1; }
-        .reply-box { display: flex; gap: 8px; margin-top: 10px; }
-        .reply-box input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; font-weight: 600; font-family: inherit; }
+        .user-thread { background: white; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 20px; }
+        .chat-area { max-height: 200px; overflow-y: auto; background: #f8fafc; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px inset #e2e8f0; display: flex; flex-direction: column; gap: 8px; }
+        .m-user { align-self: flex-start; background: #e0e7ff; color: #3730a3; padding: 8px; border-radius: 8px; font-size: 13px; max-width: 80%; }
+        .m-admin { align-self: flex-end; background: #d1fae5; color: #065f46; padding: 8px; border-radius: 8px; font-size: 13px; max-width: 80%; }
+        
+        .reply-box { display: flex; gap: 8px; }
+        .reply-box input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-weight: 600; }
         .reply-box button { background: #10b981; color: white; border: none; padding: 0 15px; border-radius: 8px; font-weight: 800; cursor: pointer; }
     </style>
 </head>
 <body>
     <a href="index.html" style="text-decoration:none; font-weight:800; color:#1e293b;">⬅ Back</a>
-    <h2 style="margin-top:10px;">🎧 User Queries</h2>
-    <div id="list"><p style="color:#64748b; font-size:12px;">Loading messages...</p></div>
+    <h2 style="margin-top:10px;">🎧 Live Support Chats</h2>
+    <div id="threads-container">Loading...</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         const db = getDatabase(initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" }));
 
-        // FIX: Displaying all messages clearly
-        onValue(ref(db, 'support'), snap => {
-            const list = document.getElementById('list'); 
-            list.innerHTML = "";
-            let hasData = false;
-            
-            snap.forEach(c => {
-                hasData = true;
-                const d = c.val();
+        onValue(ref(db, 'support_chats'), snap => {
+            const container = document.getElementById('threads-container'); 
+            container.innerHTML = "";
+            let hasChats = false;
+
+            snap.forEach(userThread => {
+                hasChats = true;
+                const mob = userThread.key;
+                let msgsHTML = "";
                 
-                // Show Admin's reply if it exists, else show input box
-                let replyHTML = d.reply ? 
-                    `<div style="background:#d1fae5; color:#065f46; padding:8px; border-radius:6px; margin-top:8px; font-size:13px;"><b>Admin Reply:</b> ${d.reply}</div>` : 
-                    `<div class="reply-box">
-                        <input type="text" id="rep-${c.key}" placeholder="Type reply here...">
-                        <button onclick="sendRep('${c.key}')">Send</button>
-                    </div>`;
-                
-                list.innerHTML += `
-                    <div class="card">
-                        <div style="font-size:12px; color:#6366f1; font-weight:800; margin-bottom:5px;">👤 +91 ${d.userMobile}</div>
-                        <div style="font-weight:800; font-size:15px; color:#1e293b;">${d.message}</div>
-                        ${replyHTML}
+                userThread.forEach(msg => {
+                    const m = msg.val();
+                    const cls = m.sender === 'user' ? 'm-user' : 'm-admin';
+                    const prefix = m.sender === 'user' ? 'User:' : 'You:';
+                    msgsHTML += `<div class="${cls}"><b>${prefix}</b> ${m.text}</div>`;
+                });
+
+                container.innerHTML += `
+                    <div class="user-thread">
+                        <b style="color:#6366f1;">📞 +91 ${mob}</b>
+                        <div class="chat-area">${msgsHTML}</div>
+                        <div class="reply-box">
+                            <input type="text" id="rep-${mob}" placeholder="Reply to ${mob}...">
+                            <button onclick="sendRep('${mob}')">Send</button>
+                        </div>
                     </div>`;
             });
-            if(!hasData) list.innerHTML = "<p style='color:#64748b; font-size:13px;'>No messages yet.</p>";
+            if(!hasChats) container.innerHTML = "<p style='color:#64748b; font-size:13px;'>No active chats.</p>";
         });
 
-        window.sendRep = id => {
-            const txt = document.getElementById('rep-' + id).value;
-            if(!txt) return alert("Type a message first!");
-            update(ref(db, 'support/' + id), { reply: txt }).then(() => alert("✅ Reply Sent to User!"));
+        window.sendRep = mob => {
+            const txt = document.getElementById('rep-' + mob).value;
+            if(!txt) return;
+            push(ref(db, `support_chats/${mob}`), { text: txt, sender: 'admin', timestamp: Date.now() });
         };
     </script>
 </body>
