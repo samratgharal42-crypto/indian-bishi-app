@@ -41,19 +41,28 @@
                     bidsHTML += `<div class="bid-item"><span>+91 ${b.user}</span> <b style="color:#ef4444;">₹${bAmt}</b></div>`;
                 });
 
-                get(child(ref(db), `pools/${poolId}/name`)).then(nameSnap => {
-                    const poolName = nameSnap.val() || poolId;
+                get(child(ref(db), `pools/${poolId}`)).then(pSnap => {
+                    if(!pSnap.exists()) return;
+                    const pData = pSnap.val();
+                    const poolName = pData.name;
+                    const dur = parseInt(pData.duration);
+                    const pastWinCount = pData.past_winners ? Object.keys(pData.past_winners).length : 0;
+
                     container.innerHTML += `
                         <div class="pool-section">
-                            <h3 style="margin:0 0 10px; color:#6366f1;">Pool: ${poolName}</h3>
+                            <h3 style="margin:0 0 5px; color:#6366f1;">${poolName}</h3>
+                            <div style="font-size:11px; color:#64748b; margin-bottom:10px; font-weight:800;">CYCLE: ${pastWinCount}/${dur} Winners Declared</div>
+                            
                             <div style="max-height:150px; overflow-y:auto; margin-bottom:10px; border:1px solid #f1f5f9; padding:5px;">
                                 ${bidsHTML}
                             </div>
+                            
                             <div style="background:#d1fae5; padding:8px; border-radius:6px; font-size:12px; margin-bottom:10px; color:#065f46;">
                                 Current Lowest: <b>₹${lowestBid}</b> by +91 ${winnerMobile}
                             </div>
+                            
                             <button class="btn-winner" onclick="declareWinner('${poolId}', '${winnerMobile}', ${lowestBid}, '${poolName}')">
-                                🏆 Declare Winner & Auto-Credit
+                                🏆 Declare Winner & Payout
                             </button>
                         </div>
                     `;
@@ -62,31 +71,40 @@
             if(!hasBids) container.innerHTML = "<p style='color:#64748b; font-size:12px;'>No active bids running.</p>";
         });
 
-        // 🚨 ADVANCED WINNER LOGIC 🚨
         window.declareWinner = (pId, wMobile, wAmt, pName) => {
-            if(!confirm(`Declare +91 ${wMobile} as winner for ₹${wAmt}?\nThis will add money to their wallet and generate an auto-withdrawal request.`)) return;
-            
+            if(!confirm(`Declare +91 ${wMobile} as winner for ₹${wAmt}?`)) return;
             const todayStr = new Date().toLocaleDateString('en-IN');
 
-            // 1. ADD TO WALLET
+            // 1. ADD TO WALLET & WITHDRAWAL
             get(child(ref(db), `users/${wMobile}/balance`)).then(snap => {
                 let curBal = snap.exists() ? parseFloat(snap.val()) : 0;
                 update(ref(db, `users/${wMobile}`), { balance: curBal + parseFloat(wAmt) });
             });
+            push(ref(db, 'withdrawals'), { poolId: pId, poolName: pName, userMobile: wMobile, amount: wAmt, status: "Pending", type: "Auto Winner Payout", date: todayStr });
+            push(ref(db, 'transactions'), { userMobile: wMobile, amount: wAmt, type: 'Credit', status: 'Success', title: `🏆 Won: ${pName}`, date: todayStr });
 
-            // 2. GENERATE AUTO-WITHDRAWAL REQUEST
-            push(ref(db, 'withdrawals'), {
-                poolId: pId, poolName: pName, userMobile: wMobile, amount: wAmt, status: "Pending", type: "Auto Winner Payout", date: todayStr
+            // 2. ADD TO PAST WINNERS LIST
+            update(ref(db, `pools/${pId}/past_winners`), { [wMobile]: true }).then(() => {
+                // 3. CHECK IF TENURE ENDED
+                get(child(ref(db), `pools/${pId}`)).then(pSnap => {
+                    const pData = pSnap.val();
+                    const winCount = pData.past_winners ? Object.keys(pData.past_winners).length : 1;
+                    
+                    if(winCount >= parseInt(pData.duration)) {
+                        // RESTART POOL
+                        push(ref(db, 'pools'), {
+                            name: pData.name + " (New)", winAmount: pData.winAmount, emiType: pData.emiType, emiAmount: pData.emiAmount, duration: pData.duration, maxMembers: pData.maxMembers, joined: 0, status: "Open"
+                        });
+                        remove(ref(db, `pools/${pId}`)); // Delete old
+                        alert("🎉 Winner Declared! Tenure completed, so old pool is deleted and New Pool is Auto-Created!");
+                    } else {
+                        alert("🎉 Winner Declared & Wallet Updated!");
+                    }
+                });
             });
 
-            // 3. ADD TO TRANSACTIONS (PASSBOOK)
-            push(ref(db, 'transactions'), {
-                userMobile: wMobile, amount: wAmt, type: 'Credit', status: 'Success', title: `🏆 Bishi Won: ${pName}`, date: todayStr
-            });
-
-            // 4. END BIDDING (CLEAR ROOM)
+            // 4. CLEAR BIDS
             remove(ref(db, `bids/${pId}`));
-            alert("🎉 Winner Declared! Amount added to wallet & Auto-Withdrawal generated.");
         };
     </script>
 </body>
