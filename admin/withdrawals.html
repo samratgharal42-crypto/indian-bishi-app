@@ -1,19 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Withdrawals | Admin</title>
+    <title>Withdrawals & History | Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; padding: 15px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; padding: 15px; margin: 0; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .btn-back { background: white; padding: 10px 15px; border-radius: 10px; text-decoration: none; color: #1e293b; font-weight: 800; border: 1px solid #e2e8f0; }
+        
         .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #cbd5e1; }
         .btn-done { background: #10b981; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: 800; cursor: pointer; }
+        .history-card { background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #6366f1; }
     </style>
 </head>
 <body>
-    <a href="index.html" style="text-decoration:none; font-weight:800;">⬅ Back</a>
-    <h2>🏆 Bishi Winners (Withdrawals)</h2>
-    <div id="w-list">Loading requests...</div>
+    <div class="header">
+        <a href="index.html" class="btn-back">⬅ Back</a>
+        <h2 style="margin:0; font-size:18px;">🏆 Payouts</h2>
+    </div>
+
+    <h3 style="color:#ef4444;">⏳ Pending Payouts</h3>
+    <div id="w-list"><p style="font-size:12px; color:#64748b;">Loading requests...</p></div>
+
+    <h3 style="color:#10b981; margin-top:30px;">✅ Payout History (Completed)</h3>
+    <div id="h-list"><p style="font-size:12px; color:#64748b;">Loading history...</p></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -22,25 +33,39 @@
 
         onValue(ref(db, 'withdrawals'), snap => {
             const list = document.getElementById('w-list');
-            list.innerHTML = "";
-            let has = false;
+            const hList = document.getElementById('h-list');
+            list.innerHTML = ""; hList.innerHTML = "";
+            let hasPending = false; let hasHistory = false;
+
             snap.forEach(c => {
                 const w = c.val();
-                if(w.status === "Pending") {
-                    has = true;
+                if(w.status === "Pending" || w.status === "Pending Payout") {
+                    hasPending = true;
                     list.innerHTML += `
                         <div class="card">
-                            <b>Winner: +91 ${w.userMobile}</b><br>
-                            <span style="color:#6366f1; font-size:20px;">Amount: ₹${w.amount}</span><br>
-                            <small>Pool: ${w.poolName}</small><br><br>
+                            <b style="font-size:16px;">Winner: +91 ${w.userMobile || w.winnerMobile}</b><br>
+                            <span style="color:#10b981; font-size:22px; font-weight:800;">Amount: ₹${w.amount}</span><br>
+                            <small style="color:#64748b;">Pool: ${w.poolName} | Date: ${w.date}</small><br><br>
                             <button class="btn-done" onclick="markPaid('${c.key}')">Mark as Paid ✅</button>
+                        </div>`;
+                } else if (w.status === "Paid") {
+                    hasHistory = true;
+                    hList.innerHTML += `
+                        <div class="history-card">
+                            <b>+91 ${w.userMobile || w.winnerMobile}</b> <span style="float:right; color:#10b981; font-weight:800;">₹${w.amount}</span><br>
+                            <small style="color:#64748b;">${w.poolName} | Paid on: ${w.date}</small>
                         </div>`;
                 }
             });
-            if(!has) list.innerHTML = "No pending winner payouts.";
+            if(!hasPending) list.innerHTML = "<p style='font-size:13px; color:#64748b;'>No pending winner payouts.</p>";
+            if(!hasHistory) hList.innerHTML = "<p style='font-size:13px; color:#64748b;'>No payout history found.</p>";
         });
 
-        window.markPaid = id => update(ref(db, 'withdrawals/' + id), { status: "Paid" });
+        window.markPaid = id => {
+            if(confirm("Confirm payment is sent to user?")) {
+                update(ref(db, 'withdrawals/' + id), { status: "Paid" });
+            }
+        };
     </script>
 </body>
 </html>
