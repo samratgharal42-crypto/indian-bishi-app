@@ -3,109 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Master Control | Indian Bishi</title>
+    <title>Master Admin | Indian Bishi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #0f172a; --accent: #6366f1; --bg: #f1f5f9; --text: #1e293b; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; }
+        :root { --primary: #0f172a; --accent: #6366f1; --bg: #f1f5f9; --text: #1e293b; --danger: #ef4444; --success: #10b981; }
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); padding-bottom: 50px; }
 
-        /* AUTH SCREEN */
-        #auth-screen { position: fixed; inset: 0; background: var(--primary); z-index: 10000; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .auth-box { background: white; padding: 30px; border-radius: 24px; width: 100%; max-width: 350px; text-align: center; }
-        .auth-box input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 24px; text-align: center; margin-bottom: 15px; letter-spacing: 8px; }
-        .auth-box button { width: 100%; background: var(--accent); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        /* HEADER & STATS */
+        .header { background: var(--primary); color: white; padding: 20px; display: flex; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; background: white; border-bottom: 1px solid #e2e8f0; }
+        .stat-box { background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; }
+        .stat-box h4 { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-box.green h2 { color: var(--success); font-size: 20px; }
+        .stat-box.red h2 { color: var(--danger); font-size: 20px; }
 
-        /* MAIN DASHBOARD */
-        #main-dashboard { display: none; }
-        .header { background: var(--primary); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        
-        .tab-bar { display: flex; background: white; border-bottom: 1px solid #e2e8f0; overflow-x: auto; position: sticky; top: 60px; z-index: 100; }
-        .tab { flex: none; padding: 15px 20px; font-weight: 800; font-size: 12px; color: #64748b; cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; }
+        /* TABS */
+        .tab-bar { display: flex; background: white; overflow-x: auto; border-bottom: 1px solid #cbd5e1; }
+        .tab { flex: none; padding: 12px 15px; font-size: 12px; font-weight: 800; color: #64748b; cursor: pointer; border-bottom: 3px solid transparent; }
         .tab.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
+        .tab-bar::-webkit-scrollbar { display: none; }
 
         .container { padding: 15px; }
         .card { background: white; padding: 15px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 15px; }
         .card h3 { font-size: 14px; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
 
-        /* LISTS & BUTTONS */
-        .list-item { background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
-        .badge { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; }
-        .bg-success { background: #d1fae5; color: #065f46; }
-        .bg-warning { background: #fef3c7; color: #92400e; }
+        input, select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 10px; font-size: 13px; font-weight: 600; outline: none; }
         
+        .list-item { background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px; font-size: 13px; }
         .btn-row { display: flex; gap: 8px; margin-top: 10px; }
-        .btn { flex: 1; border: none; padding: 10px; border-radius: 8px; font-weight: 800; font-size: 11px; cursor: pointer; color: white; }
-        .btn-blue { background: var(--accent); }
-        .btn-red { background: var(--danger); }
+        .btn { flex: 1; border: none; padding: 10px; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer; color: white; }
         .btn-green { background: var(--success); }
+        .btn-red { background: var(--danger); }
+        .btn-blue { background: var(--accent); }
 
-        input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 10px; font-size: 14px; outline: none; }
+        #auth-screen { position: fixed; inset: 0; background: var(--primary); z-index: 10000; display: flex; justify-content: center; align-items: center; }
+        .auth-box { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
     </style>
 </head>
 <body>
 
     <div id="auth-screen">
         <div class="auth-box">
-            <h2 style="margin-bottom:5px; color:#0f172a;">Admin Access</h2>
-            <p style="font-size:12px; color:#64748b; margin-bottom:20px;">Indian Bishi Control Panel</p>
-            <input type="password" id="pin" placeholder="••••" maxlength="4">
-            <button onclick="login()">Login 🔓</button>
+            <h2>Admin Login</h2>
+            <input type="password" id="pin" placeholder="PIN" style="text-align:center; font-size:24px; letter-spacing:10px; margin-top:20px;">
+            <button class="btn btn-blue" style="width:100%; padding:15px;" onclick="login()">Unlock 🔓</button>
         </div>
     </div>
 
-    <div id="main-dashboard">
+    <div id="main-dashboard" style="display:none;">
         <div class="header">
-            <h2 style="font-size:16px; margin:0;">⚙️ Admin Panel</h2>
-            <button onclick="location.reload()" style="background:rgba(255,255,255,0.2); border:none; color:white; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;">Logout</button>
+            <h2 style="font-size:16px;">Admin Panel</h2>
+            <button onclick="location.reload()" style="background:none; border:none; color:white; font-weight:800;">Logout</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box green"><h4>Today's Deposit</h4><h2 id="today-dep">₹0</h2></div>
+            <div class="stat-box red"><h4>Today's Withdrawal</h4><h2 id="today-with">₹0</h2></div>
         </div>
 
         <div class="tab-bar">
             <div class="tab active" onclick="showTab('pools')">POOLS</div>
-            <div class="tab" onclick="showTab('users')">USERS</div>
-            <div class="tab" onclick="showTab('requests')">PAY REQUESTS 🔔</div>
-            <div class="tab" onclick="showTab('txns')">ALL TXNS</div>
+            <div class="tab" onclick="showTab('deposits')">DEPOSITS 📥</div>
+            <div class="tab" onclick="showTab('withdrawals')">WITHDRAW 📤</div>
+            <div class="tab" onclick="showTab('support')">SUPPORT 🎧</div>
         </div>
 
         <div class="container">
             <div id="tab-pools" class="tab-content">
                 <div class="card">
                     <h3>➕ Create New Pool</h3>
-                    <input type="text" id="p-name" placeholder="Pool Name (e.g. Silver 25K)">
+                    <input type="text" id="p-name" placeholder="Pool Name (e.g. Diwali Dhamaka)">
                     <div style="display:flex; gap:10px;">
-                        <input type="number" id="p-amt" placeholder="Total Amt (₹)">
-                        <input type="number" id="p-emi" placeholder="EMI (₹)">
+                        <input type="number" id="p-win" placeholder="Win Amount (₹)">
+                        <select id="p-type">
+                            <option value="Daily">Daily EMI</option>
+                            <option value="Weekly">Weekly EMI</option>
+                            <option value="Monthly">Monthly EMI</option>
+                            <option value="6 Months">6 Months EMI</option>
+                            <option value="Yearly">Yearly EMI</option>
+                        </select>
                     </div>
                     <div style="display:flex; gap:10px;">
-                        <input type="number" id="p-months" placeholder="Months">
-                        <input type="number" id="p-max" placeholder="Max Members" value="60">
+                        <input type="number" id="p-emi" placeholder="Installment (₹)">
+                        <input type="number" id="p-duration" placeholder="Total Duration (e.g. 10)">
                     </div>
-                    <button class="btn btn-green" style="width:100%" onclick="createPool()">Publish Pool 🚀</button>
+                    <input type="number" id="p-max" placeholder="Max Members" value="60">
+                    <button class="btn btn-blue" style="width:100%" onclick="createPool()">Publish Pool 🚀</button>
                 </div>
                 <div class="card">
-                    <h3>🗑️ Live Pools (Delete)</h3>
+                    <h3>🗑️ Live Pools</h3>
                     <div id="pools-list"><p style="font-size:12px; color:#64748b;">Loading...</p></div>
                 </div>
             </div>
 
-            <div id="tab-users" class="tab-content" style="display:none">
+            <div id="tab-deposits" class="tab-content" style="display:none">
                 <div class="card">
-                    <h3>👥 Registered Users</h3>
-                    <div id="users-list"><p style="font-size:12px; color:#64748b;">Loading...</p></div>
+                    <h3>📥 Pending Deposits (UTR Verification)</h3>
+                    <div id="deposits-list"><p style="font-size:12px; color:#64748b;">Loading...</p></div>
                 </div>
             </div>
 
-            <div id="tab-requests" class="tab-content" style="display:none">
+            <div id="tab-withdrawals" class="tab-content" style="display:none">
                 <div class="card">
-                    <h3>🔔 Pending Payments</h3>
-                    <div id="requests-list"><p style="font-size:12px; color:#64748b;">Loading...</p></div>
+                    <h3>📤 Pending Withdrawals</h3>
+                    <div id="withdrawals-list"><p style="font-size:12px; color:#64748b;">Loading...</p></div>
                 </div>
             </div>
 
-            <div id="tab-txns" class="tab-content" style="display:none">
+            <div id="tab-support" class="tab-content" style="display:none">
                 <div class="card">
-                    <h3>📝 Global Transactions</h3>
-                    <div id="global-txns"><p style="font-size:12px; color:#64748b;">Loading...</p></div>
+                    <h3>🎧 User Messages</h3>
+                    <div id="support-list"><p style="font-size:12px; color:#64748b;">Loading...</p></div>
                 </div>
             </div>
         </div>
@@ -117,8 +126,8 @@
 
         const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
         const db = getDatabase(app);
+        const todayDate = new Date().toLocaleDateString('en-IN');
 
-        // LOGIN (PIN: 1234)
         window.login = () => {
             if(document.getElementById('pin').value === "1234") {
                 document.getElementById('auth-screen').style.display = 'none';
@@ -127,7 +136,6 @@
             } else { alert("❌ Wrong PIN!"); }
         };
 
-        // TAB SWITCHER
         window.showTab = (name) => {
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -137,147 +145,126 @@
 
         const init = () => {
             loadPools();
-            loadUsers();
-            loadRequests();
-            loadTxns();
+            loadDeposits();
+            loadWithdrawals();
+            loadSupport();
+            calculateTodayStats();
         };
 
-        // ------------------ 1. POOLS LOGIC ------------------
+        // 1. STATS CALCULATION
+        const calculateTodayStats = () => {
+            onValue(ref(db, 'transactions'), snap => {
+                let dep = 0, withd = 0;
+                if(snap.exists()){
+                    snap.forEach(c => {
+                        const d = c.val();
+                        if(d.date === todayDate) {
+                            if(d.type === 'Credit') dep += d.amount;
+                            if(d.type === 'Debit') withd += d.amount;
+                        }
+                    });
+                }
+                document.getElementById('today-dep').innerText = '₹' + dep;
+                document.getElementById('today-with').innerText = '₹' + withd;
+            });
+        };
+
+        // 2. POOLS LOGIC
         window.createPool = () => {
             const name = document.getElementById('p-name').value;
-            const amt = parseInt(document.getElementById('p-amt').value);
+            const win = parseInt(document.getElementById('p-win').value);
+            const type = document.getElementById('p-type').value;
             const emi = parseInt(document.getElementById('p-emi').value);
-            const months = parseInt(document.getElementById('p-months').value);
+            const duration = parseInt(document.getElementById('p-duration').value);
             const max = parseInt(document.getElementById('p-max').value);
 
-            if(!name || !amt || !emi || !months) return alert("Fill all fields!");
+            if(!name || !win || !emi || !duration) return alert("Fill all fields!");
 
-            push(ref(db, 'pools'), { name, amount: amt, emi, months, maxMembers: max, joined: 0, status: "Open" })
-            .then(() => {
-                alert("✅ Pool is Live on User App!");
-                document.querySelectorAll('input[type="text"], input[type="number"]').forEach(i => i.value = '');
-            });
+            push(ref(db, 'pools'), { name, winAmount: win, emiType: type, emiAmount: emi, duration: duration, maxMembers: max, joined: 0, status: "Open" })
+            .then(() => { alert("✅ Pool Created!"); });
         };
 
         const loadPools = () => {
             onValue(ref(db, 'pools'), snap => {
                 const list = document.getElementById('pools-list');
-                list.innerHTML = "";
-                if(!snap.exists()) { list.innerHTML = "<p style='font-size:12px;'>No live pools.</p>"; return; }
+                list.innerHTML = snap.exists() ? "" : "No active pools.";
                 snap.forEach(c => {
                     const d = c.val();
-                    list.innerHTML += `<div class="list-item"><b>${d.name}</b> (₹${d.amount})<br><span style="font-size:11px; color:#64748b;">EMI: ₹${d.emi} | Months: ${d.months}</span><br><button class="btn btn-red" style="margin-top:5px; width:100%;" onclick="deletePool('${c.key}')">Delete Pool</button></div>`;
+                    list.innerHTML += `<div class="list-item"><b>${d.name}</b><br><span style="color:var(--success)">Win: ₹${d.winAmount}</span> | EMI: ₹${d.emiAmount}/${d.emiType}<br><button class="btn btn-red" style="margin-top:5px; width:100%;" onclick="deletePool('${c.key}')">Delete</button></div>`;
                 });
             });
         };
         window.deletePool = id => { if(confirm("Delete this pool?")) remove(ref(db, 'pools/' + id)); };
 
-        // ------------------ 2. USERS LOGIC ------------------
-        const loadUsers = () => {
-            onValue(ref(db, 'users'), snap => {
-                const list = document.getElementById('users-list');
-                list.innerHTML = "";
-                if(!snap.exists()) return;
+        // 3. DEPOSITS LOGIC (Replaced Pay Requests)
+        const loadDeposits = () => {
+            onValue(ref(db, 'deposits'), snap => {
+                const list = document.getElementById('deposits-list');
+                list.innerHTML = snap.exists() ? "" : "No pending deposits.";
                 snap.forEach(c => {
                     const d = c.val();
-                    list.innerHTML += `
-                        <div class="list-item">
-                            <b>👤 ${d.name}</b> (+91 ${c.key})<br>
-                            <span class="badge bg-success" style="margin-top:5px; display:inline-block;">Balance: ₹${(d.balance || 0).toFixed(2)}</span>
-                            <div class="btn-row">
-                                <button class="btn btn-blue" onclick="adjustWallet('${c.key}', ${d.balance || 0}, 'add')">Add Money</button>
-                                <button class="btn btn-red" onclick="adjustWallet('${c.key}', ${d.balance || 0}, 'minus')">Deduct</button>
-                            </div>
-                        </div>`;
+                    if(d.status === "Pending") {
+                        const forText = d.poolName ? `Joining: ${d.poolName}` : `Wallet Deposit`;
+                        list.innerHTML += `
+                            <div class="list-item">
+                                <b style="font-size:16px;">₹${d.amount}</b> by +91 ${d.userMobile}<br>
+                                <span style="color:#64748b">UTR: <b>${d.utr}</b></span><br>
+                                <span style="color:var(--accent)">For: ${forText}</span>
+                                <div class="btn-row">
+                                    <button class="btn btn-green" onclick="approveDep('${c.key}', '${d.userMobile}', ${d.amount}, '${d.poolId}', '${d.poolName}')">Approve</button>
+                                    <button class="btn btn-red" onclick="rejectDep('${c.key}')">Reject</button>
+                                </div>
+                            </div>`;
+                    }
                 });
             });
         };
 
-        window.adjustWallet = (mob, cur, type) => {
-            let amt = parseFloat(prompt("Enter Amount:"));
-            if(!amt || isNaN(amt) || amt <= 0) return;
-            let newBal = type === 'add' ? cur + amt : cur - amt;
-            
-            update(ref(db, 'users/' + mob), { balance: newBal });
-            push(ref(db, 'transactions'), {
-                userMobile: mob, amount: amt, type: type === 'add' ? 'Credit' : 'Debit',
-                title: type === 'add' ? "Admin Deposit" : "Admin Deduction",
-                date: new Date().toLocaleDateString('en-IN'), id: "AD"+Date.now()
-            });
-            alert("✅ Wallet Updated!");
-        };
-
-        // ------------------ 3. PAY REQUESTS (MAIN LOGIC) ------------------
-        const loadRequests = () => {
-            onValue(ref(db, 'pay_requests'), snap => {
-                const list = document.getElementById('requests-list');
-                list.innerHTML = snap.exists() ? "" : "<p style='font-size:12px;'>No pending requests.</p>";
-                snap.forEach(c => {
-                    const d = c.val();
-                    const reason = d.poolId && d.poolId !== "Wallet Deposit" ? `Joining: ${d.poolName}` : "Wallet Deposit";
-                    
-                    list.innerHTML += `
-                        <div class="list-item">
-                            <b style="font-size:16px; color:var(--primary);">₹${d.amount}</b> from +91 ${d.userMobile}<br>
-                            <span style="font-size:12px; color:#ef4444; font-weight:800;">Reason: ${reason}</span><br>
-                            <span class="badge bg-warning">Pending Approval</span>
-                            <div class="btn-row">
-                                <button class="btn btn-green" onclick="approvePay('${c.key}', '${d.userMobile}', ${d.amount}, '${d.poolId}', '${d.poolName}')">Approve ✅</button>
-                                <button class="btn btn-red" onclick="deleteReq('${c.key}')">Reject</button>
-                            </div>
-                        </div>`;
-                });
-            });
-        };
-
-        window.approvePay = (reqId, mob, amt, pId, pName) => {
-            // Check if it's a Pool Join Request or Wallet Deposit
-            if(pId && pId !== "Wallet Deposit" && pId !== "undefined" && pId !== "null") {
-                // 1. ADD TO JOINED POOLS
+        window.approveDep = (id, mob, amt, pId, pName) => {
+            if(pId && pId !== "undefined") {
                 update(ref(db, `users/${mob}/joined_pools`), { [pId]: true });
-                // 2. RECORD TRANSACTION
-                push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', title: `Joined Pool: ${pName || 'Bishi'}`, date: new Date().toLocaleDateString('en-IN'), id: reqId });
-                alert("✅ Payment Approved! User is now joined in the Bishi.");
+                push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', title: `Joined: ${pName}`, date: todayDate });
             } else {
-                // 1. ADD TO WALLET BALANCE
                 get(child(ref(db), `users/${mob}/balance`)).then(snap => {
-                    let curBal = snap.exists() ? snap.val() : 0;
-                    update(ref(db, `users/${mob}`), { balance: curBal + amt });
+                    let cur = snap.exists() ? snap.val() : 0;
+                    update(ref(db, `users/${mob}`), { balance: cur + amt });
                 });
-                // 2. RECORD TRANSACTION
-                push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', title: "Wallet Deposit (PhonePe)", date: new Date().toLocaleDateString('en-IN'), id: reqId });
-                alert("✅ Payment Approved! Money added to User's Wallet.");
+                push(ref(db, 'transactions'), { userMobile: mob, amount: amt, type: 'Credit', title: `Wallet Deposit`, date: todayDate });
             }
-            
-            // DELETE REQUEST AFTER APPROVAL
-            remove(ref(db, 'pay_requests/' + reqId));
+            update(ref(db, 'deposits/' + id), { status: "Approved" });
+            alert("✅ Deposit Approved!");
+        };
+        window.rejectDep = id => { update(ref(db, 'deposits/' + id), { status: "Rejected" }); };
+
+        // 4. WITHDRAWALS
+        const loadWithdrawals = () => {
+            // Basic structure for future withdrawal request mapping
+            document.getElementById('withdrawals-list').innerHTML = "No pending withdrawal requests.";
         };
 
-        window.deleteReq = id => { if(confirm("Reject this payment?")) remove(ref(db, 'pay_requests/' + id)); };
-
-        // ------------------ 4. TRANSACTIONS ------------------
-        const loadTxns = () => {
-            onValue(ref(db, 'transactions'), snap => {
-                const list = document.getElementById('global-txns');
-                list.innerHTML = "";
-                if(!snap.exists()) { list.innerHTML = "<p style='font-size:12px;'>No transactions yet.</p>"; return; }
-                
+        // 5. SUPPORT
+        const loadSupport = () => {
+            onValue(ref(db, 'support'), snap => {
+                const list = document.getElementById('support-list');
+                list.innerHTML = snap.exists() ? "" : "No messages.";
                 snap.forEach(c => {
                     const d = c.val();
-                    const color = d.type === 'Credit' ? '#10b981' : '#ef4444';
-                    const sign = d.type === 'Credit' ? '+' : '-';
-                    list.innerHTML = `
-                        <div class="list-item" style="display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <b style="font-size:12px;">+91 ${d.userMobile}</b><br>
-                                <span style="font-size:10px; color:#64748b;">${d.title} | ${d.date}</span>
-                            </div>
-                            <div style="font-weight:800; color:${color};">${sign}₹${d.amount}</div>
-                        </div>` + list.innerHTML; // Prepend to show latest first
+                    list.innerHTML += `
+                        <div class="list-item">
+                            <b>+91 ${d.userMobile}</b><br>
+                            <p style="margin:5px 0;">${d.message}</p>
+                            <button class="btn btn-blue" onclick="replyMsg('${c.key}', '${d.userMobile}')">Reply</button>
+                        </div>`;
                 });
             });
+        };
+        window.replyMsg = (id, mob) => {
+            let rep = prompt("Reply to " + mob + ":");
+            if(rep) {
+                update(ref(db, 'support/' + id), { reply: rep, status: "Answered" });
+                alert("Reply Sent!");
+            }
         };
     </script>
 </body>
 </html>
-
