@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Joined Pools | Indian Bishi</title>
+    <title>My Active Bishi | Indian Bishi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
@@ -14,7 +14,7 @@
         
         .container { padding: 20px; }
 
-        /* YOUR BEAUTIFUL POOL CARD DESIGN */
+        /* PERFECT CARD DESIGN */
         .pool-card-new { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 15px; border: 1px solid #f1f5f9; }
         .p-head { display: flex; justify-content: space-between; align-items: center; }
         .p-title { font-size: 18px; font-weight: 800; color: #1e293b; text-transform: uppercase; }
@@ -27,7 +27,7 @@
         .s-label { font-size: 10px; color: #64748b; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; }
         .s-val { font-size: 14px; font-weight: 800; color: #1e293b; }
         
-        .btn-active-status { background: #f8fafc; color: #10b981; border: 1px solid #d1fae5; width: 100%; padding: 15px; border-radius: 12px; font-size: 15px; font-weight: 800; display: block; text-align: center; }
+        .btn-active-status { background: #f0fdf4; color: #059669; border: 1px solid #bbf7d0; width: 100%; padding: 15px; border-radius: 12px; font-size: 15px; font-weight: 800; display: block; text-align: center; }
 
         .empty-state { text-align: center; padding: 50px 20px; color: #64748b; font-weight: 600; line-height: 1.6; }
         .btn-home { display: inline-block; background: var(--primary); color: white; padding: 12px 24px; border-radius: 12px; text-decoration: none; margin-top: 15px; font-weight: 800; }
@@ -63,7 +63,6 @@
 
         if(!mobile) window.location.href = "../index.html";
 
-        // Fetch User's Joined Pools
         onValue(ref(db, `users/${mobile}/joined_pools`), (joinedSnap) => {
             const container = document.getElementById('my-pools');
             
@@ -79,13 +78,12 @@
 
             const joinedPoolsData = joinedSnap.val(); 
 
-            // Fetch actual pool details
             onValue(ref(db, 'pools'), (allPoolsSnap) => {
                 container.innerHTML = "";
                 let hasPools = false;
 
                 allPoolsSnap.forEach((child) => {
-                    if(joinedPoolsData[child.key]) { // If pool ID matches joined list
+                    if(joinedPoolsData[child.key]) { 
                         hasPools = true;
                         const data = child.val();
                         container.innerHTML += `
