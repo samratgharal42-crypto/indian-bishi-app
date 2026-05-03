@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Live Bids | Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; padding: 15px; margin: 0; }
+        .pool-section { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #cbd5e1; }
+        .bid-item { padding: 8px; border-bottom: 1px dashed #e2e8f0; font-size: 13px; display: flex; justify-content: space-between; }
+        .btn-winner { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: 800; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <a href="index.html" style="text-decoration:none; font-weight:800; color:#1e293b;">⬅ Back</a>
+    <h2 style="margin-top:10px;">👁️ Live Bids Monitor</h2>
+
+    <div id="bids-container"><p style="color:#64748b; font-size:12px;">No active bids going on.</p></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push, remove, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        const db = getDatabase(initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" }));
+
+        onValue(ref(db, 'bids'), snap => {
+            const container = document.getElementById('bids-container');
+            container.innerHTML = "";
+            let hasBids = false;
+
+            snap.forEach(poolSnap => {
+                hasBids = true;
+                const poolId = poolSnap.key;
+                let lowestBid = 9999999;
+                let winnerMobile = "";
+                let bidsHTML = "";
+
+                poolSnap.forEach(bidSnap => {
+                    const b = bidSnap.val();
+                    if(b.amount < lowestBid) { lowestBid = b.amount; winnerMobile = b.user; }
+                    bidsHTML += `<div class="bid-item"><span>+91 ${b.user}</span> <b style="color:#ef4444;">₹${b.amount}</b></div>`;
+                });
+
+                // Get Pool Name for context
+                get(child(ref(db), `pools/${poolId}/name`)).then(nameSnap => {
+                    const poolName = nameSnap.val() || poolId;
+                    container.innerHTML += `
+                        <div class="pool-section">
+                            <h3 style="margin:0 0 10px; color:#6366f1;">Pool: ${poolName}</h3>
+                            <div style="max-height:150px; overflow-y:auto; margin-bottom:10px; border:1px solid #f1f5f9; padding:5px;">
+                                ${bidsHTML}
+                            </div>
+                            <div style="background:#d1fae5; padding:8px; border-radius:6px; font-size:12px; margin-bottom:10px;">
+                                Current Lowest: <b>₹${lowestBid}</b> by +91 ${winnerMobile}
+                            </div>
+                            <button class="btn-winner" onclick="declareWinner('${poolId}', '${winnerMobile}', ${lowestBid}, '${poolName}')">
+                                🏆 Declare Winner & End Bid
+                            </button>
+                        </div>
+                    `;
+                });
+            });
+            if(!hasBids) container.innerHTML = "<p style='color:#64748b; font-size:12px;'>No active bids running.</p>";
+        });
+
+        // WINNER LOGIC FIRED BY ADMIN
+        window.declareWinner = (pId, wMobile, wAmt, pName) => {
+            if(!confirm(`Declare +91 ${wMobile} as the winner for ₹${wAmt}?`)) return;
+            
+            // 1. Send to Withdrawals Tab
+            push(ref(db, 'withdrawals'), {
+                poolId: pId, poolName: pName, winnerMobile: wMobile, amount: wAmt, status: "Pending", date: new Date().toLocaleDateString('en-IN')
+            }).then(() => {
+                // 2. Clear Bids so next month starts fresh
+                remove(ref(db, `bids/${pId}`));
+                alert("🎉 Winner Declared! Sent to Withdrawals tab for payout.");
+            });
+        };
+    </script>
+</body>
+</html>
