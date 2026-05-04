@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Withdrawals & History | Admin</title>
+    <title>Withdrawals | Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
@@ -10,7 +10,7 @@
         .btn-back { background: white; padding: 10px 15px; border-radius: 10px; text-decoration: none; color: #1e293b; font-weight: 800; border: 1px solid #e2e8f0; }
         
         .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #cbd5e1; }
-        .btn-done { background: #10b981; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: 800; cursor: pointer; }
+        .btn-done { background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: 800; cursor: pointer; }
         .history-card { background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #6366f1; }
     </style>
 </head>
@@ -23,12 +23,12 @@
     <h3 style="color:#ef4444;">⏳ Pending Payouts</h3>
     <div id="w-list"><p style="font-size:12px; color:#64748b;">Loading requests...</p></div>
 
-    <h3 style="color:#10b981; margin-top:30px;">✅ Payout History (Completed)</h3>
+    <h3 style="color:#10b981; margin-top:30px;">✅ Completed Payouts</h3>
     <div id="h-list"><p style="font-size:12px; color:#64748b;">Loading history...</p></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, update, get, child, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         const db = getDatabase(initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" }));
 
         onValue(ref(db, 'withdrawals'), snap => {
@@ -39,31 +39,52 @@
 
             snap.forEach(c => {
                 const w = c.val();
+                const mob = w.userMobile || w.winnerMobile; // support both formats
+                
                 if(w.status === "Pending" || w.status === "Pending Payout") {
                     hasPending = true;
                     list.innerHTML += `
                         <div class="card">
-                            <b style="font-size:16px;">Winner: +91 ${w.userMobile || w.winnerMobile}</b><br>
-                            <span style="color:#10b981; font-size:22px; font-weight:800;">Amount: ₹${w.amount}</span><br>
+                            <b style="font-size:16px;">Winner: +91 ${mob}</b><br>
+                            <span style="color:#10b981; font-size:22px; font-weight:800;">₹${w.amount}</span><br>
                             <small style="color:#64748b;">Pool: ${w.poolName} | Date: ${w.date}</small><br><br>
-                            <button class="btn-done" onclick="markPaid('${c.key}')">Mark as Paid ✅</button>
+                            <button class="btn-done" onclick="markPaid('${c.key}', '${mob}', ${w.amount})">Mark as Paid & Deduct Wallet ✅</button>
                         </div>`;
                 } else if (w.status === "Paid") {
                     hasHistory = true;
                     hList.innerHTML += `
                         <div class="history-card">
-                            <b>+91 ${w.userMobile || w.winnerMobile}</b> <span style="float:right; color:#10b981; font-weight:800;">₹${w.amount}</span><br>
+                            <b>+91 ${mob}</b> <span style="float:right; color:#10b981; font-weight:800;">₹${w.amount}</span><br>
                             <small style="color:#64748b;">${w.poolName} | Paid on: ${w.date}</small>
                         </div>`;
                 }
             });
-            if(!hasPending) list.innerHTML = "<p style='font-size:13px; color:#64748b;'>No pending winner payouts.</p>";
-            if(!hasHistory) hList.innerHTML = "<p style='font-size:13px; color:#64748b;'>No payout history found.</p>";
+            if(!hasPending) list.innerHTML = "<p style='font-size:13px; color:#64748b;'>No pending payouts.</p>";
+            if(!hasHistory) hList.innerHTML = "<p style='font-size:13px; color:#64748b;'>No history found.</p>";
         });
 
-        window.markPaid = id => {
-            if(confirm("Confirm payment is sent to user?")) {
-                update(ref(db, 'withdrawals/' + id), { status: "Paid" });
+        window.markPaid = (id, mob, amt) => {
+            if(confirm(`Send ₹${amt} to user's bank?\n\nThis will DEDUCT ₹${amt} from their in-app Wallet Balance.`)) {
+                
+                // 1. Deduct from wallet
+                get(child(ref(db), `users/${mob}/balance`)).then(snap => {
+                    let curBal = snap.exists() ? parseFloat(snap.val()) : 0;
+                    let newBal = curBal - parseFloat(amt);
+                    if(newBal < 0) newBal = 0; // Negative balance security
+                    
+                    update(ref(db, `users/${mob}`), { balance: newBal });
+                    
+                    // 2. Mark as Paid
+                    update(ref(db, 'withdrawals/' + id), { status: "Paid" });
+                    
+                    // 3. Add to User's Transactions (Passbook)
+                    push(ref(db, 'transactions'), { 
+                        userMobile: mob, amount: amt, type: 'Debit', status: 'Success', 
+                        title: 'Withdrawal Payout (Sent to Bank)', date: new Date().toLocaleDateString('en-IN') 
+                    });
+                    
+                    alert("✅ Payout Successful! Wallet balance deducted.");
+                });
             }
         };
     </script>
