@@ -2,36 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dashboard | Indian Bishi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        /* TUZHA JUNA CSS ITHE THEV (Copy from previous dashboard) */
         :root { --primary: #6366f1; --bg: #f8fafc; --text: #1e293b; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 100px; }
-        /* Add basic styles for the cards here */
+
+        /* HEADER */
         .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 30px 20px 60px; color: white; border-radius: 0 0 30px 30px; position: relative; }
+        .welcome-text { font-size: 14px; opacity: 0.9; }
+        .user-name { font-size: 28px; font-weight: 800; margin-top: 5px; }
         .cibil-badge { background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; position: absolute; right: 20px; top: 35px; border: 1px solid rgba(255,255,255,0.3); cursor: pointer; }
-        .pool-card-new { background: white; border-radius: 20px; padding: 20px; margin: 15px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
-        .btn-gradient { background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; display: block; text-align: center; }
+
+        .main-content { padding: 0 20px; margin-top: -30px; position: relative; z-index: 10; }
+
+        /* BANNERS SLIDER */
+        .banner-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; margin-bottom: 25px; padding-bottom: 10px; }
+        .banner-slider::-webkit-scrollbar { display: none; }
+        .slide { scroll-snap-align: center; flex: 0 0 100%; border-radius: 16px; object-fit: cover; aspect-ratio: 1000 / 350; width: 100%; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+
+        .section-title { font-size: 18px; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; color: #1e293b; }
+        
+        /* POOL CARD DESIGN */
+        .pools-container { display: flex; flex-direction: column; gap: 15px; }
+        .pool-card-new { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
+        .p-head { display: flex; justify-content: space-between; align-items: center; }
+        .p-title { font-size: 18px; font-weight: 800; color: #1e293b; text-transform: uppercase; }
+        .p-badge { background: #e0e7ff; color: #6366f1; padding: 5px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; }
+        .p-win-amt { font-size: 32px; font-weight: 800; color: #10b981; margin: 5px 0 15px; letter-spacing: -1px; }
+        .p-win-amt span { font-size: 14px; color: #64748b; font-weight: 600; letter-spacing: 0; }
+        
+        .p-stats { display: flex; justify-content: space-between; background: white; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 15px 10px; margin-bottom: 15px; }
+        .stat-box { text-align: center; flex: 1; border-right: 1px dashed #cbd5e1; }
+        .stat-box:last-child { border-right: none; }
+        .s-label { font-size: 10px; color: #64748b; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; }
+        .s-val { font-size: 14px; font-weight: 800; color: #1e293b; }
+        
+        /* BUTTONS */
+        .btn-gradient { background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; display: block; text-align: center; box-shadow: 0 10px 20px rgba(99,102,241,0.2); }
         .btn-locked { background: #e2e8f0; color: #94a3b8; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 14px; font-weight: 800; text-align: center; }
+        .btn-joined { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; width: 100%; padding: 15px; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; display: block; text-align: center; box-shadow: none; }
+
+        /* BOTTOM NAV */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 80px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 9999; border-top: 1px solid #f1f5f9; }
+        .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 33.33%; height: 100%; gap: 5px; }
+        .nav-item.active { color: var(--primary); }
+        .nav-icon { font-size: 24px !important; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div style="font-size: 14px; opacity: 0.9;">Welcome back,</div>
-        <div style="font-size: 28px; font-weight: 800;" id="user-name">Loading...</div>
-        <div class="cibil-badge" id="cibil-display" onclick="window.location.href='user/cibil.html'">Check CIBIL</div>
+        <div class="welcome-text">Welcome back,</div>
+        <div class="user-name" id="user-name">Loading...</div>
+        <div class="cibil-badge" id="cibil-display" onclick="window.location.href='user/cibil.html'">🛡️ Check CIBIL</div>
     </div>
 
-    <div id="investment-pools"></div>
+    <div class="main-content">
+        <div class="banner-slider">
+            <img src="offer1.jpg" alt="Offer 1" class="slide" onerror="this.src='https://via.placeholder.com/1000x350/1e293b/fbbf24?text=Indian+Bishi+Offer+1'">
+            <img src="offer2.jpg" alt="Offer 2" class="slide" onerror="this.src='https://via.placeholder.com/1000x350/6366f1/ffffff?text=Special+Gold+Pool'">
+            <img src="offer3.jpg" alt="Offer 3" class="slide" onerror="this.src='https://via.placeholder.com/1000x350/10b981/ffffff?text=Zero+Penalty+This+Month'">
+        </div>
+
+        <div class="section-title">🎯 Available Bishi Pools</div>
+        
+        <div class="pools-container" id="investment-pools">
+            <p style="text-align:center; color:#94a3b8; font-size:13px; margin-top:20px;">Fetching Live Pools...</p>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item active"><span class="nav-icon">🏠</span><span>HOME</span></a>
+        <a href="bishi/all-pools.html" class="nav-item"><span class="nav-icon">🎯</span><span>MY BISHI</span></a>
+        <a href="user/profile.html" class="nav-item"><span class="nav-icon">👤</span><span>ACCOUNT</span></a>
+    </nav>
 
     <script type="module">
-        // --- URL HIDER SCRIPT ---
+        // URL HIDER (Clean Link)
         if (window.history.replaceState) {
-            // Hides .html from the URL bar to look professional
             window.history.replaceState(null, null, window.location.href.replace('.html', ''));
         }
 
@@ -41,50 +92,95 @@
         const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
         const db = getDatabase(app);
         const mobile = localStorage.getItem('activeUser');
+
         if(!mobile) window.location.href = "index.html";
 
         let userCibil = 0;
+        let joinedPools = {};
 
+        // 🚨 FIX: Fetch User Data FIRST, then fetch Pools 🚨
         get(child(ref(db), `users/${mobile}`)).then((snap) => {
             if(snap.exists()) {
                 const u = snap.val();
                 document.getElementById('user-name').innerText = u.name || "User";
+                
+                // Get CIBIL
                 if(u.cibil) {
                     userCibil = parseInt(u.cibil);
                     document.getElementById('cibil-display').innerText = `🛡️ CIBIL: ${userCibil}`;
                 } else {
                     document.getElementById('cibil-display').innerText = `⚠️ Check CIBIL Now`;
                 }
+
+                // Get Joined Pools
+                if(u.joined_pools) {
+                    joinedPools = u.joined_pools;
+                }
             }
+            
+            // Call fetchPools ONLY AFTER CIBIL is loaded
+            fetchPools();
         });
 
-        onValue(ref(db, 'pools'), (snapshot) => {
-            const container = document.getElementById('investment-pools');
-            container.innerHTML = "";
-            snapshot.forEach((childSnapshot) => {
-                const pId = childSnapshot.key;
-                const d = childSnapshot.val();
-                const reqCibil = d.minCibil || 0; // Default 0 if not set by admin
+        function fetchPools() {
+            onValue(ref(db, 'pools'), (snapshot) => {
+                const container = document.getElementById('investment-pools');
+                container.innerHTML = "";
                 
-                let btnHTML = "";
-                // SMART CIBIL LOGIC
-                if(userCibil === 0) {
-                    btnHTML = `<button class="btn-locked" onclick="window.location.href='user/cibil.html'">Check CIBIL to Unlock 🔒</button>`;
-                } else if(userCibil < reqCibil) {
-                    btnHTML = `<div class="btn-locked" style="color:#ef4444;">Requires ${reqCibil} CIBIL Score 🔒</div>`;
-                } else {
-                    btnHTML = `<button class="btn-gradient" onclick="window.location.href='pool-details.html?id=${pId}'">View Details & Join 🚀</button>`;
+                if(!snapshot.exists()) {
+                    container.innerHTML = "<p style='text-align:center; color:#64748b;'>No active pools right now.</p>"; return;
                 }
 
-                container.innerHTML += `
-                    <div class="pool-card-new">
-                        <div style="font-weight:800; font-size:18px;">${d.name} <span style="font-size:10px; background:#e2e8f0; padding:3px 6px; border-radius:5px; float:right;">Min CIBIL: ${reqCibil}</span></div>
-                        <div style="font-size:32px; font-weight:800; color:#10b981;">₹${d.winAmount}</div>
-                        ${btnHTML}
-                    </div>
-                `;
+                snapshot.forEach((childSnapshot) => {
+                    const pId = childSnapshot.key;
+                    const data = childSnapshot.val();
+                    const reqCibil = data.minCibil || 0;
+                    const joinedMembers = data.joined || 0;
+                    
+                    let btnHTML = "";
+                    
+                    // 1. Check if user already joined
+                    if(joinedPools[pId]) {
+                        btnHTML = `<button class="btn-joined" onclick="window.location.href='bishi/all-pools.html'">Already Joined ✅ (View in My Bishi)</button>`;
+                    } 
+                    // 2. CIBIL Logic
+                    else if(userCibil === 0) {
+                        btnHTML = `<button class="btn-locked" onclick="window.location.href='user/cibil.html'">Check CIBIL to Unlock 🔒</button>`;
+                    } else if(userCibil < reqCibil) {
+                        btnHTML = `<div class="btn-locked" style="color:#ef4444;">Requires ${reqCibil} CIBIL Score 🔒</div>`;
+                    } else {
+                        btnHTML = `<button class="btn-gradient" onclick="window.location.href='pool-details.html?id=${pId}'">View Details & Join 🚀</button>`;
+                    }
+
+                    container.innerHTML += `
+                        <div class="pool-card-new">
+                            <div class="p-head">
+                                <div class="p-title">${data.name} <span style="font-size:10px; background:#e2e8f0; padding:4px 8px; border-radius:5px; margin-left:10px; color:#475569;">Min CIBIL: ${reqCibil}</span></div>
+                                <div class="p-badge">Open</div>
+                            </div>
+                            <div class="p-win-amt">₹${(data.winAmount || 0).toLocaleString('en-IN')} <span>Win Amount</span></div>
+                            
+                            <div class="p-stats">
+                                <div class="stat-box">
+                                    <div class="s-label">EMI (${data.emiType || 'N/A'})</div>
+                                    <div class="s-val">₹${data.emiAmount || 0}</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="s-label">DURATION</div>
+                                    <div class="s-val">${data.duration || 0}</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="s-label">MEMBERS</div>
+                                    <div class="s-val">${joinedMembers}/${data.maxMembers || 60}</div>
+                                </div>
+                            </div>
+
+                            ${btnHTML}
+                        </div>
+                    `;
+                });
             });
-        });
+        }
     </script>
 </body>
 </html>
