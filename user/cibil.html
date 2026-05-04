@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check CIBIL | Indian Bishi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; text-align: center; }
+        .card { background: #1e293b; padding: 40px; border-radius: 24px; width: 90%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #10b981; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .score-display { font-size: 60px; font-weight: 800; color: #10b981; display: none; margin: 20px 0; }
+        .btn-home { background: #6366f1; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; width: 100%; display: none; cursor: pointer; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div id="loader">
+            <div class="spinner"></div>
+            <h3 style="margin:0;">Connecting to Experian Bureau...</h3>
+            <p style="font-size:12px; color:#94a3b8; margin-top:10px;">Fetching your credit history safely.</p>
+        </div>
+        
+        <div id="result" style="display:none;">
+            <h3 style="margin:0;">Your Experian CIBIL Score</h3>
+            <div class="score-display" id="score">0</div>
+            <p id="remark" style="font-size:14px; font-weight:800;"></p>
+            <button class="btn-home" id="btn-home" onclick="window.location.href='../dashboard.html'">Continue to Bishi</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        
+        const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
+        const db = getDatabase(app);
+        const mobile = localStorage.getItem('activeUser');
+
+        setTimeout(() => {
+            // Simulate CIBIL calculation logic (Between 650 to 850)
+            const generatedScore = Math.floor(Math.random() * (850 - 650 + 1)) + 650;
+            let remarkText = "Excellent! You are eligible for Premium Pools.";
+            let color = "#10b981"; // Green
+            
+            if(generatedScore < 700) { remarkText = "Average. Build score for better pools."; color = "#f59e0b"; }
+
+            // Save to Firebase
+            update(ref(db, `users/${mobile}`), { cibil: generatedScore });
+
+            // Update UI
+            document.getElementById('loader').style.display = "none";
+            document.getElementById('result').style.display = "block";
+            document.getElementById('score').innerText = generatedScore;
+            document.getElementById('score').style.color = color;
+            document.getElementById('score').style.display = "block";
+            document.getElementById('remark').innerText = remarkText;
+            document.getElementById('btn-home').style.display = "block";
+            document.getElementById('remark').style.color = color;
+            
+        }, 3000); // Wait 3 seconds to look like a real API call
+    </script>
+</body>
+</html>
