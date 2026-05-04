@@ -17,14 +17,21 @@
 
         .app-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
         .app-btn { flex: 1; padding: 12px 5px; border-radius: 12px; font-weight: 800; font-size: 13px; text-decoration: none; color: white; display: flex; justify-content: center; align-items: center; }
-        .pe { background: #5f259f; } /* PhonePe */
-        .gp { background: #1a73e8; } /* GPay */
-        .py { background: #00baf2; } /* Paytm */
+        .pe { background: #5f259f; } .gp { background: #1a73e8; } .py { background: #00baf2; }
 
         .utr-box { text-align: left; margin-top: 20px; padding-top: 20px; border-top: 1px solid #f1f5f9; }
         .utr-box label { font-size: 12px; font-weight: 800; color: #64748b; }
         .utr-box input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 16px; font-weight: 800; margin: 8px 0 15px; outline: none; text-align: center; letter-spacing: 2px; }
         .submit-btn { background: #10b981; color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; }
+
+        /* ADVANCED UI POPUP */
+        .overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
+        .popup { background: white; padding: 30px 20px; border-radius: 24px; text-align: center; width: 85%; max-width: 320px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .spinner { font-size: 50px; margin-bottom: 15px; display: inline-block; animation: spin 2s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .popup h3 { margin: 0 0 10px; color: #1e293b; font-size: 20px; }
+        .popup p { margin: 0; color: #64748b; font-size: 14px; font-weight: 600; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -32,15 +39,11 @@
     <div class="pay-card">
         <div style="font-size:16px; font-weight:800; color:#0f172a">Payment Gateway</div>
         <div class="pay-reason" id="pay-reason">Loading...</div>
-        
         <div class="amt-display" id="display-amt">₹0</div>
 
-        <div class="qr-box">
-            <img id="qr-image" src="" alt="Scan to Pay">
-        </div>
+        <div class="qr-box"><img id="qr-image" src="" alt="Scan to Pay"></div>
 
         <div style="font-size:12px; color:#64748b; margin-bottom:10px; font-weight:800;">OR PAY DIRECTLY VIA</div>
-        
         <div class="app-buttons">
             <a href="#" id="link-pe" class="app-btn pe">PhonePe</a>
             <a href="#" id="link-gp" class="app-btn gp">GPay</a>
@@ -51,6 +54,14 @@
             <label>After payment, enter 12-digit UTR/Ref No:</label>
             <input type="number" id="utr-input" placeholder="e.g. 312345678901">
             <button class="submit-btn" onclick="submitDeposit()">Verify Payment</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="success-popup">
+        <div class="popup">
+            <div class="spinner">⏳</div>
+            <h3>Request Submitted</h3>
+            <p>Please wait for payment confirmation. You will be redirected automatically...</p>
         </div>
     </div>
 
@@ -67,17 +78,13 @@
         const amount = urlParams.get('amount') || "0";
         const poolName = urlParams.get('name') || "Wallet Deposit";
 
-        // 🚨 TUZHA MERCHANT UPI ID 🚨
         const upiId = "paytm.s18vfbf@pty";
         const payeeName = "Indian Bishi";
 
-        // Setup Display
         document.getElementById('display-amt').innerText = "₹" + amount;
         document.getElementById('pay-reason').innerText = poolId ? `Joining: ${poolName}` : "Add to Wallet";
 
-        // Generate QR Code & UPI Links
         const upiString = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
-        
         document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
         
         document.getElementById('link-pe').href = `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
@@ -86,7 +93,10 @@
 
         window.submitDeposit = () => {
             const utr = document.getElementById('utr-input').value;
-            if(utr.length < 12) return alert("Please enter correct 12-digit UTR number!");
+            if(utr.length !== 12) return alert("Please enter correct 12-digit UTR number!");
+
+            // Show Advanced Popup
+            document.getElementById('success-popup').style.display = 'flex';
 
             push(ref(db, 'deposits'), {
                 userMobile: mobile,
@@ -97,8 +107,10 @@
                 status: "Pending",
                 date: new Date().toLocaleDateString('en-IN')
             }).then(() => {
-                alert("✅ Payment details submitted! Your request is under verification.");
-                window.location.href = "/indian-bishi-app/dashboard.html";
+                // Wait for 3.5 seconds before redirecting
+                setTimeout(() => {
+                    window.location.href = "/indian-bishi-app/dashboard.html";
+                }, 3500);
             });
         };
     </script>
