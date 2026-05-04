@@ -10,19 +10,20 @@
         .pay-card { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
         
         .amt-display { font-size: 40px; font-weight: 800; color: #1e293b; margin: 10px 0; }
-        .pay-reason { font-size: 14px; color: #64748b; font-weight: 800; margin-bottom: 20px; }
+        .pay-reason { font-size: 14px; color: #64748b; font-weight: 800; margin-bottom: 20px; text-transform: uppercase;}
         
         .qr-box { background: #f1f5f9; padding: 15px; border-radius: 16px; display: inline-block; margin-bottom: 20px; border: 1px dashed #cbd5e1; }
         .qr-box img { width: 180px; height: 180px; mix-blend-mode: multiply; }
 
         .app-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
-        .app-btn { flex: 1; padding: 12px 5px; border-radius: 12px; font-weight: 800; font-size: 13px; text-decoration: none; color: white; display: flex; justify-content: center; align-items: center; }
+        .app-btn { flex: 1; padding: 12px 5px; border-radius: 12px; font-weight: 800; font-size: 13px; text-decoration: none; color: white; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .app-btn:active { transform: scale(0.95); }
         .pe { background: #5f259f; } .gp { background: #1a73e8; } .py { background: #00baf2; }
 
         .utr-box { text-align: left; margin-top: 20px; padding-top: 20px; border-top: 1px solid #f1f5f9; }
         .utr-box label { font-size: 12px; font-weight: 800; color: #64748b; }
         .utr-box input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 16px; font-weight: 800; margin: 8px 0 15px; outline: none; text-align: center; letter-spacing: 2px; }
-        .submit-btn { background: #10b981; color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; }
+        .submit-btn { background: #10b981; color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 5px 15px rgba(16,185,129,0.3); }
 
         /* ADVANCED UI POPUP */
         .overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
@@ -44,6 +45,7 @@
         <div class="qr-box"><img id="qr-image" src="" alt="Scan to Pay"></div>
 
         <div style="font-size:12px; color:#64748b; margin-bottom:10px; font-weight:800;">OR PAY DIRECTLY VIA</div>
+        
         <div class="app-buttons">
             <a href="#" id="link-pe" class="app-btn pe">PhonePe</a>
             <a href="#" id="link-gp" class="app-btn gp">GPay</a>
@@ -61,7 +63,7 @@
         <div class="popup">
             <div class="spinner">⏳</div>
             <h3>Request Submitted</h3>
-            <p>Please wait for payment confirmation. You will be redirected automatically...</p>
+            <p>Please wait for payment verification. You will be redirected automatically...</p>
         </div>
     </div>
 
@@ -78,22 +80,24 @@
         const amount = urlParams.get('amount') || "0";
         const poolName = urlParams.get('name') || "Wallet Deposit";
 
+        // 🚨 MERCHANT DETAILS 🚨
         const upiId = "paytm.s18vfbf@pty";
         const payeeName = "Indian Bishi";
 
         document.getElementById('display-amt').innerText = "₹" + amount;
         document.getElementById('pay-reason').innerText = poolId ? `Joining: ${poolName}` : "Add to Wallet";
 
-        const upiString = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
-        document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
+        // UNIVERSAL UPI INTENT (Fixes VPA Error on most devices)
+        const universalLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
         
-        document.getElementById('link-pe').href = `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
-        document.getElementById('link-gp').href = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
+        document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(universalLink)}`;
+        document.getElementById('link-gp').href = universalLink;
+        document.getElementById('link-pe').href = universalLink;
         document.getElementById('link-py').href = `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR`;
 
         window.submitDeposit = () => {
             const utr = document.getElementById('utr-input').value;
-            if(utr.length !== 12) return alert("Please enter correct 12-digit UTR number!");
+            if(utr.length !== 12) return alert("Please enter a valid 12-digit UTR/Ref No!");
 
             // Show Advanced Popup
             document.getElementById('success-popup').style.display = 'flex';
@@ -109,7 +113,7 @@
             }).then(() => {
                 // Wait for 3.5 seconds before redirecting
                 setTimeout(() => {
-                    window.location.href = "/indian-bishi-app/dashboard.html";
+                    window.location.href = "../dashboard.html";
                 }, 3500);
             });
         };
