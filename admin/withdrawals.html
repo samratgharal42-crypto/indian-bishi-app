@@ -9,9 +9,12 @@
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .btn-back { background: white; padding: 10px 15px; border-radius: 10px; text-decoration: none; color: #1e293b; font-weight: 800; border: 1px solid #e2e8f0; }
         
-        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #cbd5e1; }
-        .btn-done { background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: 800; cursor: pointer; }
+        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .btn-done { background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 10px rgba(16,185,129,0.2); }
+        .btn-done:active { transform: scale(0.98); }
         .history-card { background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #e2e8f0; border-left: 4px solid #6366f1; }
+        
+        .bank-info { background: #f1f5f9; padding: 10px; border-radius: 8px; margin: 10px 0; font-size: 12px; border: 1px dashed #cbd5e1; }
     </style>
 </head>
 <body>
@@ -20,10 +23,10 @@
         <h2 style="margin:0; font-size:18px;">🏆 Payouts</h2>
     </div>
 
-    <h3 style="color:#ef4444;">⏳ Pending Payouts</h3>
+    <h3 style="color:#ef4444; font-size: 16px;">⏳ Pending Payouts</h3>
     <div id="w-list"><p style="font-size:12px; color:#64748b;">Loading requests...</p></div>
 
-    <h3 style="color:#10b981; margin-top:30px;">✅ Completed Payouts</h3>
+    <h3 style="color:#10b981; margin-top:30px; font-size: 16px;">✅ Completed Payouts</h3>
     <div id="h-list"><p style="font-size:12px; color:#64748b;">Loading history...</p></div>
 
     <script type="module">
@@ -40,27 +43,54 @@
             snap.forEach(c => {
                 const w = c.val();
                 const mob = w.userMobile || w.winnerMobile; // support both formats
+                const reqId = c.key;
                 
                 if(w.status === "Pending" || w.status === "Pending Payout") {
                     hasPending = true;
-                    list.innerHTML += `
-                        <div class="card">
+                    // Create placeholder div for this specific request
+                    const divId = `req-${reqId}`;
+                    list.innerHTML += `<div class="card" id="${divId}">Loading details...</div>`;
+                    
+                    // Fetch Bank Details asynchronously
+                    get(child(ref(db), `users/${mob}/bankDetails`)).then(bSnap => {
+                        let bankHTML = "<span style='color:#ef4444; font-weight:800;'>No Bank Details Added by User</span>";
+                        if(bSnap.exists()){
+                            let b = bSnap.val();
+                            // Handle potential missing fields gracefully
+                            const ac = b.acNumber || b.accountNumber || b.account || 'N/A';
+                            const ifsc = b.ifsc || 'N/A';
+                            bankHTML = `<span style="color:#0f172a; font-weight:800;">A/C: ${ac} | IFSC: ${ifsc}</span>`;
+                        }
+                        
+                        // Inject the final HTML into the placeholder
+                        document.getElementById(divId).innerHTML = `
                             <b style="font-size:16px;">Winner: +91 ${mob}</b><br>
-                            <span style="color:#10b981; font-size:22px; font-weight:800;">₹${w.amount}</span><br>
-                            <small style="color:#64748b;">Pool: ${w.poolName} | Date: ${w.date}</small><br><br>
-                            <button class="btn-done" onclick="markPaid('${c.key}', '${mob}', ${w.amount})">Mark as Paid & Deduct Wallet ✅</button>
-                        </div>`;
+                            <span style="color:#10b981; font-size:24px; font-weight:800; display:block; margin:5px 0;">₹${w.amount}</span>
+                            <small style="color:#64748b; font-weight:600;">Pool: ${w.poolName} | Date: ${w.date}</small>
+                            
+                            <div class="bank-info">
+                                <div style="color:#64748b; font-weight:800; margin-bottom:3px; text-transform:uppercase;">🏦 User Bank Details:</div>
+                                ${bankHTML}
+                            </div>
+                            
+                            <button class="btn-done" onclick="markPaid('${reqId}', '${mob}', ${w.amount})">Mark as Paid & Deduct Wallet ✅</button>
+                        `;
+                    });
+
                 } else if (w.status === "Paid") {
                     hasHistory = true;
                     hList.innerHTML += `
                         <div class="history-card">
                             <b>+91 ${mob}</b> <span style="float:right; color:#10b981; font-weight:800;">₹${w.amount}</span><br>
-                            <small style="color:#64748b;">${w.poolName} | Paid on: ${w.date}</small>
+                            <small style="color:#64748b; font-weight:600;">${w.poolName} | Paid on: ${w.date}</small>
                         </div>`;
                 }
             });
-            if(!hasPending) list.innerHTML = "<p style='font-size:13px; color:#64748b;'>No pending payouts.</p>";
-            if(!hasHistory) hList.innerHTML = "<p style='font-size:13px; color:#64748b;'>No history found.</p>";
+
+            setTimeout(() => {
+                if(!hasPending) list.innerHTML = "<p style='font-size:13px; color:#64748b;'>No pending payouts.</p>";
+                if(!hasHistory) hList.innerHTML = "<p style='font-size:13px; color:#64748b;'>No history found.</p>";
+            }, 500); // slight delay for async fetches to complete visually
         });
 
         window.markPaid = (id, mob, amt) => {
@@ -70,11 +100,11 @@
                 get(child(ref(db), `users/${mob}/balance`)).then(snap => {
                     let curBal = snap.exists() ? parseFloat(snap.val()) : 0;
                     let newBal = curBal - parseFloat(amt);
-                    if(newBal < 0) newBal = 0; // Negative balance security
+                    if(newBal < 0) newBal = 0; // Prevent negative balance
                     
                     update(ref(db, `users/${mob}`), { balance: newBal });
                     
-                    // 2. Mark as Paid
+                    // 2. Mark as Paid in Withdrawals
                     update(ref(db, 'withdrawals/' + id), { status: "Paid" });
                     
                     // 3. Add to User's Transactions (Passbook)
