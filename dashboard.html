@@ -17,7 +17,7 @@
 
         .main-content { padding: 0 20px; margin-top: -30px; position: relative; z-index: 10; }
 
-        /* 🔥 1000x350 BANNERS SLIDER 🔥 */
+        /* BANNERS SLIDER */
         .banner-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; margin-bottom: 25px; padding-bottom: 10px; }
         .banner-slider::-webkit-scrollbar { display: none; }
         .slide { scroll-snap-align: center; flex: 0 0 100%; border-radius: 16px; object-fit: cover; aspect-ratio: 1000 / 350; width: 100%; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
@@ -40,6 +40,7 @@
         .s-val { font-size: 14px; font-weight: 800; color: #1e293b; }
         
         .btn-gradient { background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; display: block; text-align: center; box-shadow: 0 10px 20px rgba(99,102,241,0.2); }
+        .btn-joined { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; width: 100%; padding: 15px; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; display: block; text-align: center; box-shadow: none; }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; height: 80px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 9999; border-top: 1px solid #f1f5f9; }
         .nav-item { text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 33.33%; height: 100%; gap: 5px; }
@@ -70,9 +71,9 @@
     </div>
 
     <nav class="bottom-nav">
-        <a href="/indian-bishi-app/dashboard.html" class="nav-item active"><span class="nav-icon">🏠</span><span>HOME</span></a>
-        <a href="/indian-bishi-app/bishi/all-pools.html" class="nav-item"><span class="nav-icon">🎯</span><span>MY BISHI</span></a>
-        <a href="/indian-bishi-app/user/profile.html" class="nav-item"><span class="nav-icon">👤</span><span>ACCOUNT</span></a>
+        <a href="dashboard.html" class="nav-item active"><span class="nav-icon">🏠</span><span>HOME</span></a>
+        <a href="bishi/all-pools.html" class="nav-item"><span class="nav-icon">🎯</span><span>MY BISHI</span></a>
+        <a href="user/profile.html" class="nav-item"><span class="nav-icon">👤</span><span>ACCOUNT</span></a>
     </nav>
 
     <script type="module">
@@ -89,43 +90,60 @@
             if(snap.exists()) document.getElementById('user-name').innerText = snap.val().name;
         });
 
-        onValue(ref(db, 'pools'), (snapshot) => {
-            const container = document.getElementById('investment-pools');
-            container.innerHTML = "";
-            if(!snapshot.exists()) {
-                container.innerHTML = "<p style='text-align:center; color:#64748b;'>No active pools right now.</p>"; return;
-            }
+        // 🚨 ADVANCED LOGIC: Check User's Joined Pools First 🚨
+        onValue(ref(db, `users/${mobile}/joined_pools`), (userPoolsSnap) => {
+            const joinedPools = userPoolsSnap.exists() ? userPoolsSnap.val() : {};
 
-            snapshot.forEach((childSnapshot) => {
-                const data = childSnapshot.val();
-                const joinedMembers = data.joined || 0;
+            // Fetch All Active Pools
+            onValue(ref(db, 'pools'), (snapshot) => {
+                const container = document.getElementById('investment-pools');
+                container.innerHTML = "";
                 
-                container.innerHTML += `
-                    <div class="pool-card-new">
-                        <div class="p-head">
-                            <div class="p-title">${data.name}</div>
-                            <div class="p-badge">Open</div>
-                        </div>
-                        <div class="p-win-amt">₹${(data.winAmount || 0).toLocaleString('en-IN')} <span>Win Amount</span></div>
-                        
-                        <div class="p-stats">
-                            <div class="stat-box">
-                                <div class="s-label">EMI (${data.emiType})</div>
-                                <div class="s-val">₹${data.emiAmount}</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="s-label">DURATION</div>
-                                <div class="s-val">${data.duration}</div>
-                            </div>
-                            <div class="stat-box">
-                                <div class="s-label">MEMBERS</div>
-                                <div class="s-val">${joinedMembers}/${data.maxMembers || 60}</div>
-                            </div>
-                        </div>
+                if(!snapshot.exists()) {
+                    container.innerHTML = "<p style='text-align:center; color:#64748b;'>No active pools right now.</p>"; return;
+                }
 
-                        <button class="btn-gradient" onclick="window.location.href='pool-details.html?id=${childSnapshot.key}'">View Details & Join 🚀</button>
-                    </div>
-                `;
+                snapshot.forEach((childSnapshot) => {
+                    const poolId = childSnapshot.key;
+                    const data = childSnapshot.val();
+                    const joinedMembers = data.joined || 0;
+                    
+                    let buttonHTML = "";
+                    
+                    // Check if User already joined this specific pool
+                    if(joinedPools[poolId]) {
+                        buttonHTML = `<button class="btn-joined" onclick="window.location.href='bishi/all-pools.html'">Already Joined ✅ (View in My Bishi)</button>`;
+                    } else {
+                        buttonHTML = `<button class="btn-gradient" onclick="window.location.href='pool-details.html?id=${poolId}'">View Details & Join 🚀</button>`;
+                    }
+                    
+                    container.innerHTML += `
+                        <div class="pool-card-new">
+                            <div class="p-head">
+                                <div class="p-title">${data.name}</div>
+                                <div class="p-badge">Open</div>
+                            </div>
+                            <div class="p-win-amt">₹${(data.winAmount || 0).toLocaleString('en-IN')} <span>Win Amount</span></div>
+                            
+                            <div class="p-stats">
+                                <div class="stat-box">
+                                    <div class="s-label">EMI (${data.emiType || 'N/A'})</div>
+                                    <div class="s-val">₹${data.emiAmount || 0}</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="s-label">DURATION</div>
+                                    <div class="s-val">${data.duration || 0}</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="s-label">MEMBERS</div>
+                                    <div class="s-val">${joinedMembers}/${data.maxMembers || 60}</div>
+                                </div>
+                            </div>
+
+                            ${buttonHTML}
+                        </div>
+                    `;
+                });
             });
         });
     </script>
