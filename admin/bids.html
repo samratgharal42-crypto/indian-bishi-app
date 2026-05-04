@@ -71,6 +71,7 @@
             if(!hasBids) container.innerHTML = "<p style='color:#64748b; font-size:12px;'>No active bids running.</p>";
         });
 
+        // 🚨 ADVANCED WINNER LOGIC WITH DISPLAY INFO 🚨
         window.declareWinner = (pId, wMobile, wAmt, pName) => {
             if(!confirm(`Declare +91 ${wMobile} as winner for ₹${wAmt}?`)) return;
             const todayStr = new Date().toLocaleDateString('en-IN');
@@ -83,20 +84,26 @@
             push(ref(db, 'withdrawals'), { poolId: pId, poolName: pName, userMobile: wMobile, amount: wAmt, status: "Pending", type: "Auto Winner Payout", date: todayStr });
             push(ref(db, 'transactions'), { userMobile: wMobile, amount: wAmt, type: 'Credit', status: 'Success', title: `🏆 Won: ${pName}`, date: todayStr });
 
-            // 2. ADD TO PAST WINNERS LIST
-            update(ref(db, `pools/${pId}/past_winners`), { [wMobile]: true }).then(() => {
+            // 2. ADD TO PAST WINNERS & SAVE LATEST WINNER INFO FOR USERS
+            update(ref(db, `pools/${pId}/past_winners`), { [wMobile]: true });
+            
+            const latestWinnerData = { mobile: wMobile, amount: wAmt, date: todayStr };
+            
+            update(ref(db, `pools/${pId}/latest_winner`), latestWinnerData).then(() => {
+                
                 // 3. CHECK IF TENURE ENDED
                 get(child(ref(db), `pools/${pId}`)).then(pSnap => {
                     const pData = pSnap.val();
                     const winCount = pData.past_winners ? Object.keys(pData.past_winners).length : 1;
                     
                     if(winCount >= parseInt(pData.duration)) {
-                        // RESTART POOL
+                        // RESTART POOL AND CARRY FORWARD LAST WINNER INFO
                         push(ref(db, 'pools'), {
-                            name: pData.name + " (New)", winAmount: pData.winAmount, emiType: pData.emiType, emiAmount: pData.emiAmount, duration: pData.duration, maxMembers: pData.maxMembers, joined: 0, status: "Open"
+                            name: pData.name + " (New Cycle)", winAmount: pData.winAmount, emiType: pData.emiType, emiAmount: pData.emiAmount, duration: pData.duration, maxMembers: pData.maxMembers, minCibil: pData.minCibil, joined: 0, status: "Open",
+                            latest_winner: latestWinnerData // New pool madhe pan junya winner cha record disel
                         });
                         remove(ref(db, `pools/${pId}`)); // Delete old
-                        alert("🎉 Winner Declared! Tenure completed, so old pool is deleted and New Pool is Auto-Created!");
+                        alert("🎉 Winner Declared! Tenure completed, New Pool Auto-Created.");
                     } else {
                         alert("🎉 Winner Declared & Wallet Updated!");
                     }
