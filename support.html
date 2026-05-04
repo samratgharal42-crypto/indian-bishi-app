@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #e2e8f0; margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        .header { background: #0f172a; color: white; padding: 20px; font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 15px; }
+        .header { background: #0f172a; color: white; padding: 20px; font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .msg { max-width: 80%; padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; }
         .msg.admin { background: white; color: #1e293b; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
@@ -19,10 +19,14 @@
 </head>
 <body>
     <div class="header">
-        <a href="user/profile.html" style="text-decoration:none; color:white;">⬅</a>
-        Indian Bishi Support
+        <a href="user/profile.html" style="text-decoration:none; color:white; font-size:20px;">⬅</a>
+        Indian Bishi Live Support
     </div>
-    <div class="chat-box" id="chat-box"></div>
+    
+    <div class="chat-box" id="chat-box">
+        <div class="msg admin">Welcome! How can I help you today? Admin will reply here.</div>
+    </div>
+
     <div class="input-area">
         <input type="text" id="msg-input" placeholder="Type message...">
         <button onclick="sendMsg()">➤</button>
@@ -34,15 +38,19 @@
         
         const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
         const db = getDatabase(app);
-        const mobile = localStorage.getItem('activeUser');
+        
+        // Mobile number check
+        let mobile = localStorage.getItem('activeUser');
+        if(!mobile) {
+            mobile = "Guest-" + Math.floor(Math.random() * 1000); // Fallback for testing
+        }
 
-        if(!mobile) window.location.href = "index.html";
-
-        // IMPORTANT: Listening to 'support_chats'
-        onValue(ref(db, `support_chats/${mobile}`), snap => {
+        // 🚨 FRESH NODE: bishi_support_live 🚨
+        onValue(ref(db, `bishi_support_live/${mobile}`), snap => {
             const chat = document.getElementById('chat-box');
-            chat.innerHTML = '<div class="msg admin">Welcome! How can I help you? Admin will reply here.</div>';
-            if(snap.exists()){
+            chat.innerHTML = '<div class="msg admin">Welcome! How can I help you today? Admin will reply here.</div>';
+            
+            if(snap.exists()) {
                 snap.forEach(c => {
                     const m = c.val();
                     const cls = m.sender === 'user' ? 'msg user' : 'msg admin';
@@ -55,8 +63,16 @@
         window.sendMsg = () => {
             const text = document.getElementById('msg-input').value.trim();
             if(!text) return;
-            push(ref(db, `support_chats/${mobile}`), { text: text, sender: 'user', timestamp: Date.now() });
-            document.getElementById('msg-input').value = "";
+            
+            push(ref(db, `bishi_support_live/${mobile}`), { 
+                text: text, 
+                sender: 'user', 
+                timestamp: Date.now() 
+            }).then(() => {
+                document.getElementById('msg-input').value = "";
+            }).catch(err => {
+                alert("Error sending message! Check Firebase rules.");
+            });
         };
     </script>
 </body>
