@@ -1,33 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <title>Pools | Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Pools | Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; padding: 20px; }
-        .box { background: white; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
-        input, select, button { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box; }
-        button { background: #6366f1; color: white; font-weight: 800; border: none; cursor: pointer; }
-        .pool-card { background: white; padding: 15px; border-radius: 12px; border-left: 5px solid #6366f1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-del { background: #ef4444; width: auto; padding: 8px 15px; font-size: 12px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; padding: 20px; margin: 0; }
+        .box { background: white; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        input, select, button { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #cbd5e1; box-sizing: border-box; font-family: inherit; font-weight: 600; font-size: 14px; }
+        button { background: #6366f1; color: white; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(99,102,241,0.2); }
+        button:active { transform: scale(0.98); }
+        .pool-card { background: white; padding: 15px; border-radius: 12px; border-left: 5px solid #6366f1; margin-bottom: 10px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+        .btn-del { background: #ef4444; width: auto; padding: 8px 15px; font-size: 12px; box-shadow: none; margin-bottom: 0; }
     </style>
 </head>
 <body>
-    <a href="index.html" style="text-decoration:none; font-weight:800; color:#1e293b;">⬅ Back</a>
-    <h2>📊 Live & New Pools</h2>
+    <a href="index.html" style="text-decoration:none; font-weight:800; color:#1e293b;">⬅ Back to Menu</a>
+    <h2 style="margin-top:15px;">➕ Create New Pool</h2>
 
     <div class="box">
-        <input type="text" id="p-name" placeholder="Pool Name">
+        <input type="text" id="p-name" placeholder="Pool Name (e.g. Diwali Dhamaka)">
         <input type="number" id="p-win" placeholder="Win Amount (₹)">
+        
+        <select id="p-type">
+            <option value="Daily">Daily EMI</option>
+            <option value="Weekly">Weekly EMI</option>
+            <option value="Monthly">Monthly EMI</option>
+        </select>
+        
         <input type="number" id="p-emi" placeholder="EMI Amount (₹)">
-        <input type="number" id="p-total" placeholder="Total Members Needed">
+        <input type="number" id="p-duration" placeholder="Duration (e.g. 10 Months)">
+        <input type="number" id="p-total" placeholder="Max Members Needed (e.g. 60)">
+        
         <button onclick="createPool()">Publish Pool 🚀</button>
     </div>
 
-    <h3>Active Pools</h3>
-    <div id="live-pools-list">Loading...</div>
+    <h2>📈 Active Pools</h2>
+    <div id="live-pools-list"><p style="color:#64748b; font-size:13px;">Loading active pools...</p></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -37,30 +46,44 @@
         window.createPool = () => {
             const name = document.getElementById('p-name').value;
             const win = document.getElementById('p-win').value;
+            const type = document.getElementById('p-type').value;
             const emi = document.getElementById('p-emi').value;
+            const dur = document.getElementById('p-duration').value;
             const total = document.getElementById('p-total').value;
-            if(!name || !win) return alert("Fill details!");
-            push(ref(db, 'pools'), { name, winAmount: win, emiAmount: emi, totalMembers: total, joined: 0, status: "Open" });
-            alert("Pool Live!");
+
+            if(!name || !win || !emi || !dur || !total) return alert("Please fill all details!");
+
+            push(ref(db, 'pools'), { 
+                name: name, winAmount: parseInt(win), emiType: type, emiAmount: parseInt(emi), duration: parseInt(dur), maxMembers: parseInt(total), joined: 0, status: "Open" 
+            }).then(() => {
+                alert("✅ Pool is Live!");
+                document.querySelectorAll('input').forEach(i => i.value = '');
+            });
         };
 
         onValue(ref(db, 'pools'), snap => {
             const list = document.getElementById('live-pools-list');
             list.innerHTML = "";
+            let hasPools = false;
             snap.forEach(c => {
+                hasPools = true;
                 const p = c.val();
                 list.innerHTML += `
                     <div class="pool-card">
-                        <div>
-                            <b>${p.name}</b><br>
-                            <small>Joined: ${p.joined || 0} / ${p.totalMembers || 0}</small>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <b>${p.name}</b>
+                            <span style="color:#10b981; font-weight:800;">Win: ₹${p.winAmount}</span>
                         </div>
-                        <button class="btn-del" onclick="deletePool('${c.key}')">Delete</button>
+                        <div style="font-size:12px; color:#64748b; margin: 8px 0;">
+                            EMI: ₹${p.emiAmount} (${p.emiType}) | Dur: ${p.duration} | Joined: ${p.joined || 0}/${p.maxMembers}
+                        </div>
+                        <button class="btn-del" onclick="deletePool('${c.key}')">Delete Pool</button>
                     </div>`;
             });
+            if(!hasPools) list.innerHTML = "<p style='color:#64748b; font-size:13px;'>No active pools right now.</p>";
         });
 
-        window.deletePool = id => { if(confirm("Delete this pool?")) remove(ref(db, 'pools/' + id)); };
+        window.deletePool = id => { if(confirm("Delete this pool permanently?")) remove(ref(db, 'pools/' + id)); };
     </script>
 </body>
 </html>
