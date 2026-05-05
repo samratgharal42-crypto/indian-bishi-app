@@ -11,7 +11,7 @@
 
         .user-card { background: white; padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .u-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 10px; }
-        .u-title { font-size: 16px; font-weight: 800; color: #1e293b; }
+        .u-title { font-size: 16px; font-weight: 800; color: #1e293b; display: flex; align-items: center; flex-wrap: wrap; gap: 5px; }
         .u-wallet { background: #d1fae5; color: #065f46; padding: 5px 10px; border-radius: 8px; font-size: 13px; font-weight: 800; }
         
         .doc-btn { background: #f8fafc; border: 1px solid #cbd5e1; color: #6366f1; width: 100%; padding: 10px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; text-align: left; display: flex; justify-content: space-between; }
@@ -19,7 +19,8 @@
         .kyc-box { display: none; background: #f1f5f9; border: 1px inset #e2e8f0; padding: 15px; border-radius: 12px; margin-top: 10px; font-size: 13px; }
         .kyc-row { margin-bottom: 8px; color: #64748b; font-weight: 600; }
         .kyc-row span { color: #0f172a; font-weight: 800; font-family: monospace; font-size: 14px; display: block; margin-top: 2px; }
-        .badge-verified { display: inline-block; background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; vertical-align: middle; margin-left: 5px; }
+        .badge-verified { background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 5px; }
+        .badge-pending { background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 5px; }
     </style>
 </head>
 <body>
@@ -28,7 +29,7 @@
         <h2 style="margin:0; font-size:20px;">👥 Registered Users</h2>
     </div>
 
-    <div id="u-list"><p style="color:#64748b; font-size:13px;">Fetching user database...</p></div>
+    <div id="u-list"><p style="color:#64748b; font-size:13px; text-align:center;">Fetching user database...</p></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -43,20 +44,44 @@
                 const mob = c.key;
                 const u = c.val();
                 
-                // Extract KYC Data securely
-                const aadhaar = u.kyc && u.kyc.aadhaar ? u.kyc.aadhaar : "Not Submitted";
-                const pan = u.kyc && u.kyc.pan ? u.kyc.pan : "Not Submitted";
-                const ac = u.bankDetails && u.bankDetails.acNumber ? u.bankDetails.acNumber : "N/A";
-                const ifsc = u.bankDetails && u.bankDetails.ifsc ? u.bankDetails.ifsc : "N/A";
+                // 🚨 SMART EXTRACTION (जुना आणि नवा डेटा एकत्र वाचेल) 🚨
                 
-                const kycStatusHTML = u.kyc && u.kyc.status === "Verified" ? `<span class="badge-verified">Verified KYC</span>` : `<span style="color:#ef4444; font-size:11px; font-weight:800; margin-left:5px;">Pending</span>`;
+                // KYC Data Logic
+                let aadhaar = "Not Submitted";
+                let pan = "Not Submitted";
+                let kycStatusHTML = `<span class="badge-pending">Pending</span>`;
+
+                if (u.kyc) {
+                    aadhaar = u.kyc.aadhaar || "Not Submitted";
+                    pan = u.kyc.pan || "Not Submitted";
+                    if (u.kyc.status === "Verified") {
+                        kycStatusHTML = `<span class="badge-verified">Verified KYC</span>`;
+                    }
+                } else {
+                    // Fallback for old data directly in 'users/mobile/' node
+                    aadhaar = u.aadhaar || u.aadhar || "Not Submitted";
+                    pan = u.pan || u.panCard || "Not Submitted";
+                }
+
+                // Bank Data Logic (Catching multiple variable names)
+                let ac = "N/A";
+                let ifsc = "N/A";
+                
+                if (u.bankDetails) {
+                    ac = u.bankDetails.acNumber || u.bankDetails.accountNumber || u.bankDetails.account || "N/A";
+                    ifsc = u.bankDetails.ifsc || "N/A";
+                } else {
+                    // Fallback for old data
+                    ac = u.accountNumber || u.acNumber || u.account || "N/A";
+                    ifsc = u.ifsc || "N/A";
+                }
 
                 list.innerHTML += `
                     <div class="user-card">
                         <div class="u-header">
                             <div>
                                 <div class="u-title">${u.name || 'User'} ${kycStatusHTML}</div>
-                                <div style="font-size:12px; color:#64748b; font-weight:800;">📞 +91 ${mob}</div>
+                                <div style="font-size:12px; color:#64748b; font-weight:800; margin-top:3px;">📞 +91 ${mob}</div>
                             </div>
                             <div class="u-wallet">₹${u.balance || 0}</div>
                         </div>
