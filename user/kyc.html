@@ -3,30 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KYC Verification</title>
+    <title>Complete KYC | Indian Bishi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
-        .card { width: 100%; max-width: 400px; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 30px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-        .step { background: #1e293b; padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #334155; }
-        .btn { width: 100%; padding: 15px; background: #6366f1; color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { background: white; width: 100%; max-width: 400px; padding: 30px 20px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); text-align: center; border: 1px solid #e2e8f0; }
+        
+        .icon-box { background: #e0e7ff; color: #6366f1; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin: 0 auto 15px; }
+        h2 { margin: 0 0 5px; color: #0f172a; font-size: 22px; }
+        p { color: #64748b; font-size: 13px; font-weight: 600; margin-bottom: 25px; }
+
+        .input-group { text-align: left; margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 5px; }
+        .input-group input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; font-family: inherit; font-size: 14px; font-weight: 800; outline: none; box-sizing: border-box; transition: 0.3s; }
+        .input-group input:focus { border-color: #6366f1; }
+
+        .btn-submit { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2); transition: 0.2s; margin-top: 10px; }
+        .btn-submit:active { transform: scale(0.96); }
     </style>
 </head>
 <body>
+
     <div class="card">
-        <h2>Verify Identity 🛡️</h2>
-        <p style="color:#94a3b8">Bishi शुरू करने के लिए KYC जरूरी है।</p>
-        
-        <div class="step">
-            <h4>Aadhar Card</h4>
-            <input type="file" accept="image/*">
-        </div>
-        
-        <div class="step">
-            <h4>PAN Card</h4>
-            <input type="file" accept="image/*">
+        <div class="icon-box">🛡️</div>
+        <h2>Identity Verification</h2>
+        <p>Govt. regulations require KYC to start investing and withdraw payouts.</p>
+
+        <div class="input-group">
+            <label>Aadhaar Number</label>
+            <input type="number" id="aadhaar" placeholder="Enter 12-digit Aadhaar" maxlength="12">
         </div>
 
-        <button class="btn" onclick="location.href='user-bank.html'">SAVE & NEXT</button>
+        <div class="input-group">
+            <label>PAN Card Number</label>
+            <input type="text" id="pan" placeholder="Enter 10-digit PAN (e.g. ABCDE1234F)" style="text-transform:uppercase;" maxlength="10">
+        </div>
+
+        <div class="input-group">
+            <label>Bank Account Number (For Payouts)</label>
+            <input type="number" id="account" placeholder="Enter Account Number">
+        </div>
+
+        <div class="input-group">
+            <label>Bank IFSC Code</label>
+            <input type="text" id="ifsc" placeholder="e.g. SBIN0001234" style="text-transform:uppercase;">
+        </div>
+
+        <button class="btn-submit" onclick="submitKYC()">Verify & Save Details ✅</button>
     </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const app = initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" });
+        const db = getDatabase(app);
+        const mobile = localStorage.getItem('activeUser');
+
+        if(!mobile) window.location.href = "../index.html";
+
+        window.submitKYC = () => {
+            const aadhaar = document.getElementById('aadhaar').value.trim();
+            const pan = document.getElementById('pan').value.trim().toUpperCase();
+            const account = document.getElementById('account').value.trim();
+            const ifsc = document.getElementById('ifsc').value.trim().toUpperCase();
+
+            if(!aadhaar || !pan || !account || !ifsc) return alert("Please fill all details!");
+
+            // 1. Save Full KYC info
+            update(ref(db, `users/${mobile}/kyc`), {
+                aadhaar: aadhaar,
+                pan: pan,
+                status: "Verified",
+                date: new Date().toLocaleDateString('en-IN')
+            });
+
+            // 2. Save Bank Details specifically for Admin Payout System
+            update(ref(db, `users/${mobile}/bankDetails`), {
+                acNumber: account,
+                ifsc: ifsc
+            }).then(() => {
+                alert("🎉 KYC Completed Successfully! Your account is fully secured.");
+                window.location.href = "../dashboard.html";
+            });
+        };
+    </script>
 </body>
 </html>
