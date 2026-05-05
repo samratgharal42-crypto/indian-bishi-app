@@ -6,18 +6,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; padding: 15px; margin: 0; }
-        .user-card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #cbd5e1; }
-        .info-row { font-size: 13px; margin-bottom: 5px; color: #475569; }
-        .info-row span { font-weight: 800; color: #1e293b; }
-        .wallet-tag { background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 800; float: right; }
-        .details-btn { background: #f1f5f9; color: #6366f1; border: 1px solid #cbd5e1; padding: 8px; width: 100%; border-radius: 8px; font-weight: 800; margin-top: 10px; cursor: pointer; }
-        .hidden-details { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #cbd5e1; font-size: 12px; }
+        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .btn-back { background: white; padding: 10px 15px; border-radius: 10px; text-decoration: none; color: #1e293b; font-weight: 800; border: 1px solid #e2e8f0; }
+
+        .user-card { background: white; padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .u-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 10px; }
+        .u-title { font-size: 16px; font-weight: 800; color: #1e293b; }
+        .u-wallet { background: #d1fae5; color: #065f46; padding: 5px 10px; border-radius: 8px; font-size: 13px; font-weight: 800; }
+        
+        .doc-btn { background: #f8fafc; border: 1px solid #cbd5e1; color: #6366f1; width: 100%; padding: 10px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; text-align: left; display: flex; justify-content: space-between; }
+        
+        .kyc-box { display: none; background: #f1f5f9; border: 1px inset #e2e8f0; padding: 15px; border-radius: 12px; margin-top: 10px; font-size: 13px; }
+        .kyc-row { margin-bottom: 8px; color: #64748b; font-weight: 600; }
+        .kyc-row span { color: #0f172a; font-weight: 800; font-family: monospace; font-size: 14px; display: block; margin-top: 2px; }
+        .badge-verified { display: inline-block; background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; vertical-align: middle; margin-left: 5px; }
     </style>
 </head>
 <body>
-    <a href="index.html" style="text-decoration:none; font-weight:800; color:#1e293b;">⬅ Back</a>
-    <h2 style="margin-top:10px;">👥 All Registered Users</h2>
-    <div id="u-list">Loading...</div>
+    <div class="header">
+        <a href="index.html" class="btn-back">⬅ Back</a>
+        <h2 style="margin:0; font-size:20px;">👥 Registered Users</h2>
+    </div>
+
+    <div id="u-list"><p style="color:#64748b; font-size:13px;">Fetching user database...</p></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -25,30 +36,48 @@
         const db = getDatabase(initializeApp({ databaseURL: "https://indianbishi-pro-default-rtdb.firebaseio.com" }));
 
         onValue(ref(db, 'users'), snap => {
-            const list = document.getElementById('u-list'); list.innerHTML = "";
+            const list = document.getElementById('u-list'); 
+            list.innerHTML = "";
+            
             snap.forEach(c => {
+                const mob = c.key;
                 const u = c.val();
-                let joinedPoolsHTML = u.joined_pools ? Object.keys(u.joined_pools).length + " Pools Joined" : "None";
                 
+                // Extract KYC Data securely
+                const aadhaar = u.kyc && u.kyc.aadhaar ? u.kyc.aadhaar : "Not Submitted";
+                const pan = u.kyc && u.kyc.pan ? u.kyc.pan : "Not Submitted";
+                const ac = u.bankDetails && u.bankDetails.acNumber ? u.bankDetails.acNumber : "N/A";
+                const ifsc = u.bankDetails && u.bankDetails.ifsc ? u.bankDetails.ifsc : "N/A";
+                
+                const kycStatusHTML = u.kyc && u.kyc.status === "Verified" ? `<span class="badge-verified">Verified KYC</span>` : `<span style="color:#ef4444; font-size:11px; font-weight:800; margin-left:5px;">Pending</span>`;
+
                 list.innerHTML += `
                     <div class="user-card">
-                        <div class="wallet-tag">Wallet: ₹${u.balance || 0}</div>
-                        <div class="info-row">Name: <span>${u.name || 'N/A'}</span></div>
-                        <div class="info-row">Mobile: <span>+91 ${c.key}</span></div>
+                        <div class="u-header">
+                            <div>
+                                <div class="u-title">${u.name || 'User'} ${kycStatusHTML}</div>
+                                <div style="font-size:12px; color:#64748b; font-weight:800;">📞 +91 ${mob}</div>
+                            </div>
+                            <div class="u-wallet">₹${u.balance || 0}</div>
+                        </div>
                         
-                        <button class="details-btn" onclick="toggleDetails('${c.key}')">View Full Info 🔽</button>
+                        <button class="doc-btn" onclick="toggleKYC('${mob}')">
+                            🛡️ View KYC & Bank Details <span>▼</span>
+                        </button>
                         
-                        <div class="hidden-details" id="details-${c.key}">
-                            <div class="info-row">Password: <span>${u.password || 'N/A'}</span></div>
-                            <div class="info-row">KYC Status: <span>${u.kycStatus || 'Pending'}</span></div>
-                            <div class="info-row">Active Bishi: <span style="color:#6366f1;">${joinedPoolsHTML}</span></div>
+                        <div class="kyc-box" id="kyc-${mob}">
+                            <div class="kyc-row">Aadhaar Number: <span>${aadhaar}</span></div>
+                            <div class="kyc-row">PAN Card: <span>${pan}</span></div>
+                            <div style="border-top:1px dashed #cbd5e1; margin:10px 0;"></div>
+                            <div class="kyc-row">Bank Account: <span>${ac}</span></div>
+                            <div class="kyc-row">IFSC Code: <span>${ifsc}</span></div>
                         </div>
                     </div>`;
             });
         });
 
-        window.toggleDetails = (id) => {
-            const el = document.getElementById('details-' + id);
+        window.toggleKYC = (id) => {
+            const el = document.getElementById('kyc-' + id);
             el.style.display = el.style.display === 'block' ? 'none' : 'block';
         };
     </script>
