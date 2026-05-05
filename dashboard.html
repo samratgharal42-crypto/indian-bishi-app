@@ -13,7 +13,7 @@
         /* HEADER */
         .header { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 30px 20px 60px; color: white; border-radius: 0 0 30px 30px; position: relative; }
         .welcome-text { font-size: 14px; opacity: 0.9; }
-        .user-name { font-size: 28px; font-weight: 800; margin-top: 5px; }
+        .user-name { font-size: 28px; font-weight: 800; margin-top: 5px; text-transform: capitalize; }
         .cibil-badge { background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; position: absolute; right: 20px; top: 35px; border: 1px solid rgba(255,255,255,0.3); cursor: pointer; }
 
         .main-content { padding: 0 20px; margin-top: -30px; position: relative; z-index: 10; }
@@ -80,6 +80,17 @@
         <a href="user/profile.html" class="nav-item"><span class="nav-icon">👤</span><span>ACCOUNT</span></a>
     </nav>
 
+    <div id="kyc-blocker" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.95); z-index:999999; justify-content:center; align-items:center; backdrop-filter:blur(10px);">
+        <div style="background:white; width:85%; max-width:350px; padding:30px 20px; border-radius:24px; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+            <div style="font-size:50px; margin-bottom:10px;">🛑</div>
+            <h2 style="color:#0f172a; margin:0 0 10px; font-size:22px;">KYC Required!</h2>
+            <p style="color:#64748b; font-size:14px; font-weight:600; margin-bottom:25px; line-height:1.5;">You cannot access the Bishi app without identity verification. Please link your documents.</p>
+            <button onclick="window.location.href='user/kyc.html'" style="background:linear-gradient(135deg, #6366f1, #a855f7); color:white; border:none; width:100%; padding:15px; border-radius:12px; font-weight:800; font-size:16px; cursor:pointer; box-shadow:0 10px 20px rgba(99,102,241,0.3);">
+                Complete KYC Now ➔
+            </button>
+        </div>
+    </div>
+
     <script type="module">
         // URL HIDER (Clean Link)
         if (window.history.replaceState) {
@@ -98,27 +109,37 @@
         let userCibil = 0;
         let joinedPools = {};
 
-        // 🚨 FIX: Fetch User Data FIRST, then fetch Pools 🚨
+        // Fetch User Data, Check KYC & Fetch Pools
         get(child(ref(db), `users/${mobile}`)).then((snap) => {
             if(snap.exists()) {
                 const u = snap.val();
                 document.getElementById('user-name').innerText = u.name || "User";
                 
+                // 🚨 KYC LOGIC CHECK 🚨
+                if(!u.kyc || u.kyc.status !== "Verified") {
+                    document.getElementById('kyc-blocker').style.display = 'flex';
+                    document.body.style.overflow = 'hidden'; // Stop scrolling
+                }
+
                 // Get CIBIL
                 if(u.cibil) {
                     userCibil = parseInt(u.cibil);
                     document.getElementById('cibil-display').innerText = `🛡️ CIBIL: ${userCibil}`;
                 } else {
-                    document.getElementById('cibil-display').innerText = `⚠️ Check CIBIL Now`;
+                    document.getElementById('cibil-display').innerText = `⚠️ Check CIBIL`;
                 }
 
                 // Get Joined Pools
                 if(u.joined_pools) {
                     joinedPools = u.joined_pools;
                 }
+            } else {
+                // If user doesn't exist in DB yet, show KYC blocker
+                document.getElementById('kyc-blocker').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
             }
             
-            // Call fetchPools ONLY AFTER CIBIL is loaded
+            // Fetch pools after checking user details
             fetchPools();
         });
 
@@ -155,7 +176,7 @@
                     container.innerHTML += `
                         <div class="pool-card-new">
                             <div class="p-head">
-                                <div class="p-title">${data.name} <span style="font-size:10px; background:#e2e8f0; padding:4px 8px; border-radius:5px; margin-left:10px; color:#475569;">Min CIBIL: ${reqCibil}</span></div>
+                                <div class="p-title">${data.name} <span style="font-size:10px; background:#e2e8f0; padding:4px 8px; border-radius:5px; margin-left:10px; color:#475569; letter-spacing:0;">Min CIBIL: ${reqCibil}</span></div>
                                 <div class="p-badge">Open</div>
                             </div>
                             <div class="p-win-amt">₹${(data.winAmount || 0).toLocaleString('en-IN')} <span>Win Amount</span></div>
